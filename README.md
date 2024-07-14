@@ -6,7 +6,6 @@
 * [Features](#features)
 * [Technologies Used](#technologies-used)
 * [Dependencies](#dependencies)
-* [Documentation](#documentation)
 * [Testing](#testing)
 
 ## Usage Guide
