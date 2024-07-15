@@ -1,5 +1,5 @@
-# Book-Store_backend
-> Utilizing Java Spring Boot, the back-end of the Bookstore project offers a comprehensive RESTful API, serving as the foundation for managing book-related interactions, including inventory, user transactions, and essential bookstore functionalities.
+# Book Nest
+> Serving as a robust and secure backend infrastructure for a bookstore application using Java Spring Boot, this project delivers a comprehensive RESTful API to manage book inventory, user transactions, and other essential bookstore functionalities. 
 
 ## Table of Contents
 * [Usage Guide](#usage-guide)
