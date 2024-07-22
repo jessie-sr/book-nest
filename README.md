@@ -70,7 +70,7 @@ Serving as a robust and secure backend infrastructure for a bookstore applicatio
 - **junit-jupiter-api**: JUnit 5 API for writing tests.
 - **junit-jupiter-engine**: JUnit 5 test engine implementation.
 - **spring-boot-starter-validation**: Starter for using validation in Spring Boot applications.
-- **springdoc-openapi-starter-webmvc-ui**: Starter for adding OpenAPI 3 documentation and Swagger UI support to your Spring Boot application.
+- **springdoc-openapi-starter-webmvc-ui**: Starter for adding OpenAPI 3 documentation and Swagger UI support to Spring Boot application.
 
 ## Testing
 ### Usage Guide
