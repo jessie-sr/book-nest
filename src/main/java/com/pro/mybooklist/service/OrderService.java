@@ -18,7 +18,7 @@ import com.pro.mybooklist.httpforms.AddressInfoNoAuthentication;
 import com.pro.mybooklist.httpforms.OrderInfo;
 import com.pro.mybooklist.httpforms.OrderPasswordInfo;
 import com.pro.mybooklist.model.Cart;
-import com.pro.mybooklist.sqlforms.TotalOfBacket;
+import com.pro.mybooklist.sqlforms.TotalOfCart;
 
 import jakarta.mail.MessagingException;
 
@@ -69,10 +69,10 @@ public class OrderService {
 	}
 
 	// Method to get total price of order by order Id:
-	public TotalOfBacket getTotalOfOrderByOrderId(Long orderId) {
+	public TotalOfCart getTotalOfOrderByOrderId(Long orderId) {
 		commonService.findOrder(orderId);
 
-		TotalOfBacket totalOfOrder = cartRepository.findTotalOfOrder(orderId);
+		TotalOfCart totalOfOrder = cartRepository.findTotalOfOrder(orderId);
 		return totalOfOrder;
 	}
 
@@ -158,7 +158,7 @@ public class OrderService {
 	}
 
 	private void checkIfBacketIsEmpty(Cart cart) {
-		List<CartBook> backetBooksInCart = cartBookRepository.findByBacket(cart);
+		List<CartBook> backetBooksInCart = cartBookRepository.findByCart(cart);
 		if (backetBooksInCart.size() == 0)
 			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "The cart is empty");
 	}
