@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.pro.mybooklist.model.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -27,18 +28,7 @@ import com.pro.mybooklist.httpforms.AccountCredentials;
 import com.pro.mybooklist.httpforms.AddressInfo;
 import com.pro.mybooklist.httpforms.PasswordInfo;
 import com.pro.mybooklist.httpforms.QuantityInfo;
-import com.pro.mybooklist.model.Backet;
-import com.pro.mybooklist.model.BacketBook;
-import com.pro.mybooklist.model.BacketBookRepository;
-import com.pro.mybooklist.model.BacketRepository;
-import com.pro.mybooklist.model.Book;
-import com.pro.mybooklist.model.BookRepository;
-import com.pro.mybooklist.model.Category;
-import com.pro.mybooklist.model.CategoryRepository;
-import com.pro.mybooklist.model.Order;
-import com.pro.mybooklist.model.OrderRepository;
-import com.pro.mybooklist.model.User;
-import com.pro.mybooklist.model.UserRepository;
+import com.pro.mybooklist.model.Cart;
 
 import jakarta.transaction.Transactional;
 
@@ -93,7 +83,7 @@ public class RestAuthenticatedControllerTest {
 	private String jwt;
 	private Long authenticatedUserId;
 	private User authenticatedUser;
-	private Backet authenticatedUserCurrentBacket;
+	private Cart authenticatedUserCurrentCart;
 
 	@BeforeAll
 	public void setUp() throws Exception {
@@ -162,7 +152,7 @@ public class RestAuthenticatedControllerTest {
 	}
 
 	@Nested
-	class testAddBookToCurrentBacket {
+	class testAddBookToCurrentCart {
 		@Test
 		@Rollback
 		public void testAddBookToCurrentBacketBookNotFoundCase() throws Exception {
@@ -308,7 +298,7 @@ public class RestAuthenticatedControllerTest {
 			mockMvc.perform(get(requestURIGood).header("Authorization", jwt)).andExpect(status().isOk())
 					.andExpect(jsonPath("$.size()").value(0));
 
-			// More than one current Backet case:
+			// More than one current Cart case:
 			createBacketWithUser(true, USERNAME, EMAIL);
 			createSecondCurrentBacketForAuthenticatedUser();
 			mockMvc.perform(get(requestURIGood).header("Authorization", jwt)).andExpect(status().isOk())
@@ -325,7 +315,7 @@ public class RestAuthenticatedControllerTest {
 			mockMvc.perform(get(requestURIGood).header("Authorization", jwt)).andExpect(status().isOk())
 					.andExpect(jsonPath("$.size()").value(0));
 
-			// Books are in the current Backet case:
+			// Books are in the current Cart case:
 			addTwoBooksToAuthenticatedUserCurrentBacket();
 			mockMvc.perform(get(requestURIGood).header("Authorization", jwt)).andExpect(status().isOk())
 					.andExpect(jsonPath("$.size()").value(2));
@@ -346,7 +336,7 @@ public class RestAuthenticatedControllerTest {
 					.andReturn();
 			assertThat(result.getResponse().getContentAsString()).isEqualTo("");
 
-			// More than one current Backet case:
+			// More than one current Cart case:
 			createBacketWithUser(true, USERNAME, EMAIL);
 			createSecondCurrentBacketForAuthenticatedUser();
 			result = mockMvc.perform(get(requestURI).header("Authorization", jwt)).andExpect(status().isOk())
@@ -364,7 +354,7 @@ public class RestAuthenticatedControllerTest {
 					.andReturn();
 			assertThat(result.getResponse().getContentAsString()).isEqualTo("");
 
-			// Current Backet is not empty case:
+			// Current Cart is not empty case:
 			addTwoBooksToAuthenticatedUserCurrentBacket();
 			mockMvc.perform(get(requestURI).header("Authorization", jwt)).andExpect(status().isOk())
 					.andExpect(jsonPath("$.total").value(DEFAULT_PRICE * 4));
@@ -373,7 +363,7 @@ public class RestAuthenticatedControllerTest {
 	}
 
 	@Nested
-	class testClearCurrentBacket {
+	class testClearCurrentCart {
 		@Test
 		@Rollback
 		public void testClearCurrentBacketIdMissmatchCase() throws Exception {
@@ -394,7 +384,7 @@ public class RestAuthenticatedControllerTest {
 
 			mockMvc.perform(delete(requestURIGood).header("Authorization", jwt)).andExpect(status().isOk());
 
-			// More than one current Backet case:
+			// More than one current Cart case:
 			createBacketWithUser(true, USERNAME, EMAIL);
 			createSecondCurrentBacketForAuthenticatedUser();
 			mockMvc.perform(delete(requestURIGood).header("Authorization", jwt)).andExpect(status().isOk());
@@ -410,7 +400,7 @@ public class RestAuthenticatedControllerTest {
 			mockMvc.perform(delete(requestURIGood).header("Authorization", jwt)).andExpect(status().isOk())
 					.andExpect(content().string("0 records were deleted from current cart"));
 
-			// Current Backet is not empty case:
+			// Current Cart is not empty case:
 			addTwoBooksToAuthenticatedUserCurrentBacket();
 			mockMvc.perform(delete(requestURIGood).header("Authorization", jwt)).andExpect(status().isOk())
 					.andExpect(content().string("2 records were deleted from current cart"));
@@ -455,7 +445,7 @@ public class RestAuthenticatedControllerTest {
 			mockMvc.perform(put(requestURIBookNotInBacket).header("Authorization", jwt))
 			.andExpect(status().isConflict());
 
-			// More than one current Backet case:
+			// More than one current Cart case:
 			createBacketWithUser(true, USERNAME, EMAIL);
 			createSecondCurrentBacketForAuthenticatedUser();
 			mockMvc.perform(put(requestURIBookNotInBacket).header("Authorization", jwt))
@@ -470,7 +460,7 @@ public class RestAuthenticatedControllerTest {
 			Book book = createBook(BOOK_TITLE, OTHER_CATEGORY, DEFAULT_PRICE);
 			Long bookId = book.getId();
 
-			createBacketBookCustomQuantity(2, book, authenticatedUserCurrentBacket);
+			createBacketBookCustomQuantity(2, book, authenticatedUserCurrentCart);
 
 			String requestURIGood = requestURI + bookId;
 
@@ -492,7 +482,7 @@ public class RestAuthenticatedControllerTest {
 	}
 
 	@Nested
-	class testDeleteBookFromCurrentBacket {
+	class testDeleteBookFromCurrentCart {
 		@Test
 		@Rollback
 		public void testDeleteBookFromCurrentBacketBookNotFoundCase() throws Exception {
@@ -532,7 +522,7 @@ public class RestAuthenticatedControllerTest {
 
 			mockMvc.perform(delete(requestURIGood).header("Authorization", jwt)).andExpect(status().isConflict());
 
-			// More than one current Backet case:
+			// More than one current Cart case:
 			createBacketWithUser(true, USERNAME, EMAIL);
 			createSecondCurrentBacketForAuthenticatedUser();
 			mockMvc.perform(delete(requestURIGood).header("Authorization", jwt)).andExpect(status().isConflict());
@@ -546,7 +536,7 @@ public class RestAuthenticatedControllerTest {
 			Book book = createBook(BOOK_TITLE, OTHER_CATEGORY, DEFAULT_PRICE);
 			Long bookId = book.getId();
 
-			createBacketBookCustomQuantity(2, book, authenticatedUserCurrentBacket);
+			createBacketBookCustomQuantity(2, book, authenticatedUserCurrentCart);
 
 			String requestURIGood = requestURI + bookId;
 
@@ -581,7 +571,7 @@ public class RestAuthenticatedControllerTest {
 					.andReturn();
 			assertThat(result.getResponse().getContentAsString()).isEqualTo("");
 
-			// More than one current Backet case:
+			// More than one current Cart case:
 			createBacketWithUser(true, USERNAME, EMAIL);
 			createSecondCurrentBacketForAuthenticatedUser();
 			result = mockMvc.perform(get(requestURI).header("Authorization", jwt)).andExpect(status().isOk())
@@ -596,8 +586,8 @@ public class RestAuthenticatedControllerTest {
 
 			Book book1 = createBook(BOOK_TITLE, OTHER_CATEGORY, DEFAULT_PRICE);
 			Book book2 = createBook(BOOK_TITLE + " 2", OTHER_CATEGORY, DEFAULT_PRICE);
-			createBacketBookCustomQuantity(3, book1, authenticatedUserCurrentBacket);
-			createBacketBookCustomQuantity(2, book2, authenticatedUserCurrentBacket);
+			createBacketBookCustomQuantity(3, book1, authenticatedUserCurrentCart);
+			createBacketBookCustomQuantity(2, book2, authenticatedUserCurrentCart);
 
 			mockMvc.perform(get(requestURI).header("Authorization", jwt)).andExpect(status().isOk())
 					.andExpect(jsonPath("$.items").value(5));
@@ -633,7 +623,7 @@ public class RestAuthenticatedControllerTest {
 			mockMvc.perform(post(requestURIGood).header("Authorization", jwt).contentType(MediaType.APPLICATION_JSON)
 					.content(requestBody)).andExpect(status().isNotAcceptable());
 
-			// More than one current Backet case:
+			// More than one current Cart case:
 			createBacketWithUser(true, USERNAME, EMAIL);
 			createSecondCurrentBacketForAuthenticatedUser();
 
@@ -671,8 +661,8 @@ public class RestAuthenticatedControllerTest {
 
 			List<Long> idsOfNotCurrentBacketsOfUser = backetRepository.findNotCurrentByUserid(authenticatedUserId);
 			assertThat(idsOfNotCurrentBacketsOfUser).hasSize(1);
-			List<Backet> backets = (List<Backet>) backetRepository.findAll();
-			assertThat(backets).hasSize(2);
+			List<Cart> carts = (List<Cart>) backetRepository.findAll();
+			assertThat(carts).hasSize(2);
 		}
 	}
 
@@ -789,34 +779,34 @@ public class RestAuthenticatedControllerTest {
 	}
 
 	private Order createOrderOutOfCurrentBacketOfAuthenticatedUser(int quantity, List<Book> books) {
-		List<Backet> backetsCurrentOfUser = backetRepository.findCurrentByUserid(authenticatedUserId);
+		List<Cart> backetsCurrentOfUser = backetRepository.findCurrentByUserid(authenticatedUserId);
 
-		Backet backet = backetsCurrentOfUser.get(0);
+		Cart cart = backetsCurrentOfUser.get(0);
 
 		for (Book book : books) {
-			this.createBacketBookCustomQuantity(quantity, book, backet);
+			this.createBacketBookCustomQuantity(quantity, book, cart);
 		}
 
 		User user = urepository.findById(authenticatedUserId).get();
 
 		Order newOrder = new Order(user.getFirstname(), user.getLastname(), user.getCountry(), user.getCity(),
-				user.getStreet(), user.getPostcode(), user.getEmail(), backet, NOTE, DEFAULT_PASSWORD);
+				user.getStreet(), user.getPostcode(), user.getEmail(), cart, NOTE, DEFAULT_PASSWORD);
 		orepository.save(newOrder);
 
 		return newOrder;
 	}
 
-	private Backet createBacketWithUser(boolean current, String username, String email) {
+	private Cart createBacketWithUser(boolean current, String username, String email) {
 		User user = this.createUser(username, email);
 
-		List<Backet> currentBackets = backetRepository.findCurrentByUserid(user.getId());
-		if (currentBackets.size() != 0 && current)
-			return currentBackets.get(0);
+		List<Cart> currentCarts = backetRepository.findCurrentByUserid(user.getId());
+		if (currentCarts.size() != 0 && current)
+			return currentCarts.get(0);
 
-		Backet newBacket = new Backet(current, user);
-		backetRepository.save(newBacket);
+		Cart newCart = new Cart(current, user);
+		backetRepository.save(newCart);
 
-		return newBacket;
+		return newCart;
 	}
 
 	private User createUser(String username, String email) {
@@ -837,8 +827,8 @@ public class RestAuthenticatedControllerTest {
 		return user;
 	}
 
-	private BacketBook createBacketBookCustomQuantity(int quantity, Book book, Backet backet) {
-		BacketBook newBacketBook = new BacketBook(quantity, backet, book);
+	private BacketBook createBacketBookCustomQuantity(int quantity, Book book, Cart cart) {
+		BacketBook newBacketBook = new BacketBook(quantity, cart, book);
 		backetBookRepository.save(newBacketBook);
 
 		return newBacketBook;
@@ -887,7 +877,7 @@ public class RestAuthenticatedControllerTest {
 		user.setAccountVerified(true);
 		user.setVerificationCode(null);
 		urepository.save(user);
-		Backet currentBacket = this.createBacketWithUser(true, USERNAME, EMAIL);
+		Cart currentCart = this.createBacketWithUser(true, USERNAME, EMAIL);
 
 		AccountCredentials creds = new AccountCredentials(USERNAME, DEFAULT_PASSWORD);
 		String requestBody = objectMapper.writeValueAsString(creds);
@@ -898,18 +888,18 @@ public class RestAuthenticatedControllerTest {
 		jwt = result.getResponse().getHeader("Authorization");
 		authenticatedUserId = Long.valueOf(result.getResponse().getHeader("Host"));
 		authenticatedUser = user;
-		authenticatedUserCurrentBacket = currentBacket;
+		authenticatedUserCurrentCart = currentCart;
 	}
 
 	private void createSecondCurrentBacketForAuthenticatedUser() {
-		Backet newCurrentBacket = new Backet(true, authenticatedUser);
-		backetRepository.save(newCurrentBacket);
+		Cart newCurrentCart = new Cart(true, authenticatedUser);
+		backetRepository.save(newCurrentCart);
 	}
 
 	private void addTwoBooksToAuthenticatedUserCurrentBacket() {
 		Book book1 = createBook(BOOK_TITLE, OTHER_CATEGORY, DEFAULT_PRICE);
 		Book book2 = createBook(BOOK_TITLE + " 2", ROMANCE_CATEGORY, DEFAULT_PRICE);
-		createBacketBookCustomQuantity(2, book1, authenticatedUserCurrentBacket);
-		createBacketBookCustomQuantity(2, book2, authenticatedUserCurrentBacket);
+		createBacketBookCustomQuantity(2, book1, authenticatedUserCurrentCart);
+		createBacketBookCustomQuantity(2, book2, authenticatedUserCurrentCart);
 	}
 }

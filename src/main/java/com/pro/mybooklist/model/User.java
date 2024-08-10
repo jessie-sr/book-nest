@@ -58,7 +58,7 @@ public class User {
 	
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy="user")
-	private List<Backet> backets;
+	private List<Cart> carts;
 	
 	public User() {}
 
@@ -203,11 +203,11 @@ public class User {
 		this.postcode = postcode;
 	}
 
-	public List<Backet> getBackets() {
-		return backets;
+	public List<Cart> getBackets() {
+		return carts;
 	}
 
-	public void setBackets(List<Backet> backets) {
-		this.backets = backets;
+	public void setBackets(List<Cart> carts) {
+		this.carts = carts;
 	}
 }

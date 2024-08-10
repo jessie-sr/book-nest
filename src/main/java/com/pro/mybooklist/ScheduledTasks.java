@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.pro.mybooklist.model.Backet;
+import com.pro.mybooklist.model.Cart;
 import com.pro.mybooklist.model.BacketRepository;
 
 @Component
@@ -21,13 +21,13 @@ public class ScheduledTasks {
 	@Scheduled(fixedRate = 1, timeUnit = TimeUnit.DAYS)
 	@Transactional
 	public void deleteUnusedCarts() {
-		List<Backet> backets = (List<Backet>) barepository.findAll();
+		List<Cart> carts = (List<Cart>) barepository.findAll();
 		
-		if (backets.size() > 0) {
-			for (int i = 0; i < backets.size(); i++) {
-				if (backets.get(i).getUser() == null && backets.get(i).isCurrent()) {
-					if (LocalDate.now().isAfter(LocalDate.parse(backets.get(i).getExpiryDate()))) {
-						barepository.delete(backets.get(i));
+		if (carts.size() > 0) {
+			for (int i = 0; i < carts.size(); i++) {
+				if (carts.get(i).getUser() == null && carts.get(i).isCurrent()) {
+					if (LocalDate.now().isAfter(LocalDate.parse(carts.get(i).getExpiryDate()))) {
+						barepository.delete(carts.get(i));
 					}
 				}
 			}

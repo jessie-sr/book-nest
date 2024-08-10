@@ -2,6 +2,7 @@ package com.pro.mybooklist.service;
 
 import java.util.Optional;
 
+import com.pro.mybooklist.model.*;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,13 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.pro.mybooklist.httpforms.BacketInfo;
 import com.pro.mybooklist.httpforms.BookQuantityInfo;
 import com.pro.mybooklist.httpforms.QuantityInfo;
-import com.pro.mybooklist.model.Backet;
-import com.pro.mybooklist.model.BacketBook;
-import com.pro.mybooklist.model.BacketBookKey;
-import com.pro.mybooklist.model.BacketBookRepository;
-import com.pro.mybooklist.model.BacketRepository;
-import com.pro.mybooklist.model.Book;
-import com.pro.mybooklist.model.User;
+import com.pro.mybooklist.model.Cart;
 import com.pro.mybooklist.sqlforms.QuantityOfBacket;
 import com.pro.mybooklist.sqlforms.TotalOfBacket;
 
@@ -65,7 +60,7 @@ public class BacketService {
 		return quantityOfCurrentBacket;
 	}
 
-	// Method to create Backet with password and no user. The method returns the
+	// Method to create Cart with password and no user. The method returns the
 	// backet Id and its password
 	public BacketInfo createBacketNoAuthentication() {
 		String password = RandomStringUtils.randomAlphanumeric(15);
@@ -77,9 +72,9 @@ public class BacketService {
 	}
 
 	private Long createBacket(String hashedPassword) {
-		Backet backet = new Backet(hashedPassword);
-		backetRepository.save(backet);
-		Long backetId = backet.getBacketid();
+		Cart cart = new Cart(hashedPassword);
+		backetRepository.save(cart);
+		Long backetId = cart.getBacketid();
 
 		return backetId;
 	}
@@ -92,9 +87,9 @@ public class BacketService {
 		int additionalQuantity = bookQuantityAndBacketPassword.getQuantity();
 		String password = bookQuantityAndBacketPassword.getPassword();
 
-		Backet backet = commonService.findBacketAndCheckIsPrivateAndCheckPasswordAndCheckIsCurrent(backetId, password);
+		Cart cart = commonService.findBacketAndCheckIsPrivateAndCheckPasswordAndCheckIsCurrent(backetId, password);
 
-		return this.addQuantityOfBookToTheBacket(backet, bookId, additionalQuantity);
+		return this.addQuantityOfBookToTheBacket(cart, bookId, additionalQuantity);
 	}
 
 	// Method to add the certain quantity of the book to the current backet of the
@@ -104,13 +99,13 @@ public class BacketService {
 		int additionalQuantity = quantityInfo.getQuantity();
 
 		User user = commonService.checkAuthentication(authentication);
-		Backet currentBacket = commonService.findCurrentBacketOfUser(user);
+		Cart currentCart = commonService.findCurrentBacketOfUser(user);
 
-		return this.addQuantityOfBookToTheBacket(currentBacket, bookId, additionalQuantity);
+		return this.addQuantityOfBookToTheBacket(currentCart, bookId, additionalQuantity);
 	}
 
-	private ResponseEntity<?> addQuantityOfBookToTheBacket(Backet backet, Long bookId, int additionalQuantity) {
-		Long backetId = backet.getBacketid();
+	private ResponseEntity<?> addQuantityOfBookToTheBacket(Cart cart, Long bookId, int additionalQuantity) {
+		Long backetId = cart.getBacketid();
 		Book book = commonService.findBook(bookId);
 		Optional<BacketBook> optionalBacketBook = this.getOptionalBacketBook(backetId, bookId);
 
@@ -118,7 +113,7 @@ public class BacketService {
 			BacketBook backetBook = optionalBacketBook.get();
 			this.addQuantityToBacketBook(backetBook, additionalQuantity);
 		} else {
-			this.createBacketBook(additionalQuantity, backet, book);
+			this.createBacketBook(additionalQuantity, cart, book);
 		}
 
 		return new ResponseEntity<>("Book was added to cart successfully", HttpStatus.OK);
@@ -130,8 +125,8 @@ public class BacketService {
 		this.setBookQuantityInCart(newQuantity, backetBook);
 	}
 
-	private void createBacketBook(int quantity, Backet backet, Book book) {
-		BacketBook backetBook = new BacketBook(quantity, backet, book);
+	private void createBacketBook(int quantity, Cart cart, Book book) {
+		BacketBook backetBook = new BacketBook(quantity, cart, book);
 		backetBookRepository.save(backetBook);
 	}
 
@@ -140,22 +135,22 @@ public class BacketService {
 		Long backetId = backetInfo.getId();
 		String password = backetInfo.getPassword();
 
-		Backet backet = commonService.findBacketAndCheckIsPrivateAndCheckPasswordAndCheckIsCurrent(backetId, password);
+		Cart cart = commonService.findBacketAndCheckIsPrivateAndCheckPasswordAndCheckIsCurrent(backetId, password);
 
-		return this.reduceQuantityOfBookInBacket(backet, bookId);
+		return this.reduceQuantityOfBookInBacket(cart, bookId);
 	}
 
 	// Method to reduce the quantity of the book in the current backet of the
 	// authenticated user:
 	public ResponseEntity<?> reduceBookAuthenticated(Long bookId, Authentication authentication) {
 		User user = commonService.checkAuthentication(authentication);
-		Backet currentBacket = commonService.findCurrentBacketOfUser(user);
+		Cart currentCart = commonService.findCurrentBacketOfUser(user);
 
-		return this.reduceQuantityOfBookInBacket(currentBacket, bookId);
+		return this.reduceQuantityOfBookInBacket(currentCart, bookId);
 	}
 
-	private ResponseEntity<?> reduceQuantityOfBookInBacket(Backet backet, Long bookId) {
-		Long backetId = backet.getBacketid();
+	private ResponseEntity<?> reduceQuantityOfBookInBacket(Cart cart, Long bookId) {
+		Long backetId = cart.getBacketid();
 		commonService.findBook(bookId);
 
 		BacketBook backetBook = this.findBacketBook(bookId, backetId);
@@ -179,21 +174,21 @@ public class BacketService {
 		Long backetId = backetInfo.getId();
 		String password = backetInfo.getPassword();
 
-		Backet backet = commonService.findBacketAndCheckIsPrivateAndCheckPasswordAndCheckIsCurrent(backetId, password);
+		Cart cart = commonService.findBacketAndCheckIsPrivateAndCheckPasswordAndCheckIsCurrent(backetId, password);
 
-		return this.deleteBookFromBacket(backet, bookId);
+		return this.deleteBookFromBacket(cart, bookId);
 	}
 
 	// Method to delete the book from the current backet of the authenticated user:
 	public ResponseEntity<?> deleteBookFromCurrentBacket(Long bookId, Authentication authentication) {
 		User user = commonService.checkAuthentication(authentication);
-		Backet currentBacket = commonService.findCurrentBacketOfUser(user);
+		Cart currentCart = commonService.findCurrentBacketOfUser(user);
 
-		return this.deleteBookFromBacket(currentBacket, bookId);
+		return this.deleteBookFromBacket(currentCart, bookId);
 	}
 
-	private ResponseEntity<?> deleteBookFromBacket(Backet backet, Long bookId) {
-		Long backetId = backet.getBacketid();
+	private ResponseEntity<?> deleteBookFromBacket(Cart cart, Long bookId) {
+		Long backetId = cart.getBacketid();
 		commonService.findBook(bookId);
 		BacketBook backetBook = this.findBacketBook(bookId, backetId);
 
@@ -203,9 +198,9 @@ public class BacketService {
 	// Method to clear current backet of the authenticated user:
 	public ResponseEntity<?> clearCurrentBacket(Long userId, Authentication authentication) {
 		User user = commonService.checkAuthenticationAndAuthorize(authentication, userId);
-		Backet currentBacket = commonService.findCurrentBacketOfUser(user);
+		Cart currentCart = commonService.findCurrentBacketOfUser(user);
 
-		long deleted = backetBookRepository.deleteByBacket(currentBacket);
+		long deleted = backetBookRepository.deleteByBacket(currentCart);
 		return new ResponseEntity<>(deleted + " records were deleted from current cart", HttpStatus.OK);
 	}
 

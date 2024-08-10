@@ -74,7 +74,7 @@ public class BookService {
 		return idsOfBooksInCurrentCart;
 	}
 
-	// Method to get list of Books in Backet by backetId and backet password:
+	// Method to get list of Books in Cart by backetId and backet password:
 	public List<BookInCurrentCart> getBooksInBacketByIdAndPassword(BacketInfo backetInfo) {
 		Long backetId = backetInfo.getId();
 		String password = backetInfo.getPassword();

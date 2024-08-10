@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.pro.mybooklist.model.*;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Nested;
@@ -34,18 +35,7 @@ import com.pro.mybooklist.httpforms.EmailInfo;
 import com.pro.mybooklist.httpforms.OrderPasswordInfo;
 import com.pro.mybooklist.httpforms.SignupCredentials;
 import com.pro.mybooklist.httpforms.TokenInfo;
-import com.pro.mybooklist.model.Backet;
-import com.pro.mybooklist.model.BacketBook;
-import com.pro.mybooklist.model.BacketBookRepository;
-import com.pro.mybooklist.model.BacketRepository;
-import com.pro.mybooklist.model.Book;
-import com.pro.mybooklist.model.BookRepository;
-import com.pro.mybooklist.model.Category;
-import com.pro.mybooklist.model.CategoryRepository;
-import com.pro.mybooklist.model.Order;
-import com.pro.mybooklist.model.OrderRepository;
-import com.pro.mybooklist.model.User;
-import com.pro.mybooklist.model.UserRepository;
+import com.pro.mybooklist.model.Cart;
 
 import jakarta.transaction.Transactional;
 
@@ -251,8 +241,8 @@ public class RestPublicControllerTest {
 		mockMvc.perform(post(requestURI)).andExpect(status().isOk()).andExpect(jsonPath("$.id").exists())
 				.andExpect(jsonPath("$.password").exists());
 
-		List<Backet> backets = (List<Backet>) backetRepository.findAll();
-		assertThat(backets).hasSize(1);
+		List<Cart> carts = (List<Cart>) backetRepository.findAll();
+		assertThat(carts).hasSize(1);
 	}
 
 	@Nested
@@ -278,8 +268,8 @@ public class RestPublicControllerTest {
 		public void testAddBookToCartNoAuthenticationBacketIsPrivateCase() throws Exception {
 			String requestURI = "/addbook/";
 
-			Backet newBacket = createBacketWithUser(true, USERNAME);
-			Long privateBacketId = newBacket.getBacketid();
+			Cart newCart = createBacketWithUser(true, USERNAME);
+			Long privateBacketId = newCart.getBacketid();
 
 			BookQuantityInfo bookQuantityInfo = new BookQuantityInfo(2, Long.valueOf(2), WRONG_PWD);
 			String requestBody = objectMapper.writeValueAsString(bookQuantityInfo);
@@ -294,8 +284,8 @@ public class RestPublicControllerTest {
 		public void testAddBookToCartNoAuthenticationWrongPasswordCase() throws Exception {
 			String requestURI = "/addbook/";
 
-			Backet backet = createBacketNoUser(true);
-			Long backetId = backet.getBacketid();
+			Cart cart = createBacketNoUser(true);
+			Long backetId = cart.getBacketid();
 
 			String goodRequestURI = requestURI + backetId;
 
@@ -310,8 +300,8 @@ public class RestPublicControllerTest {
 		public void testAddBookToCartNoAuthenticationBacketIsNotCurrentCase() throws Exception {
 			String requestURI = "/addbook/";
 
-			Backet backet = createBacketNoUser(false);
-			Long backetId = backet.getBacketid();
+			Cart cart = createBacketNoUser(false);
+			Long backetId = cart.getBacketid();
 			String requestURINotCurrentBacket = requestURI + backetId;
 
 			BookQuantityInfo bookQuantityInfo = new BookQuantityInfo(2, Long.valueOf(2), DEFAULT_PASSWORD);
@@ -326,8 +316,8 @@ public class RestPublicControllerTest {
 		public void testAddBookToCartNoAuthenticationBookNotFoundCase() throws Exception {
 			String requestURI = "/addbook/";
 
-			Backet backet = createBacketNoUser(true);
-			Long backetId = backet.getBacketid();
+			Cart cart = createBacketNoUser(true);
+			Long backetId = cart.getBacketid();
 			String requestURIGood = requestURI + backetId;
 
 			BookQuantityInfo bookQuantityInfo = new BookQuantityInfo(2, Long.valueOf(2), DEFAULT_PASSWORD);
@@ -345,8 +335,8 @@ public class RestPublicControllerTest {
 		public void testAddBookToCartNoAuthenticationGoodCases() throws Exception {
 			String requestURI = "/addbook/";
 
-			Backet backet = createBacketNoUser(true);
-			Long backetId = backet.getBacketid();
+			Cart cart = createBacketNoUser(true);
+			Long backetId = cart.getBacketid();
 			String requestURIGood = requestURI + backetId;
 
 			Book book = createBook(BOOK_TITLE, OTHER_CATEGORY, DEFAULT_PRICE);
@@ -388,8 +378,8 @@ public class RestPublicControllerTest {
 		public void testGetIdsOfBooksByBacketidBacketHasUserCase() throws Exception {
 			String requestURI = "/booksids/";
 
-			Backet backet = createBacketWithUser(true, USERNAME);
-			Long backetId = backet.getBacketid();
+			Cart cart = createBacketWithUser(true, USERNAME);
+			Long backetId = cart.getBacketid();
 
 			String requestURIBacketHasUser = requestURI + backetId;
 
@@ -401,8 +391,8 @@ public class RestPublicControllerTest {
 		public void testGetIdsOfBooksByBacketidGoodCases() throws Exception {
 			String requestURI = "/booksids/";
 
-			Backet backet = createBacketNoUser(true);
-			Long backetId = backet.getBacketid();
+			Cart cart = createBacketNoUser(true);
+			Long backetId = cart.getBacketid();
 
 			String requestURIGood = requestURI + backetId;
 			// Empty lost case
@@ -410,14 +400,14 @@ public class RestPublicControllerTest {
 
 			Book book1 = createBook(BOOK_TITLE, OTHER_CATEGORY, DEFAULT_PRICE);
 			Book book2 = createBook(BOOK_TITLE + " 2", OTHER_CATEGORY, DEFAULT_PRICE);
-			createBacketBookCustomQuantity(2, book1, backet);
-			createBacketBookCustomQuantity(1, book2, backet);
+			createBacketBookCustomQuantity(2, book1, cart);
+			createBacketBookCustomQuantity(1, book2, cart);
 			mockMvc.perform(get(requestURIGood)).andExpect(status().isOk()).andExpect(jsonPath("$.size()").value(2));
 		}
 	}
 
 	@Nested
-	class testGetBooksInBacketByIdAndPassword {
+	class testGetBooksInCartByIdAndPassword {
 		@Test
 		@Rollback
 		public void testGetBooksInBacketByIdAndPasswordBacketNotFoundCase() throws Exception {
@@ -434,8 +424,8 @@ public class RestPublicControllerTest {
 		public void testGetBooksInBacketByIdAndPasswordBacketHasOwnerCase() throws Exception {
 			String requestURI = "/showcart";
 
-			Backet backetWithOwner = createBacketWithUser(false, USERNAME);
-			Long backetId = backetWithOwner.getBacketid();
+			Cart cartWithOwner = createBacketWithUser(false, USERNAME);
+			Long backetId = cartWithOwner.getBacketid();
 
 			BacketInfo backetInfo = new BacketInfo(backetId, WRONG_PWD);
 			String requestBody = objectMapper.writeValueAsString(backetInfo);
@@ -448,8 +438,8 @@ public class RestPublicControllerTest {
 		public void testGetBooksInBacketByIdAndPasswordWrongPasswordCase() throws Exception {
 			String requestURI = "/showcart";
 
-			Backet backet = createBacketNoUser(false);
-			Long backetId = backet.getBacketid();
+			Cart cart = createBacketNoUser(false);
+			Long backetId = cart.getBacketid();
 
 			BacketInfo backetInfoWrongPwd = new BacketInfo(backetId, WRONG_PWD);
 			String requestBodyWrongPwd = objectMapper.writeValueAsString(backetInfoWrongPwd);
@@ -462,19 +452,19 @@ public class RestPublicControllerTest {
 		public void testGetBooksInBacketByIdAndPasswordGoodCases() throws Exception {
 			String requestURI = "/showcart";
 
-			Backet backet = createBacketNoUser(false);
-			Long backetId = backet.getBacketid();
+			Cart cart = createBacketNoUser(false);
+			Long backetId = cart.getBacketid();
 
 			BacketInfo backetInfo = new BacketInfo(backetId, DEFAULT_PASSWORD);
 			String requestBody = objectMapper.writeValueAsString(backetInfo);
-			// Empty backet case;
+			// Empty cart case;
 			mockMvc.perform(post(requestURI).contentType(MediaType.APPLICATION_JSON).content(requestBody))
 					.andExpect(status().isOk()).andExpect(jsonPath("$.size()").value(0));
 
 			Book book1 = createBook(BOOK_TITLE, OTHER_CATEGORY, DEFAULT_PRICE);
 			Book book2 = createBook(BOOK_TITLE + " 2", ROMANCE_CATEGORY, DEFAULT_PRICE);
-			createBacketBookCustomQuantity(1, book1, backet);
-			createBacketBookCustomQuantity(1, book2, backet);
+			createBacketBookCustomQuantity(1, book1, cart);
+			createBacketBookCustomQuantity(1, book2, cart);
 
 			mockMvc.perform(post(requestURI).contentType(MediaType.APPLICATION_JSON).content(requestBody))
 					.andExpect(status().isOk()).andExpect(jsonPath("$.size()").value(2));
@@ -509,7 +499,7 @@ public class RestPublicControllerTest {
 	}
 
 	@Nested
-	class testGetTotalByBacketId {
+	class testGetTotalByCartId {
 		@Test
 		@Rollback
 		public void testGetTotalByBacketIdBacketNotFoundCase() throws Exception {
@@ -527,8 +517,8 @@ public class RestPublicControllerTest {
 		public void testGetTotalByBacketIdBacketIsPrivateCase() throws Exception {
 			String requestURI = "/totalofbacket";
 
-			Backet newBacket = createBacketWithUser(true, USERNAME);
-			Long backetId = newBacket.getBacketid();
+			Cart newCart = createBacketWithUser(true, USERNAME);
+			Long backetId = newCart.getBacketid();
 
 			BacketInfo backetInfoPrivateBacket = new BacketInfo(backetId, DEFAULT_PASSWORD);
 			String requestBodyPrivateBacket = objectMapper.writeValueAsString(backetInfoPrivateBacket);
@@ -542,8 +532,8 @@ public class RestPublicControllerTest {
 		public void testGetTotalByBacketIdWrongPasswordCase() throws Exception {
 			String requestURI = "/totalofbacket";
 
-			Backet newBacket = createBacketNoUser(true);
-			Long backetId = newBacket.getBacketid();
+			Cart newCart = createBacketNoUser(true);
+			Long backetId = newCart.getBacketid();
 
 			BacketInfo backetInfoWrongPwd = new BacketInfo(backetId, WRONG_PWD);
 			String requestBodyWrongPwd = objectMapper.writeValueAsString(backetInfoWrongPwd);
@@ -557,8 +547,8 @@ public class RestPublicControllerTest {
 		public void testGetTotalByBacketIdGoodCases() throws Exception {
 			String requestURI = "/totalofbacket";
 
-			Backet newBacket = createBacketNoUser(true);
-			Long backetId = newBacket.getBacketid();
+			Cart newCart = createBacketNoUser(true);
+			Long backetId = newCart.getBacketid();
 
 			BacketInfo backetInfo = new BacketInfo(backetId, DEFAULT_PASSWORD);
 			String requestBody = objectMapper.writeValueAsString(backetInfo);
@@ -572,8 +562,8 @@ public class RestPublicControllerTest {
 
 			Book book1 = createBook(BOOK_TITLE, OTHER_CATEGORY, DEFAULT_PRICE);
 			Book book2 = createBook(BOOK_TITLE + " 2", ROMANCE_CATEGORY, DEFAULT_PRICE);
-			createBacketBookCustomQuantity(1, book1, newBacket);
-			createBacketBookCustomQuantity(2, book2, newBacket);
+			createBacketBookCustomQuantity(1, book1, newCart);
+			createBacketBookCustomQuantity(2, book2, newCart);
 
 			mockMvc.perform(post(requestURI).contentType(MediaType.APPLICATION_JSON).content(requestBody))
 					.andExpect(status().isOk()).andExpect(jsonPath("$.total").value(DEFAULT_PRICE * 3));
@@ -634,8 +624,8 @@ public class RestPublicControllerTest {
 		public void testReduceItemNoAuthenticationBacketIsPrivateCase() throws Exception {
 			String requestURI = "/reduceitemnoauth/";
 
-			Backet backetWithOwner = createBacketWithUser(true, USERNAME);
-			Long backetId = backetWithOwner.getBacketid();
+			Cart cartWithOwner = createBacketWithUser(true, USERNAME);
+			Long backetId = cartWithOwner.getBacketid();
 
 			BacketInfo backetInfoPrivateBacket = new BacketInfo(backetId, WRONG_PWD);
 			String requestBody = objectMapper.writeValueAsString(backetInfoPrivateBacket);
@@ -650,8 +640,8 @@ public class RestPublicControllerTest {
 		public void testReduceItemNoAuthenticationWrongPasswordCase() throws Exception {
 			String requestURI = "/reduceitemnoauth/";
 
-			Backet backet = createBacketNoUser(true);
-			Long backetId = backet.getBacketid();
+			Cart cart = createBacketNoUser(true);
+			Long backetId = cart.getBacketid();
 
 			BacketInfo backetInfoWrongPwd = new BacketInfo(backetId, WRONG_PWD);
 			String requestBody = objectMapper.writeValueAsString(backetInfoWrongPwd);
@@ -666,8 +656,8 @@ public class RestPublicControllerTest {
 		public void testReduceItemNoAuthenticationBacketIsNotCurrentCase() throws Exception {
 			String requestURI = "/reduceitemnoauth/";
 
-			Backet backet = createBacketNoUser(false);
-			Long backetId = backet.getBacketid();
+			Cart cart = createBacketNoUser(false);
+			Long backetId = cart.getBacketid();
 
 			BacketInfo backetInfoNotCurrent = new BacketInfo(backetId, DEFAULT_PASSWORD);
 			String requestBody = objectMapper.writeValueAsString(backetInfoNotCurrent);
@@ -682,8 +672,8 @@ public class RestPublicControllerTest {
 		public void testReduceItemNoAuthenticationBookNotFoundCase() throws Exception {
 			String requestURI = "/reduceitemnoauth/";
 
-			Backet backet = createBacketNoUser(true);
-			Long backetId = backet.getBacketid();
+			Cart cart = createBacketNoUser(true);
+			Long backetId = cart.getBacketid();
 
 			BacketInfo backetInfoGood = new BacketInfo(backetId, DEFAULT_PASSWORD);
 			String requestBodyGood = objectMapper.writeValueAsString(backetInfoGood);
@@ -702,8 +692,8 @@ public class RestPublicControllerTest {
 		public void testReduceItemNoAuthenticationBookIsNotInBacketCase() throws Exception {
 			String requestURI = "/reduceitemnoauth/";
 
-			Backet backet = createBacketNoUser(true);
-			Long backetId = backet.getBacketid();
+			Cart cart = createBacketNoUser(true);
+			Long backetId = cart.getBacketid();
 
 			Book book = createBook(BOOK_TITLE, OTHER_CATEGORY, DEFAULT_PRICE);
 			Long bookId = book.getId();
@@ -721,13 +711,13 @@ public class RestPublicControllerTest {
 		public void testReduceItemNoAuthenticationQuantityIsReducedGoodCase() throws Exception {
 			String requestURI = "/reduceitemnoauth/";
 
-			Backet backet = createBacketNoUser(true);
-			Long backetId = backet.getBacketid();
+			Cart cart = createBacketNoUser(true);
+			Long backetId = cart.getBacketid();
 
 			Book book = createBook(BOOK_TITLE, OTHER_CATEGORY, DEFAULT_PRICE);
 			Long bookId = book.getId();
 
-			createBacketBookCustomQuantity(2, book, backet);
+			createBacketBookCustomQuantity(2, book, cart);
 
 			BacketInfo backetInfo = new BacketInfo(backetId, DEFAULT_PASSWORD);
 			String requestBody = objectMapper.writeValueAsString(backetInfo);
@@ -746,13 +736,13 @@ public class RestPublicControllerTest {
 		public void testReduceItemNoAuthenticationBookIsRemovedFromBacketGoodCase() throws Exception {
 			String requestURI = "/reduceitemnoauth/";
 
-			Backet backet = createBacketNoUser(true);
-			Long backetId = backet.getBacketid();
+			Cart cart = createBacketNoUser(true);
+			Long backetId = cart.getBacketid();
 
 			Book book = createBook(BOOK_TITLE, OTHER_CATEGORY, DEFAULT_PRICE);
 			Long bookId = book.getId();
 
-			createBacketBookCustomQuantity(1, book, backet);
+			createBacketBookCustomQuantity(1, book, cart);
 
 			BacketInfo backetInfo = new BacketInfo(backetId, DEFAULT_PASSWORD);
 			String requestBody = objectMapper.writeValueAsString(backetInfo);
@@ -791,8 +781,8 @@ public class RestPublicControllerTest {
 		public void testDeleteBookNoAuthenticationBacketIsPrivateCase() throws Exception {
 			String requestURI = "/deletebook/";
 
-			Backet backetWithOwner = createBacketWithUser(true, USERNAME);
-			Long backetId = backetWithOwner.getBacketid();
+			Cart cartWithOwner = createBacketWithUser(true, USERNAME);
+			Long backetId = cartWithOwner.getBacketid();
 
 			BacketInfo backetInfoPrivatBacket = new BacketInfo(backetId, WRONG_PWD);
 			String requestBody = objectMapper.writeValueAsString(backetInfoPrivatBacket);
@@ -807,8 +797,8 @@ public class RestPublicControllerTest {
 		public void testDeleteBookNoAuthenticationWrongPasswordCase() throws Exception {
 			String requestURI = "/deletebook/";
 
-			Backet backet = createBacketNoUser(true);
-			Long backetId = backet.getBacketid();
+			Cart cart = createBacketNoUser(true);
+			Long backetId = cart.getBacketid();
 
 			BacketInfo backetInfoWrongPwd = new BacketInfo(backetId, WRONG_PWD);
 			String requestBody = objectMapper.writeValueAsString(backetInfoWrongPwd);
@@ -823,8 +813,8 @@ public class RestPublicControllerTest {
 		public void testDeleteBookNoAuthenticationBacketIsNotCurrentCase() throws Exception {
 			String requestURI = "/deletebook/";
 
-			Backet backet = createBacketNoUser(false);
-			Long backetId = backet.getBacketid();
+			Cart cart = createBacketNoUser(false);
+			Long backetId = cart.getBacketid();
 
 			BacketInfo backetInfoNotCurrent = new BacketInfo(backetId, DEFAULT_PASSWORD);
 			String requestBody = objectMapper.writeValueAsString(backetInfoNotCurrent);
@@ -839,8 +829,8 @@ public class RestPublicControllerTest {
 		public void testDeleteBookNoAuthenticationBookNotFoundCase() throws Exception {
 			String requestURI = "/deletebook/";
 
-			Backet backet = createBacketNoUser(true);
-			Long backetId = backet.getBacketid();
+			Cart cart = createBacketNoUser(true);
+			Long backetId = cart.getBacketid();
 
 			BacketInfo backetInfo = new BacketInfo(backetId, DEFAULT_PASSWORD);
 			String requestBodyBookNotFound = objectMapper.writeValueAsString(backetInfo);
@@ -855,8 +845,8 @@ public class RestPublicControllerTest {
 		public void testDeleteBookNoAuthenticationBookIsNotInBacketCase() throws Exception {
 			String requestURI = "/deletebook/";
 
-			Backet backet = createBacketNoUser(true);
-			Long backetId = backet.getBacketid();
+			Cart cart = createBacketNoUser(true);
+			Long backetId = cart.getBacketid();
 
 			Book book = createBook(BOOK_TITLE, OTHER_CATEGORY, DEFAULT_PRICE);
 			Long bookId = book.getId();
@@ -876,13 +866,13 @@ public class RestPublicControllerTest {
 				throws Exception {
 			String requestURI = "/deletebook/";
 
-			Backet backet = createBacketNoUser(true);
-			Long backetId = backet.getBacketid();
+			Cart cart = createBacketNoUser(true);
+			Long backetId = cart.getBacketid();
 
 			Book book = createBook(BOOK_TITLE, OTHER_CATEGORY, DEFAULT_PRICE);
 			Long bookId = book.getId();
 
-			createBacketBookCustomQuantity(3, book, backet);
+			createBacketBookCustomQuantity(3, book, cart);
 
 			BacketInfo backetInfoWithBookId = new BacketInfo(backetId, DEFAULT_PASSWORD);
 			String requestBody = objectMapper.writeValueAsString(backetInfoWithBookId);
@@ -900,13 +890,13 @@ public class RestPublicControllerTest {
 		public void testDeleteBookNoAuthenticationBookWithQuantity1IsRemovedFromBacketGoodCase() throws Exception {
 			String requestURI = "/deletebook/";
 
-			Backet backet = createBacketNoUser(true);
-			Long backetId = backet.getBacketid();
+			Cart cart = createBacketNoUser(true);
+			Long backetId = cart.getBacketid();
 
 			Book book = createBook(BOOK_TITLE, OTHER_CATEGORY, DEFAULT_PRICE);
 			Long bookId = book.getId();
 
-			createBacketBookCustomQuantity(1, book, backet);
+			createBacketBookCustomQuantity(1, book, cart);
 
 			BacketInfo backetInfo = new BacketInfo(backetId, DEFAULT_PASSWORD);
 			String requestBody = objectMapper.writeValueAsString(backetInfo);
@@ -940,8 +930,8 @@ public class RestPublicControllerTest {
 		public void testMakeSaleNoAuthenticationEmptyBacketCase() throws Exception {
 			String requestURI = "/makesale";
 
-			Backet emptyBacket = createBacketNoUser(true);
-			Long bakcetId = emptyBacket.getBacketid();
+			Cart emptyCart = createBacketNoUser(true);
+			Long bakcetId = emptyCart.getBacketid();
 
 			AddressInfoNoAuthentication addressInfoEmptyBacket = new AddressInfoNoAuthentication(FIRSTNAME, LASTNAME,
 					COUNTRY, CITY, STREET, POSTCODE, EMAIL, NOTE, bakcetId, DEFAULT_PASSWORD);
@@ -956,11 +946,11 @@ public class RestPublicControllerTest {
 		public void testMakeSaleNoAuthenticationWrongPasswordCase() throws Exception {
 			String requestURI = "/makesale";
 
-			Backet backet = createBacketNoUser(false);
-			Long bakcetId = backet.getBacketid();
+			Cart cart = createBacketNoUser(false);
+			Long bakcetId = cart.getBacketid();
 
 			Book book1 = createBook(BOOK_TITLE, OTHER_CATEGORY, DEFAULT_PRICE);
-			createBacketBookCustomQuantity(1, book1, backet);
+			createBacketBookCustomQuantity(1, book1, cart);
 
 			AddressInfoNoAuthentication addressInfoWrongPwd = new AddressInfoNoAuthentication(FIRSTNAME, LASTNAME,
 					COUNTRY, CITY, STREET, POSTCODE, EMAIL, NOTE, bakcetId, WRONG_PWD);
@@ -975,11 +965,11 @@ public class RestPublicControllerTest {
 		public void testMakeSaleNoAuthenticationBacketIsNotCurrentCase() throws Exception {
 			String requestURI = "/makesale";
 
-			Backet backetNotCurrent = createBacketNoUser(false);
-			Long bakcetId = backetNotCurrent.getBacketid();
+			Cart cartNotCurrent = createBacketNoUser(false);
+			Long bakcetId = cartNotCurrent.getBacketid();
 
 			Book book1 = createBook(BOOK_TITLE, OTHER_CATEGORY, DEFAULT_PRICE);
-			createBacketBookCustomQuantity(1, book1, backetNotCurrent);
+			createBacketBookCustomQuantity(1, book1, cartNotCurrent);
 
 			AddressInfoNoAuthentication addressInfo = new AddressInfoNoAuthentication(FIRSTNAME, LASTNAME, COUNTRY,
 					CITY, STREET, POSTCODE, EMAIL, NOTE, bakcetId, DEFAULT_PASSWORD);
@@ -994,11 +984,11 @@ public class RestPublicControllerTest {
 		public void testMakeSaleNoAuthenticationGoodCase() throws Exception {
 			String requestURI = "/makesale";
 
-			Backet backet = createBacketNoUser(true);
-			Long bakcetId = backet.getBacketid();
+			Cart cart = createBacketNoUser(true);
+			Long bakcetId = cart.getBacketid();
 
 			Book book1 = createBook(BOOK_TITLE, OTHER_CATEGORY, DEFAULT_PRICE);
-			createBacketBookCustomQuantity(1, book1, backet);
+			createBacketBookCustomQuantity(1, book1, cart);
 
 			AddressInfoNoAuthentication addressInfo = new AddressInfoNoAuthentication(FIRSTNAME, LASTNAME, COUNTRY,
 					CITY, STREET, POSTCODE, EMAIL, NOTE, bakcetId, DEFAULT_PASSWORD);
@@ -1008,7 +998,7 @@ public class RestPublicControllerTest {
 					.andExpect(status().isOk()).andExpect(jsonPath("$.orderid").exists())
 					.andExpect(jsonPath("$.password").exists());
 
-			assertThat(backet.isCurrent()).isFalse();
+			assertThat(cart.isCurrent()).isFalse();
 		}
 	}
 
@@ -1214,8 +1204,8 @@ public class RestPublicControllerTest {
 						.andExpect(status().isOk());
 
 				assertThat(user.isAccountVerified()).isTrue();
-				List<Backet> currentBackets = backetRepository.findCurrentByUserid(user.getId());
-				assertThat(currentBackets).hasSize(1);
+				List<Cart> currentCarts = backetRepository.findCurrentByUserid(user.getId());
+				assertThat(currentCarts).hasSize(1);
 			}
 
 			user.setAccountVerified(false);
@@ -1231,8 +1221,8 @@ public class RestPublicControllerTest {
 						.andExpect(status().isOk());
 
 				assertThat(user.isAccountVerified()).isTrue();
-				List<Backet> currentBackets = backetRepository.findCurrentByUserid(user.getId());
-				assertThat(currentBackets).hasSize(1);
+				List<Cart> currentCarts = backetRepository.findCurrentByUserid(user.getId());
+				assertThat(currentCarts).hasSize(1);
 			}
 		}
 
@@ -1246,8 +1236,8 @@ public class RestPublicControllerTest {
 			// By username case:
 			AccountCredentials credentials = new AccountCredentials(USERNAME, DEFAULT_PASSWORD);
 			String requestBody = objectMapper.writeValueAsString(credentials);
-			List<Backet> backets = (List<Backet>) backetRepository.findAll();
-			assertThat(backets).isEmpty();
+			List<Cart> carts = (List<Cart>) backetRepository.findAll();
+			assertThat(carts).isEmpty();
 
 			if (springMailUsername.equals("default_value")) {
 				mockMvc.perform(post(requestURI).contentType(MediaType.APPLICATION_JSON).content(requestBody))
@@ -1256,9 +1246,9 @@ public class RestPublicControllerTest {
 						.andExpect(header().string("Allow", "USER"));
 
 				assertThat(user.isAccountVerified()).isTrue();
-				backets = (List<Backet>) backetRepository.findAll();
-				assertThat(backets).hasSize(1);
-				assertThat(backets.get(0).getUser()).isEqualTo(user);
+				carts = (List<Cart>) backetRepository.findAll();
+				assertThat(carts).hasSize(1);
+				assertThat(carts.get(0).getUser()).isEqualTo(user);
 			}
 
 			backetRepository.deleteAll();
@@ -1276,9 +1266,9 @@ public class RestPublicControllerTest {
 						.andExpect(header().string("Allow", "USER"));
 
 				assertThat(user.isAccountVerified()).isTrue();
-				backets = (List<Backet>) backetRepository.findAll();
-				assertThat(backets).hasSize(1);
-				assertThat(backets.get(0).getUser()).isEqualTo(user);
+				carts = (List<Cart>) backetRepository.findAll();
+				assertThat(carts).hasSize(1);
+				assertThat(carts.get(0).getUser()).isEqualTo(user);
 			}
 		}
 
@@ -1437,10 +1427,10 @@ public class RestPublicControllerTest {
 			assertThat(verifiedUser.isAccountVerified()).isTrue();
 			assertThat(verifiedUser.getVerificationCode()).isNull();
 
-			List<Backet> backets = (List<Backet>) backetRepository.findAll();
-			assertThat(backets).hasSize(1);
-			assertThat(backets.get(0).getUser()).isEqualTo(verifiedUser);
-			assertThat(backets.get(0).isCurrent()).isTrue();
+			List<Cart> carts = (List<Cart>) backetRepository.findAll();
+			assertThat(carts).hasSize(1);
+			assertThat(carts.get(0).getUser()).isEqualTo(verifiedUser);
+			assertThat(carts.get(0).isCurrent()).isTrue();
 		}
 	}
 
@@ -1482,9 +1472,9 @@ public class RestPublicControllerTest {
 			BCryptPasswordEncoder bc = new BCryptPasswordEncoder();
 			assertThat(bc.matches(DEFAULT_PASSWORD, user.getPassword())).isTrue();
 
-			List<Backet> backets = (List<Backet>) backetRepository.findAll();
-			assertThat(backets).hasSize(1);
-			assertThat(backets.get(0).isCurrent()).isTrue();
+			List<Cart> carts = (List<Cart>) backetRepository.findAll();
+			assertThat(carts).hasSize(1);
+			assertThat(carts.get(0).isCurrent()).isTrue();
 
 			// User already has backet case:
 			user.setAccountVerified(false);
@@ -1495,14 +1485,14 @@ public class RestPublicControllerTest {
 				mockMvc.perform(put(requestURI).contentType(MediaType.APPLICATION_JSON).content(requestBody))
 						.andExpect(status().isOk());
 				assertThat(user.isAccountVerified()).isTrue();
-				backets = (List<Backet>) backetRepository.findAll();
-				assertThat(backets).hasSize(1);
+				carts = (List<Cart>) backetRepository.findAll();
+				assertThat(carts).hasSize(1);
 			} else {
 				mockMvc.perform(put(requestURI).contentType(MediaType.APPLICATION_JSON).content(requestBody))
 						.andExpect(status().isNotImplemented());
 				assertThat(user.isAccountVerified()).isTrue();
-				backets = (List<Backet>) backetRepository.findAll();
-				assertThat(backets).hasSize(1);
+				carts = (List<Cart>) backetRepository.findAll();
+				assertThat(carts).hasSize(1);
 			}
 		}
 
@@ -1532,40 +1522,40 @@ public class RestPublicControllerTest {
 	}
 
 	private Order createOrderWithDefaultStatusNoUser(int quantity, List<Book> books, String password) {
-		Backet backet = this.createBacketNoUser(false);
+		Cart cart = this.createBacketNoUser(false);
 
 		for (Book book : books) {
-			this.createBacketBookCustomQuantity(quantity, book, backet);
+			this.createBacketBookCustomQuantity(quantity, book, cart);
 		}
 
 		String stringField = "field";
 		String hashPwd = this.encodePassword(password);
 
 		Order newOrder = new Order(stringField, stringField, stringField, stringField, stringField, stringField,
-				stringField, backet, stringField, hashPwd);
+				stringField, cart, stringField, hashPwd);
 		orepository.save(newOrder);
 
 		return newOrder;
 	}
 
-	private Backet createBacketWithUser(boolean current, String username) {
+	private Cart createBacketWithUser(boolean current, String username) {
 		User user = this.createUser(username);
 
-		List<Backet> currentBackets = backetRepository.findCurrentByUserid(user.getId());
-		if (currentBackets.size() != 0 && current)
-			return currentBackets.get(0);
+		List<Cart> currentCarts = backetRepository.findCurrentByUserid(user.getId());
+		if (currentCarts.size() != 0 && current)
+			return currentCarts.get(0);
 
-		Backet newBacket = new Backet(current, user);
-		backetRepository.save(newBacket);
+		Cart newCart = new Cart(current, user);
+		backetRepository.save(newCart);
 
-		return newBacket;
+		return newCart;
 	}
 
-	private Backet createBacketNoUser(boolean current) {
-		Backet newBacket = new Backet(current);
-		backetRepository.save(newBacket);
+	private Cart createBacketNoUser(boolean current) {
+		Cart newCart = new Cart(current);
+		backetRepository.save(newCart);
 
-		return newBacket;
+		return newCart;
 	}
 
 	private User createUser(String username) {
@@ -1581,8 +1571,8 @@ public class RestPublicControllerTest {
 		return user;
 	}
 
-	private BacketBook createBacketBookCustomQuantity(int quantity, Book book, Backet backet) {
-		BacketBook newBacketBook = new BacketBook(quantity, backet, book);
+	private BacketBook createBacketBookCustomQuantity(int quantity, Book book, Cart cart) {
+		BacketBook newBacketBook = new BacketBook(quantity, cart, book);
 		backetBookRepository.save(newBacketBook);
 
 		return newBacketBook;

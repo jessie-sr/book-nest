@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.pro.mybooklist.model.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -16,18 +17,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import com.pro.mybooklist.model.Backet;
-import com.pro.mybooklist.model.BacketBook;
-import com.pro.mybooklist.model.BacketBookRepository;
-import com.pro.mybooklist.model.BacketRepository;
-import com.pro.mybooklist.model.Book;
-import com.pro.mybooklist.model.BookRepository;
-import com.pro.mybooklist.model.Category;
-import com.pro.mybooklist.model.CategoryRepository;
-import com.pro.mybooklist.model.Order;
-import com.pro.mybooklist.model.OrderRepository;
-import com.pro.mybooklist.model.User;
-import com.pro.mybooklist.model.UserRepository;
+import com.pro.mybooklist.model.Cart;
 
 import jakarta.transaction.Transactional;
 
@@ -259,87 +249,87 @@ public class OrderRepositoryTest {
 	}
 
 	private Order createOrderWithStatusNoNoteNoUser(int quantity, List<Book> books, String status) {
-		Backet backet = this.createBacketNoUser(false);
+		Cart cart = this.createBacketNoUser(false);
 
 		for (Book book : books) {
-			this.createBacketBookCustomQuantity(quantity, book, backet);
+			this.createBacketBookCustomQuantity(quantity, book, cart);
 		}
 
 		String stringField = "field";
 
 		Order newOrder = new Order(stringField, stringField, stringField, stringField, stringField, stringField, status,
-				stringField, backet, stringField);
+				stringField, cart, stringField);
 		orepository.save(newOrder);
 
 		return newOrder;
 	}
 
 	private Order createOrderWithStatusNoNoteWithUser(int quantity, List<Book> books, String status, String username) {
-		Backet backet = this.createBacketWithUser(false, username);
+		Cart cart = this.createBacketWithUser(false, username);
 
 		for (Book book : books) {
-			this.createBacketBookCustomQuantity(quantity, book, backet);
+			this.createBacketBookCustomQuantity(quantity, book, cart);
 		}
 
 		String stringField = "field";
 
 		Order newOrder = new Order(stringField, stringField, stringField, stringField, stringField, stringField, status,
-				stringField, backet, stringField);
+				stringField, cart, stringField);
 		orepository.save(newOrder);
 
 		return newOrder;
 	}
 
 	private Order createOrderWithDefaultStatusNoUser(int quantity, List<Book> books) {
-		Backet backet = this.createBacketNoUser(false);
+		Cart cart = this.createBacketNoUser(false);
 
 		for (Book book : books) {
-			this.createBacketBookCustomQuantity(quantity, book, backet);
+			this.createBacketBookCustomQuantity(quantity, book, cart);
 		}
 
 		String stringField = "field";
 
 		Order newOrder = new Order(stringField, stringField, stringField, stringField, stringField, stringField,
-				stringField, backet, stringField, stringField);
+				stringField, cart, stringField, stringField);
 		orepository.save(newOrder);
 
 		return newOrder;
 	}
 
 	private Order createOrderWithDefaultStatusWithUser(int quantity, List<Book> books, String username) {
-		Backet backet = this.createBacketWithUser(false, username);
+		Cart cart = this.createBacketWithUser(false, username);
 
 		for (Book book : books) {
-			this.createBacketBookCustomQuantity(quantity, book, backet);
+			this.createBacketBookCustomQuantity(quantity, book, cart);
 		}
 
 		String stringField = "field";
 
 		Order newOrder = new Order(stringField, stringField, stringField, stringField, stringField, stringField,
-				stringField, backet, stringField, stringField);
+				stringField, cart, stringField, stringField);
 		orepository.save(newOrder);
 
 		return newOrder;
 	}
 
-	private Backet createBacketWithUser(boolean current, String username) {
+	private Cart createBacketWithUser(boolean current, String username) {
 		User user = this.createUser(username);
 
-		List<Backet> currentBackets = backetRepository.findCurrentByUserid(user.getId());
-		if (currentBackets.size() != 0 && current)
-			return currentBackets.get(0);
+		List<Cart> currentCarts = backetRepository.findCurrentByUserid(user.getId());
+		if (currentCarts.size() != 0 && current)
+			return currentCarts.get(0);
 
-		Backet newBacket = new Backet(current, user);
-		backetRepository.save(newBacket);
+		Cart newCart = new Cart(current, user);
+		backetRepository.save(newCart);
 
-		return newBacket;
+		return newCart;
 	}
 
-	private Backet createBacketNoUser(boolean current) {
-		Backet newBacket = new Backet(current);
-		backetRepository.save(newBacket);
+	private Cart createBacketNoUser(boolean current) {
+		Cart newCart = new Cart(current);
+		backetRepository.save(newCart);
 
-		return newBacket;
+		return newCart;
 	}
 
 	private User createUser(String username) {
@@ -354,8 +344,8 @@ public class OrderRepositoryTest {
 		return user;
 	}
 
-	private BacketBook createBacketBookCustomQuantity(int quantity, Book book, Backet backet) {
-		BacketBook newBacketBook = new BacketBook(quantity, backet, book);
+	private BacketBook createBacketBookCustomQuantity(int quantity, Book book, Cart cart) {
+		BacketBook newBacketBook = new BacketBook(quantity, cart, book);
 		backetBookRepository.save(newBacketBook);
 
 		return newBacketBook;

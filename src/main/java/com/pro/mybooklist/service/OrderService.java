@@ -3,6 +3,7 @@ package com.pro.mybooklist.service;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
+import com.pro.mybooklist.model.*;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,13 +17,7 @@ import com.pro.mybooklist.httpforms.AddressInfo;
 import com.pro.mybooklist.httpforms.AddressInfoNoAuthentication;
 import com.pro.mybooklist.httpforms.OrderInfo;
 import com.pro.mybooklist.httpforms.OrderPasswordInfo;
-import com.pro.mybooklist.model.Backet;
-import com.pro.mybooklist.model.BacketBook;
-import com.pro.mybooklist.model.BacketBookRepository;
-import com.pro.mybooklist.model.BacketRepository;
-import com.pro.mybooklist.model.Order;
-import com.pro.mybooklist.model.OrderRepository;
-import com.pro.mybooklist.model.User;
+import com.pro.mybooklist.model.Cart;
 import com.pro.mybooklist.sqlforms.TotalOfBacket;
 
 import jakarta.mail.MessagingException;
@@ -97,12 +92,12 @@ public class OrderService {
 		Long backetId = addressInfo.getBacketid();
 		String backetPassword = addressInfo.getPassword();
 
-		Backet backet = commonService.findBacketAndCheckIsPrivateAndCheckPasswordAndCheckIsCurrent(backetId,
+		Cart cart = commonService.findBacketAndCheckIsPrivateAndCheckPasswordAndCheckIsCurrent(backetId,
 				backetPassword);
-		String passwordRandom = this.checkIfBacketIsEmptyAndSetBacketNotCurrentAndGeneratePassword(backet);
+		String passwordRandom = this.checkIfBacketIsEmptyAndSetBacketNotCurrentAndGeneratePassword(cart);
 		String hashedPassword = commonService.encodePassword(passwordRandom);
 
-		Long orderId = this.createOrderByAddressInfoNoAuthentication(addressInfo, backet, hashedPassword);
+		Long orderId = this.createOrderByAddressInfoNoAuthentication(addressInfo, cart, hashedPassword);
 		OrderPasswordInfo orderPassword = new OrderPasswordInfo(orderId, passwordRandom);
 
 		this.tryToSendOrderInfoEmail(addressInfo.getFirstname(), addressInfo.getEmail(), orderId, passwordRandom);
@@ -110,11 +105,11 @@ public class OrderService {
 		return orderPassword;
 	}
 
-	private Long createOrderByAddressInfoNoAuthentication(AddressInfoNoAuthentication addressInfo, Backet backet,
+	private Long createOrderByAddressInfoNoAuthentication(AddressInfoNoAuthentication addressInfo, Cart cart,
 			String hashedPassword) {
 		Order order = new Order(addressInfo.getFirstname(), addressInfo.getLastname(), addressInfo.getCountry(),
 				addressInfo.getCity(), addressInfo.getStreet(), addressInfo.getPostcode(), addressInfo.getEmail(),
-				backet, addressInfo.getNote(), hashedPassword);
+                cart, addressInfo.getNote(), hashedPassword);
 		orderRepository.save(order);
 
 		Long orderId = order.getOrderid();
@@ -125,12 +120,12 @@ public class OrderService {
 	public OrderPasswordInfo makeSaleByUserId(Long userId, AddressInfo addressInfo, Authentication authentication)
 			throws MessagingException, UnsupportedEncodingException {
 		User user = commonService.checkAuthenticationAndAuthorize(authentication, userId);
-		Backet currentBacket = commonService.findCurrentBacketOfUser(user);
+		Cart currentCart = commonService.findCurrentBacketOfUser(user);
 
-		String passwordRandom = this.checkIfBacketIsEmptyAndSetBacketNotCurrentAndGeneratePassword(currentBacket);
+		String passwordRandom = this.checkIfBacketIsEmptyAndSetBacketNotCurrentAndGeneratePassword(currentCart);
 		String hashedPassword = commonService.encodePassword(passwordRandom);
 
-		Long orderId = this.createOrderByAddressInfo(addressInfo, currentBacket, hashedPassword);
+		Long orderId = this.createOrderByAddressInfo(addressInfo, currentCart, hashedPassword);
 		OrderPasswordInfo orderPassword = new OrderPasswordInfo(orderId, passwordRandom);
 
 		this.tryToSendOrderInfoEmail(user.getUsername(), user.getEmail(), orderId, passwordRandom);
@@ -144,33 +139,33 @@ public class OrderService {
 		return orderPassword;
 	}
 
-	private Long createOrderByAddressInfo(AddressInfo addressInfo, Backet backet, String hashedPassword) {
+	private Long createOrderByAddressInfo(AddressInfo addressInfo, Cart cart, String hashedPassword) {
 		Order order = new Order(addressInfo.getFirstname(), addressInfo.getLastname(), addressInfo.getCountry(),
 				addressInfo.getCity(), addressInfo.getStreet(), addressInfo.getPostcode(), addressInfo.getEmail(),
-				backet, addressInfo.getNote(), hashedPassword);
+                cart, addressInfo.getNote(), hashedPassword);
 		orderRepository.save(order);
 
 		Long orderId = order.getOrderid();
 		return orderId;
 	}
 
-	private String checkIfBacketIsEmptyAndSetBacketNotCurrentAndGeneratePassword(Backet backet) {
-		this.checkIfBacketIsEmpty(backet);
-		this.setBacketNotCurrent(backet);
+	private String checkIfBacketIsEmptyAndSetBacketNotCurrentAndGeneratePassword(Cart cart) {
+		this.checkIfBacketIsEmpty(cart);
+		this.setBacketNotCurrent(cart);
 
 		String passwordRandom = RandomStringUtils.randomAlphanumeric(15);
 		return passwordRandom;
 	}
 
-	private void checkIfBacketIsEmpty(Backet backet) {
-		List<BacketBook> backetBooksInBacket = backetBookRepository.findByBacket(backet);
+	private void checkIfBacketIsEmpty(Cart cart) {
+		List<BacketBook> backetBooksInBacket = backetBookRepository.findByBacket(cart);
 		if (backetBooksInBacket.size() == 0)
-			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "The backet is empty");
+			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "The cart is empty");
 	}
 
-	private void setBacketNotCurrent(Backet backet) {
-		backet.setCurrent(false);
-		backetRepository.save(backet);
+	private void setBacketNotCurrent(Cart cart) {
+		cart.setCurrent(false);
+		backetRepository.save(cart);
 	}
 
 	private void tryToSendOrderInfoEmail(String firstnameOrUsername, String email, Long orderId, String password)
@@ -222,9 +217,9 @@ public class OrderService {
 	private Order handleStatusChangedCase(Order order, OrderInfo orderInfo, Long orderId)
 			throws MessagingException, UnsupportedEncodingException {
 		if (!order.getStatus().equals(orderInfo.getStatus())) {
-			Backet backet = order.getBacket();
-			if (backet.getUser() != null) {
-				this.tryToSendStatusChangeEmail(orderInfo, backet.getUser().getEmail(), orderId);
+			Cart cart = order.getBacket();
+			if (cart.getUser() != null) {
+				this.tryToSendStatusChangeEmail(orderInfo, cart.getUser().getEmail(), orderId);
 			}
 			this.tryToSendStatusChangeEmail(orderInfo, orderInfo.getEmail(), orderId);
 			order.setStatus(orderInfo.getStatus());

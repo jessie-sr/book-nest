@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.pro.mybooklist.model.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -27,18 +28,7 @@ import com.pro.mybooklist.httpforms.AccountCredentials;
 import com.pro.mybooklist.httpforms.BookUpdate;
 import com.pro.mybooklist.httpforms.OrderInfo;
 import com.pro.mybooklist.httpforms.RoleVerificationInfo;
-import com.pro.mybooklist.model.Backet;
-import com.pro.mybooklist.model.BacketBook;
-import com.pro.mybooklist.model.BacketBookRepository;
-import com.pro.mybooklist.model.BacketRepository;
-import com.pro.mybooklist.model.Book;
-import com.pro.mybooklist.model.BookRepository;
-import com.pro.mybooklist.model.Category;
-import com.pro.mybooklist.model.CategoryRepository;
-import com.pro.mybooklist.model.Order;
-import com.pro.mybooklist.model.OrderRepository;
-import com.pro.mybooklist.model.User;
-import com.pro.mybooklist.model.UserRepository;
+import com.pro.mybooklist.model.Cart;
 
 import jakarta.transaction.Transactional;
 
@@ -373,17 +363,17 @@ public class RestAdminControllerTest {
 		}
 	}
 
-	private Backet createBacketWithUser(boolean current, String username, String email) {
+	private Cart createBacketWithUser(boolean current, String username, String email) {
 		User user = this.createUser(username, email);
 
-		List<Backet> currentBackets = backetRepository.findCurrentByUserid(user.getId());
-		if (currentBackets.size() != 0 && current)
-			return currentBackets.get(0);
+		List<Cart> currentCarts = backetRepository.findCurrentByUserid(user.getId());
+		if (currentCarts.size() != 0 && current)
+			return currentCarts.get(0);
 
-		Backet newBacket = new Backet(current, user);
-		backetRepository.save(newBacket);
+		Cart newCart = new Cart(current, user);
+		backetRepository.save(newCart);
 
-		return newBacket;
+		return newCart;
 	}
 
 	private User createUser(String username, String email) {
@@ -404,8 +394,8 @@ public class RestAdminControllerTest {
 		return user;
 	}
 
-	private BacketBook createBacketBookCustomQuantity(int quantity, Book book, Backet backet) {
-		BacketBook newBacketBook = new BacketBook(quantity, backet, book);
+	private BacketBook createBacketBookCustomQuantity(int quantity, Book book, Cart cart) {
+		BacketBook newBacketBook = new BacketBook(quantity, cart, book);
 		backetBookRepository.save(newBacketBook);
 
 		return newBacketBook;
@@ -480,15 +470,15 @@ public class RestAdminControllerTest {
 		return newAdmin;
 	}
 
-	private Backet createBacketNoUser(boolean current) {
-		Backet newBacket = new Backet(current);
-		backetRepository.save(newBacket);
+	private Cart createBacketNoUser(boolean current) {
+		Cart newCart = new Cart(current);
+		backetRepository.save(newCart);
 
-		return newBacket;
+		return newCart;
 	}
 
 	private Order createOrderWithDefaultStatusNoUser() {
-		Backet backet = this.createBacketNoUser(false);
+		Cart cart = this.createBacketNoUser(false);
 
 		List<Book> booksInOrder = new ArrayList<Book>();
 		Book book1 = this.createBook(BOOK_TITLE, OTHER_CATEGORY, DEFAULT_PRICE);
@@ -497,12 +487,12 @@ public class RestAdminControllerTest {
 		booksInOrder.add(book2);
 
 		for (Book book : booksInOrder) {
-			this.createBacketBookCustomQuantity(1, book, backet);
+			this.createBacketBookCustomQuantity(1, book, cart);
 		}
 
 		String hashPwd = this.encodePassword(DEFAULT_PASSWORD);
 
-		Order newOrder = new Order(FIRSTNAME, LASTNAME, COUNTRY, CITY, STREET, POSTCODE, EMAIL, backet, NOTE, hashPwd);
+		Order newOrder = new Order(FIRSTNAME, LASTNAME, COUNTRY, CITY, STREET, POSTCODE, EMAIL, cart, NOTE, hashPwd);
 		orepository.save(newOrder);
 
 		return newOrder;

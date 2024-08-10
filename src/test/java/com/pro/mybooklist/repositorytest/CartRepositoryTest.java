@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.pro.mybooklist.model.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -17,18 +18,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import com.pro.mybooklist.model.Backet;
-import com.pro.mybooklist.model.BacketBook;
-import com.pro.mybooklist.model.BacketBookRepository;
-import com.pro.mybooklist.model.BacketRepository;
-import com.pro.mybooklist.model.Book;
-import com.pro.mybooklist.model.BookRepository;
-import com.pro.mybooklist.model.Category;
-import com.pro.mybooklist.model.CategoryRepository;
-import com.pro.mybooklist.model.Order;
-import com.pro.mybooklist.model.OrderRepository;
-import com.pro.mybooklist.model.User;
-import com.pro.mybooklist.model.UserRepository;
+import com.pro.mybooklist.model.Cart;
 import com.pro.mybooklist.sqlforms.QuantityOfBacket;
 import com.pro.mybooklist.sqlforms.TotalOfBacket;
 
@@ -38,7 +28,7 @@ import jakarta.transaction.Transactional;
 @DataJpaTest
 @TestInstance(Lifecycle.PER_CLASS)
 @Transactional
-public class BacketRepositoryTest {
+public class CartRepositoryTest {
 	@Autowired
 	private UserRepository urepository;
 
@@ -72,44 +62,44 @@ public class BacketRepositoryTest {
 	@Test
 	@Rollback
 	public void testCreateBacketWithUser() {
-		Backet newBacket1 = this.createBacketWithUser(true, "user1");
-		assertThat(newBacket1.getBacketid()).isNotNull();
+		Cart newCart1 = this.createBacketWithUser(true, "user1");
+		assertThat(newCart1.getBacketid()).isNotNull();
 
 		this.createBacketWithUser(true, "user2");
-		List<Backet> backets = (List<Backet>) backetrepository.findAll();
-		assertThat(backets).hasSize(2);
+		List<Cart> carts = (List<Cart>) backetrepository.findAll();
+		assertThat(carts).hasSize(2);
 	}
 
 	@Test
 	@Rollback
 	public void testCreateBacketNoUser() {
-		Backet newBacket1 = this.createBacketNoUser(true);
-		assertThat(newBacket1.getBacketid()).isNotNull();
+		Cart newCart1 = this.createBacketNoUser(true);
+		assertThat(newCart1.getBacketid()).isNotNull();
 
 		this.createBacketNoUser(true);
-		List<Backet> backets = (List<Backet>) backetrepository.findAll();
-		assertThat(backets).hasSize(2);
+		List<Cart> carts = (List<Cart>) backetrepository.findAll();
+		assertThat(carts).hasSize(2);
 	}
 
 	@Test
 	@Rollback
 	public void testFindAllAndFindById() {
-		List<Backet> backets = (List<Backet>) backetrepository.findAll();
-		assertThat(backets).isEmpty();
+		List<Cart> carts = (List<Cart>) backetrepository.findAll();
+		assertThat(carts).isEmpty();
 
-		Optional<Backet> optionalBacket = backetrepository.findById(Long.valueOf(2));
+		Optional<Cart> optionalBacket = backetrepository.findById(Long.valueOf(2));
 		assertThat(optionalBacket).isNotPresent();
 
-		Backet backet = this.createBacketNoUser(true);
-		Long backetId = backet.getBacketid();
+		Cart cart = this.createBacketNoUser(true);
+		Long backetId = cart.getBacketid();
 
 		optionalBacket = backetrepository.findById(backetId);
 		assertThat(optionalBacket).isPresent();
 
 		this.createBacketNoUser(true);
 
-		backets = (List<Backet>) backetrepository.findAll();
-		assertThat(backets).hasSize(2);
+		carts = (List<Cart>) backetrepository.findAll();
+		assertThat(carts).hasSize(2);
 	}
 
 	@Test
@@ -122,16 +112,16 @@ public class BacketRepositoryTest {
 		User user = this.createUser(username);
 		Long userId = user.getId();
 
-		Backet backet = this.createBacketWithUser(true, username);
+		Cart cart = this.createBacketWithUser(true, username);
 		Book book1 = this.createBook("Little Women", "Other", 10.2);
-		this.createBacketBookCustomQuantity(2, book1, backet);
+		this.createBacketBookCustomQuantity(2, book1, cart);
 
 		quantityOfBacket = backetrepository.findQuantityInCurrent(userId);
 		assertThat(quantityOfBacket).isNotNull();
 		assertThat(quantityOfBacket.getItems()).isEqualTo(2);
 
 		Book book2 = this.createBook("Little Women 2", "Other", 10.2);
-		this.createBacketBookCustomQuantity(3, book2, backet);
+		this.createBacketBookCustomQuantity(3, book2, cart);
 		quantityOfBacket = backetrepository.findQuantityInCurrent(userId);
 		assertThat(quantityOfBacket.getItems()).isEqualTo(5);
 	}
@@ -143,12 +133,12 @@ public class BacketRepositoryTest {
 		assertThat(totalOfBacket).isNull();
 
 		String username = "user1";
-		Backet backet = this.createBacketWithUser(true, username);
-		Long backetId = backet.getBacketid();
+		Cart cart = this.createBacketWithUser(true, username);
+		Long backetId = cart.getBacketid();
 
 		double price1 = 10.2;
 		Book book1 = this.createBook("Little Women", "Other", price1);
-		this.createBacketBookCustomQuantity(2, book1, backet);
+		this.createBacketBookCustomQuantity(2, book1, cart);
 
 		totalOfBacket = backetrepository.findTotalOfBacket(backetId);
 		assertThat(totalOfBacket).isNotNull();
@@ -156,18 +146,18 @@ public class BacketRepositoryTest {
 
 		double price2 = 8.2;
 		Book book2 = this.createBook("Little Women 2", "Other", price2);
-		this.createBacketBookCustomQuantity(3, book2, backet);
+		this.createBacketBookCustomQuantity(3, book2, cart);
 		totalOfBacket = backetrepository.findTotalOfBacket(backetId);
 		assertThat(totalOfBacket).isNotNull();
 		assertThat(totalOfBacket.getTotal()).isEqualTo(price1 * 2 + price2 * 3);
 
-		Backet backetNoUser = this.createBacketNoUser(true);
-		Long backet2Id = backetNoUser.getBacketid();
+		Cart cartNoUser = this.createBacketNoUser(true);
+		Long backet2Id = cartNoUser.getBacketid();
 
 		totalOfBacket = backetrepository.findTotalOfBacket(backet2Id);
 		assertThat(totalOfBacket).isNull();
 
-		this.createBacketBookCustomQuantity(1, book2, backetNoUser);
+		this.createBacketBookCustomQuantity(1, book2, cartNoUser);
 		totalOfBacket = backetrepository.findTotalOfBacket(backet2Id);
 		assertThat(totalOfBacket).isNotNull();
 		assertThat(totalOfBacket.getTotal()).isEqualTo(price2);
@@ -204,11 +194,11 @@ public class BacketRepositoryTest {
 		assertThat(totalOfCurrent).isNull();
 
 		String username = "user1";
-		Backet backet = this.createBacketWithUser(true, username);
+		Cart cart = this.createBacketWithUser(true, username);
 
 		double price1 = 10.2;
 		Book book1 = this.createBook("Little Women", "Other", price1);
-		this.createBacketBookCustomQuantity(2, book1, backet);
+		this.createBacketBookCustomQuantity(2, book1, cart);
 
 		Long user1Id = urepository.findByUsername(username).get().getId();
 
@@ -218,7 +208,7 @@ public class BacketRepositoryTest {
 
 		double price2 = 8.2;
 		Book book2 = this.createBook("Little Women 2", "Other", price2);
-		this.createBacketBookCustomQuantity(3, book2, backet);
+		this.createBacketBookCustomQuantity(3, book2, cart);
 		totalOfCurrent = backetrepository.findTotalOfCurrentCart(user1Id);
 		assertThat(totalOfCurrent).isNotNull();
 		assertThat(totalOfCurrent.getTotal()).isEqualTo(price1 * 2 + price2 * 3);
@@ -231,9 +221,9 @@ public class BacketRepositoryTest {
 		assertThat(idsOfNotCurrentBackets).isEmpty();
 
 		String username = "user1";
-		Backet backet = this.createBacketWithUser(false, username);
+		Cart cart = this.createBacketWithUser(false, username);
 		this.createBacketWithUser(true, username);
-		Long backetId = backet.getBacketid();
+		Long backetId = cart.getBacketid();
 
 		Long user1Id = urepository.findByUsername(username).get().getId();
 
@@ -245,8 +235,8 @@ public class BacketRepositoryTest {
 	@Test
 	@Rollback
 	public void testFindCurrentByUserid() {
-		List<Backet> currentBackets = backetrepository.findCurrentByUserid(Long.valueOf(2));
-		assertThat(currentBackets).isEmpty();
+		List<Cart> currentCarts = backetrepository.findCurrentByUserid(Long.valueOf(2));
+		assertThat(currentCarts).isEmpty();
 		
 		String username = "user1";
 		this.createBacketWithUser(false, username);
@@ -254,78 +244,78 @@ public class BacketRepositoryTest {
 		
 		Long user1Id = urepository.findByUsername(username).get().getId();
 
-		currentBackets = backetrepository.findCurrentByUserid(user1Id);
-		assertThat(currentBackets).hasSize(1);
+		currentCarts = backetrepository.findCurrentByUserid(user1Id);
+		assertThat(currentCarts).hasSize(1);
 	}
 	
 	@Test
 	@Rollback
 	public void testUpdateBacket() {
 		boolean current = true;
-		Backet newBacket = this.createBacketNoUser(current);
+		Cart newCart = this.createBacketNoUser(current);
 		
 		String updatedPwd = "newHash";
 		
-		newBacket.setCurrent(!current);
-		newBacket.setPasswordHash(updatedPwd);
-		backetrepository.save(newBacket);
+		newCart.setCurrent(!current);
+		newCart.setPasswordHash(updatedPwd);
+		backetrepository.save(newCart);
 		
-		assertThat(newBacket.isCurrent()).isEqualTo(!current);
-		assertThat(newBacket.getPasswordHash()).isEqualTo(updatedPwd);
+		assertThat(newCart.isCurrent()).isEqualTo(!current);
+		assertThat(newCart.getPasswordHash()).isEqualTo(updatedPwd);
 	}
 	
 	@Test
 	@Rollback
 	public void testDeleteBacket() {
-		Backet backetToDelete = this.createBacketNoUser(false);
-		Long backetId = backetToDelete.getBacketid();
+		Cart cartToDelete = this.createBacketNoUser(false);
+		Long backetId = cartToDelete.getBacketid();
 		backetrepository.deleteById(backetId);
 		
-		Optional<Backet> optionalBacket = backetrepository.findById(backetId);
+		Optional<Cart> optionalBacket = backetrepository.findById(backetId);
 		assertThat(optionalBacket).isNotPresent();
 		
 		this.createBacketNoUser(false);
 		this.createBacketNoUser(false);
 		backetrepository.deleteAll();
 		
-		List<Backet> backets = (List<Backet>) backetrepository.findAll();
-		assertThat(backets).isEmpty();
+		List<Cart> carts = (List<Cart>) backetrepository.findAll();
+		assertThat(carts).isEmpty();
 	}
 
 	private Order createSale(int quantity, List<Book> books) {
-		Backet backet = this.createBacketNoUser(false);
+		Cart cart = this.createBacketNoUser(false);
 
 		for (Book book : books) {
-			this.createBacketBookCustomQuantity(quantity, book, backet);
+			this.createBacketBookCustomQuantity(quantity, book, cart);
 		}
 
 		String stringField = "field";
 
 		Order newOrder = new Order(stringField, stringField, stringField, stringField, stringField, stringField,
-				stringField, backet, stringField, stringField);
+				stringField, cart, stringField, stringField);
 		orepository.save(newOrder);
 
 		return newOrder;
 	}
 
-	private Backet createBacketWithUser(boolean current, String username) {
+	private Cart createBacketWithUser(boolean current, String username) {
 		User user = this.createUser(username);
 
-		List<Backet> currentBackets = backetrepository.findCurrentByUserid(user.getId());
-		if (currentBackets.size() != 0)
-			return currentBackets.get(0);
+		List<Cart> currentCarts = backetrepository.findCurrentByUserid(user.getId());
+		if (currentCarts.size() != 0)
+			return currentCarts.get(0);
 
-		Backet newBacket = new Backet(current, user);
-		backetrepository.save(newBacket);
+		Cart newCart = new Cart(current, user);
+		backetrepository.save(newCart);
 
-		return newBacket;
+		return newCart;
 	}
 
-	private Backet createBacketNoUser(boolean current) {
-		Backet newBacket = new Backet(current);
-		backetrepository.save(newBacket);
+	private Cart createBacketNoUser(boolean current) {
+		Cart newCart = new Cart(current);
+		backetrepository.save(newCart);
 
-		return newBacket;
+		return newCart;
 	}
 
 	private User createUser(String username) {
@@ -340,8 +330,8 @@ public class BacketRepositoryTest {
 		return user;
 	}
 
-	private BacketBook createBacketBookCustomQuantity(int quantity, Book book, Backet backet) {
-		BacketBook newBacketBook = new BacketBook(quantity, backet, book);
+	private BacketBook createBacketBookCustomQuantity(int quantity, Book book, Cart cart) {
+		BacketBook newBacketBook = new BacketBook(quantity, cart, book);
 		backetBookRepository.save(newBacketBook);
 
 		return newBacketBook;

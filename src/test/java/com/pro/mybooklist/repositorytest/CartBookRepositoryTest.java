@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 import java.util.Optional;
 
+import com.pro.mybooklist.model.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -15,17 +16,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import com.pro.mybooklist.model.Backet;
-import com.pro.mybooklist.model.BacketBook;
-import com.pro.mybooklist.model.BacketBookKey;
-import com.pro.mybooklist.model.BacketBookRepository;
-import com.pro.mybooklist.model.BacketRepository;
-import com.pro.mybooklist.model.Book;
-import com.pro.mybooklist.model.BookRepository;
-import com.pro.mybooklist.model.Category;
-import com.pro.mybooklist.model.CategoryRepository;
-import com.pro.mybooklist.model.User;
-import com.pro.mybooklist.model.UserRepository;
+import com.pro.mybooklist.model.Cart;
 
 import jakarta.transaction.Transactional;
 
@@ -33,7 +24,7 @@ import jakarta.transaction.Transactional;
 @DataJpaTest
 @TestInstance(Lifecycle.PER_CLASS)
 @Transactional
-public class BacketBookRepositoryTest {
+public class CartBookRepositoryTest {
 	@Autowired
 	private CategoryRepository crepository;
 
@@ -125,22 +116,22 @@ public class BacketBookRepositoryTest {
 	@Test
 	@Rollback
 	public void testFindByBacket() {
-		Backet emptyBacket = this.createBacketNoUser();
-		List<BacketBook> backetBooks = backetBookRepository.findByBacket(emptyBacket);
+		Cart emptyCart = this.createBacketNoUser();
+		List<BacketBook> backetBooks = backetBookRepository.findByBacket(emptyCart);
 		assertThat(backetBooks).isEmpty();
 		
 		BacketBook newBacketBook = this.createBacketBookDefaultQuantityNoUser("Little Women", "Other");
-		Backet backet = newBacketBook.getBacket();
+		Cart cart = newBacketBook.getBacket();
 		
-		backetBooks = backetBookRepository.findByBacket(backet);
+		backetBooks = backetBookRepository.findByBacket(cart);
 		assertThat(backetBooks).hasSize(1);
 		
 		this.createBacketBookDefaultQuantityUser("user1", "Little Women", "Other");
 		this.createBacketBookDefaultQuantityUser("user1", "Little Women 2", "Other");
 		BacketBook backetBook3User1 = this.createBacketBookCustomQuantityUser(2, "user1", "Fight Club", "Thriller");
-		Backet backetOfUser1 = backetBook3User1.getBacket();
+		Cart cartOfUser1 = backetBook3User1.getBacket();
 		
-		backetBooks = backetBookRepository.findByBacket(backetOfUser1);
+		backetBooks = backetBookRepository.findByBacket(cartOfUser1);
 		assertThat(backetBooks).hasSize(3);
 	}
 
@@ -176,25 +167,25 @@ public class BacketBookRepositoryTest {
 	@Rollback
 	public void testDeleteByBacket() {
 		BacketBook newBacketBook = this.createBacketBookDefaultQuantityNoUser("Little Women", "Other");
-		Backet backet = newBacketBook.getBacket();
+		Cart cart = newBacketBook.getBacket();
 
-		long quantityOfDeletedBacketBooks = backetBookRepository.deleteByBacket(backet);
+		long quantityOfDeletedBacketBooks = backetBookRepository.deleteByBacket(cart);
 		assertThat(quantityOfDeletedBacketBooks).isEqualTo(1);
 
 		this.createBacketBookDefaultQuantityUser("user1", "Little Women", "Other");
 		this.createBacketBookDefaultQuantityUser("user1", "Little Women 2", "Other");
 		BacketBook backetBook3User1 = this.createBacketBookCustomQuantityUser(2, "user1", "Fight Club", "Thriller");
-		Backet backetOfUser1 = backetBook3User1.getBacket();
+		Cart cartOfUser1 = backetBook3User1.getBacket();
 
-		quantityOfDeletedBacketBooks = backetBookRepository.deleteByBacket(backetOfUser1);
+		quantityOfDeletedBacketBooks = backetBookRepository.deleteByBacket(cartOfUser1);
 		assertThat(quantityOfDeletedBacketBooks).isEqualTo(3);
 	}
 
 	private BacketBook createBacketBookCustomQuantityNoUser(int quantity, String title, String categoryName) {
-		Backet backet = this.createBacketNoUser();
+		Cart cart = this.createBacketNoUser();
 		Book book = this.createBook(title, categoryName);
 
-		BacketBook newBacketBook = new BacketBook(quantity, backet, book);
+		BacketBook newBacketBook = new BacketBook(quantity, cart, book);
 		backetBookRepository.save(newBacketBook);
 
 		return newBacketBook;
@@ -204,20 +195,20 @@ public class BacketBookRepositoryTest {
 			String categoryName) {
 		User user = this.createUser(username);
 
-		Backet backet = this.createBacketWithUser(user);
+		Cart cart = this.createBacketWithUser(user);
 		Book book = this.createBook(title, categoryName);
 
-		BacketBook newBacketBook = new BacketBook(quantity, backet, book);
+		BacketBook newBacketBook = new BacketBook(quantity, cart, book);
 		backetBookRepository.save(newBacketBook);
 
 		return newBacketBook;
 	}
 
 	private BacketBook createBacketBookDefaultQuantityNoUser(String title, String categoryName) {
-		Backet backet = this.createBacketNoUser();
+		Cart cart = this.createBacketNoUser();
 		Book book = this.createBook(title, categoryName);
 
-		BacketBook newBacketBook = new BacketBook(backet, book);
+		BacketBook newBacketBook = new BacketBook(cart, book);
 		backetBookRepository.save(newBacketBook);
 
 		return newBacketBook;
@@ -226,10 +217,10 @@ public class BacketBookRepositoryTest {
 	private BacketBook createBacketBookDefaultQuantityUser(String username, String title, String categoryName) {
 		User user = this.createUser(username);
 
-		Backet backet = this.createBacketWithUser(user);
+		Cart cart = this.createBacketWithUser(user);
 		Book book = this.createBook(title, categoryName);
 
-		BacketBook newBacketBook = new BacketBook(backet, book);
+		BacketBook newBacketBook = new BacketBook(cart, book);
 		backetBookRepository.save(newBacketBook);
 
 		return newBacketBook;
@@ -246,22 +237,22 @@ public class BacketBookRepositoryTest {
 		return newUser;
 	}
 
-	private Backet createBacketWithUser(User user) {
-		List<Backet> currentBackets = backetRepository.findCurrentByUserid(user.getId());
-		if (currentBackets.size() != 0)
-			return currentBackets.get(0);
+	private Cart createBacketWithUser(User user) {
+		List<Cart> currentCarts = backetRepository.findCurrentByUserid(user.getId());
+		if (currentCarts.size() != 0)
+			return currentCarts.get(0);
 
-		Backet newBacket = new Backet(true, user);
-		backetRepository.save(newBacket);
+		Cart newCart = new Cart(true, user);
+		backetRepository.save(newCart);
 
-		return newBacket;
+		return newCart;
 	}
 
-	private Backet createBacketNoUser() {
-		Backet newBacket = new Backet(true);
-		backetRepository.save(newBacket);
+	private Cart createBacketNoUser() {
+		Cart newCart = new Cart(true);
+		backetRepository.save(newCart);
 
-		return newBacket;
+		return newCart;
 	}
 
 	private Book createBook(String title, String categoryName) {

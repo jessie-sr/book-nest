@@ -1,5 +1,6 @@
 package com.pro.mybooklist;
 
+import com.pro.mybooklist.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -8,18 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import com.pro.mybooklist.model.Backet;
-import com.pro.mybooklist.model.BacketBook;
-import com.pro.mybooklist.model.BacketBookRepository;
-import com.pro.mybooklist.model.BacketRepository;
-import com.pro.mybooklist.model.Book;
-import com.pro.mybooklist.model.BookRepository;
-import com.pro.mybooklist.model.Category;
-import com.pro.mybooklist.model.CategoryRepository;
-import com.pro.mybooklist.model.Order;
-import com.pro.mybooklist.model.OrderRepository;
-import com.pro.mybooklist.model.User;
-import com.pro.mybooklist.model.UserRepository;
+import com.pro.mybooklist.model.Cart;
 
 
 @SpringBootApplication
@@ -162,53 +152,53 @@ public class MybooklistApplication {
 			urepository.save(newAdmin);
 			urepository.save(newUser2);
 			
-			Backet currentBacketUser1 = new Backet(true, newUser1);
-			Backet currentBacketUser2 = new Backet(true, newUser2);
-			Backet currentBacketAdmin = new Backet(true, newAdmin);
-			barepository.save(currentBacketUser1);
-			barepository.save(currentBacketUser2);
-			barepository.save(currentBacketAdmin);
+			Cart currentCartUser1 = new Cart(true, newUser1);
+			Cart currentCartUser2 = new Cart(true, newUser2);
+			Cart currentCartAdmin = new Cart(true, newAdmin);
+			barepository.save(currentCartUser1);
+			barepository.save(currentCartUser2);
+			barepository.save(currentCartAdmin);
 
-			Backet backet1User1 = new Backet(false, newUser1);
-			Backet backet1Admin = new Backet(false, newAdmin);
-			Backet backet2Admin = new Backet(false, newAdmin);
+			Cart cart1User1 = new Cart(false, newUser1);
+			Cart cart1Admin = new Cart(false, newAdmin);
+			Cart cart2Admin = new Cart(false, newAdmin);
 			
-			barepository.save(backet1User1);
-			barepository.save(backet1Admin);
-			barepository.save(backet2Admin);
+			barepository.save(cart1User1);
+			barepository.save(cart1Admin);
+			barepository.save(cart2Admin);
 			
 			
-			bbrepository.save(new BacketBook(3, backet1User1, book1));
-			bbrepository.save(new BacketBook(3, backet1User1, book2));
-			bbrepository.save(new BacketBook(2, backet1User1, book3));
-			bbrepository.save(new BacketBook(1, backet1User1, book4));
-			bbrepository.save(new BacketBook(3, backet1User1, book5));
-			bbrepository.save(new BacketBook(2, backet1User1, book6));
-			bbrepository.save(new BacketBook(1, backet1User1, book7));
-			bbrepository.save(new BacketBook(4, backet1User1, book8));
-			bbrepository.save(new BacketBook(3, backet1User1, book9));
-			bbrepository.save(new BacketBook(4, backet1User1, book10));
+			bbrepository.save(new BacketBook(3, cart1User1, book1));
+			bbrepository.save(new BacketBook(3, cart1User1, book2));
+			bbrepository.save(new BacketBook(2, cart1User1, book3));
+			bbrepository.save(new BacketBook(1, cart1User1, book4));
+			bbrepository.save(new BacketBook(3, cart1User1, book5));
+			bbrepository.save(new BacketBook(2, cart1User1, book6));
+			bbrepository.save(new BacketBook(1, cart1User1, book7));
+			bbrepository.save(new BacketBook(4, cart1User1, book8));
+			bbrepository.save(new BacketBook(3, cart1User1, book9));
+			bbrepository.save(new BacketBook(4, cart1User1, book10));
 
 			
-			bbrepository.save(new BacketBook(1, backet1Admin, book2));
-			bbrepository.save(new BacketBook(3, backet1Admin, book11));
-			bbrepository.save(new BacketBook(2, backet1Admin, book4));
-			bbrepository.save(new BacketBook(1, backet1Admin, book5));
-			bbrepository.save(new BacketBook(3, backet1Admin, book7));
-			bbrepository.save(new BacketBook(2, backet1Admin, book8));
-			bbrepository.save(new BacketBook(1, backet1Admin, book9));
-			bbrepository.save(new BacketBook(4, backet1Admin, book10));
-			bbrepository.save(new BacketBook(3, backet1Admin, book12));
-			bbrepository.save(new BacketBook(4, backet1Admin, book13));
-			bbrepository.save(new BacketBook(1, backet1Admin, book14));
-			bbrepository.save(new BacketBook(2, backet1Admin, book15));
+			bbrepository.save(new BacketBook(1, cart1Admin, book2));
+			bbrepository.save(new BacketBook(3, cart1Admin, book11));
+			bbrepository.save(new BacketBook(2, cart1Admin, book4));
+			bbrepository.save(new BacketBook(1, cart1Admin, book5));
+			bbrepository.save(new BacketBook(3, cart1Admin, book7));
+			bbrepository.save(new BacketBook(2, cart1Admin, book8));
+			bbrepository.save(new BacketBook(1, cart1Admin, book9));
+			bbrepository.save(new BacketBook(4, cart1Admin, book10));
+			bbrepository.save(new BacketBook(3, cart1Admin, book12));
+			bbrepository.save(new BacketBook(4, cart1Admin, book13));
+			bbrepository.save(new BacketBook(1, cart1Admin, book14));
+			bbrepository.save(new BacketBook(2, cart1Admin, book15));
 			
-			bbrepository.save(new BacketBook(1, backet2Admin, book14));
-			bbrepository.save(new BacketBook(2, backet2Admin, book15));
+			bbrepository.save(new BacketBook(1, cart2Admin, book14));
+			bbrepository.save(new BacketBook(2, cart2Admin, book15));
 			
-			orepository.save(new Order("First", "Admin", "Finland", "Helsinki", "Juustenintie 3J 110", "00410", "In progress", "mymail@mail.com", backet1Admin, hashPwd));
-			orepository.save(new Order("First", "Userok","Jiji", "Hur", "Mesti 28 177", "511120", "In progress", "mymail2@mail.com", backet1User1, hashPwd));
-			orepository.save(new Order("Jessie", "Sun", "US", "Berkeley", "Haste 2112", "94705", "jessiesun@example.com", backet2Admin, "Make my order quick please", hashPwd));
+			orepository.save(new Order("First", "Admin", "Finland", "Helsinki", "Juustenintie 3J 110", "00410", "In progress", "mymail@mail.com", cart1Admin, hashPwd));
+			orepository.save(new Order("First", "Userok","Jiji", "Hur", "Mesti 28 177", "511120", "In progress", "mymail2@mail.com", cart1User1, hashPwd));
+			orepository.save(new Order("Jessie", "Sun", "US", "Berkeley", "Haste 2112", "94705", "jessiesun@example.com", cart2Admin, "Make my order quick please", hashPwd));
 		};
 	}
 }

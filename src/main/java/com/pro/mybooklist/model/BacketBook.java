@@ -21,7 +21,7 @@ public class BacketBook {
 	@ManyToOne
 	@MapsId("backetid")
 	@JoinColumn(name = "backetid", nullable = false)
-	private Backet backet;
+	private Cart cart;
 
 	@ManyToOne
 	@MapsId("bookid")
@@ -30,21 +30,21 @@ public class BacketBook {
 
 	public BacketBook() {}
 
-	public BacketBook(int quantity, Backet backet, Book book) {
+	public BacketBook(int quantity, Cart cart, Book book) {
 		super();
-		BacketBookKey backetBookKey = new BacketBookKey(backet.getBacketid(), book.getId());
+		BacketBookKey backetBookKey = new BacketBookKey(cart.getBacketid(), book.getId());
 		this.id = backetBookKey;
 		this.quantity = quantity;
-		this.backet = backet;
+		this.cart = cart;
 		this.book = book;
 	}
 
-	public BacketBook(Backet backet, Book book) {
+	public BacketBook(Cart cart, Book book) {
 		super();
-		BacketBookKey backetBookKey = new BacketBookKey(backet.getBacketid(), book.getId());
+		BacketBookKey backetBookKey = new BacketBookKey(cart.getBacketid(), book.getId());
 		this.id = backetBookKey;
 		this.quantity = 1;
-		this.backet = backet;
+		this.cart = cart;
 		this.book = book;
 	}
 
@@ -64,12 +64,12 @@ public class BacketBook {
 		this.quantity = quantity;
 	}
 
-	public Backet getBacket() {
-		return backet;
+	public Cart getBacket() {
+		return cart;
 	}
 
-	public void setBacket(Backet backet) {
-		this.backet = backet;
+	public void setBacket(Cart cart) {
+		this.cart = cart;
 	}
 
 	public Book getBook() {

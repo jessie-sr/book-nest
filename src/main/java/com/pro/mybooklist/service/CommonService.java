@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.pro.mybooklist.MyUser;
-import com.pro.mybooklist.model.Backet;
+import com.pro.mybooklist.model.Cart;
 import com.pro.mybooklist.model.BacketRepository;
 import com.pro.mybooklist.model.Book;
 import com.pro.mybooklist.model.BookRepository;
@@ -35,88 +35,88 @@ public class CommonService {
 	private BookRepository bookRepository;
 
 	// Method to find the backet and check if it's private:
-	public Backet findBacketAndCheckIsPrivate(Long backetId) {
-		Backet backet = this.findBacket(backetId);
-		this.checkIfBacketIsPrivate(backet);
-		return backet;
+	public Cart findBacketAndCheckIsPrivate(Long backetId) {
+		Cart cart = this.findBacket(backetId);
+		this.checkIfBacketIsPrivate(cart);
+		return cart;
 	}
 
 	// Method to find backet, check if it is private and check the provided
 	// password:
-	public Backet findBacketAndCheckIsPrivateAndCheckPassword(Long backetId, String password) {
-		Backet backet = this.findBacketAndCheckIsPrivate(backetId);
-		this.checkPassword(password, backet.getPasswordHash());
-		return backet;
+	public Cart findBacketAndCheckIsPrivateAndCheckPassword(Long backetId, String password) {
+		Cart cart = this.findBacketAndCheckIsPrivate(backetId);
+		this.checkPassword(password, cart.getPasswordHash());
+		return cart;
 	}
 
 	// Method to find backet, check if it's private, it's password and check if it's
 	// current
-	public Backet findBacketAndCheckIsPrivateAndCheckPasswordAndCheckIsCurrent(Long backetId, String password) {
-		Backet backet = this.findBacketAndCheckIsPrivateAndCheckPassword(backetId, password);
-		this.checkIfBacketIsCurrent(backet);
-		return backet;
+	public Cart findBacketAndCheckIsPrivateAndCheckPasswordAndCheckIsCurrent(Long backetId, String password) {
+		Cart cart = this.findBacketAndCheckIsPrivateAndCheckPassword(backetId, password);
+		this.checkIfBacketIsCurrent(cart);
+		return cart;
 	}
 
 	// The method to find out if the user has exactly one current backet:
-	public Backet findCurrentBacketOfUser(User user) {
+	public Cart findCurrentBacketOfUser(User user) {
 		Long userId = user.getId();
-		List<Backet> currentBacketsOfUser = backetRepository.findCurrentByUserid(userId);
+		List<Cart> currentBacketsOfUser = backetRepository.findCurrentByUserid(userId);
 
 		if (currentBacketsOfUser.size() != 1) {
 			return this.handleUserHasMoreOrLessThanOneCurrentBacketCase(currentBacketsOfUser, user);
 		}
 
-		Backet currentBacket = currentBacketsOfUser.get(0);
-		return currentBacket;
+		Cart currentCart = currentBacketsOfUser.get(0);
+		return currentCart;
 	}
 	
-	private Backet handleUserHasMoreOrLessThanOneCurrentBacketCase(List<Backet> currentBacketsOfUser, User user) {
-		for (Backet currentBacketOfUser : currentBacketsOfUser) {
-			backetRepository.delete(currentBacketOfUser);
+	private Cart handleUserHasMoreOrLessThanOneCurrentBacketCase(List<Cart> currentBacketsOfUser, User user) {
+		for (Cart currentCartOfUser : currentBacketsOfUser) {
+			backetRepository.delete(currentCartOfUser);
 		}
-		Backet newCurrentBacketForUser = new Backet(true, user);
-		backetRepository.save(newCurrentBacketForUser);
-		return newCurrentBacketForUser;
+		Cart newCurrentCartForUser = new Cart(true, user);
+		backetRepository.save(newCurrentCartForUser);
+		return newCurrentCartForUser;
 	}
 
-	// Method to add new current Backet for the user
+	// Method to add new current Cart for the user
 	public void addCurrentBacketForUser(User user) {
 		Long userId = user.getId();
 		this.checkCurrentBacketsOfUser(userId);
-		Backet newCurrentBacketForUser = new Backet(true, user);
-		backetRepository.save(newCurrentBacketForUser);
+		Cart newCurrentCartForUser = new Cart(true, user);
+		backetRepository.save(newCurrentCartForUser);
 	}
 
 	private void checkCurrentBacketsOfUser(Long userId) {
-		List<Backet> currentBackets = backetRepository.findCurrentByUserid(userId);
+		List<Cart> currentCarts = backetRepository.findCurrentByUserid(userId);
 
-		if (currentBackets.size() > 0) {
-			for (Backet currentBacketOfUser : currentBackets) {
-				backetRepository.delete(currentBacketOfUser);
+		if (currentCarts.size() > 0) {
+			for (Cart currentCartOfUser : currentCarts) {
+				backetRepository.delete(currentCartOfUser);
 			}
 		}
 	}
 
-	private Backet findBacket(Long backetId) {
-		Optional<Backet> optionalBacket = backetRepository.findById(backetId);
+	private Cart findBacket(Long backetId) {
+		Optional<Cart> optionalBacket = backetRepository.findById(backetId);
 
 		if (!optionalBacket.isPresent())
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The backet wasn't found by id");
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The cart wasn't found by id");
 
-		Backet backet = optionalBacket.get();
-		return backet;
+		Cart cart = optionalBacket.get();
+		return cart;
 	}
 
-	private void checkIfBacketIsPrivate(Backet backet) {
-		User backetOwner = backet.getUser();
+	private void checkIfBacketIsPrivate(Cart cart) {
+		User backetOwner = cart.getUser();
 
 		if (backetOwner != null)
-			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "The backet is private");
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "The cart is private");
 	}
 
-	private void checkIfBacketIsCurrent(Backet backet) {
-		if (!backet.isCurrent())
-			throw new ResponseStatusException(HttpStatus.CONFLICT, "You can't change not current backet");
+	private void checkIfBacketIsCurrent(Cart cart) {
+		if (!cart.isCurrent())
+			throw new ResponseStatusException(HttpStatus.CONFLICT, "You can't change not current cart");
 	}
 
 	// Method to encode password:

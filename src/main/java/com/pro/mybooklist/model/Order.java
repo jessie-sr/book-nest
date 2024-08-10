@@ -50,11 +50,11 @@ public class Order {
 	
 	@OneToOne
 	@JoinColumn(name="backetid", referencedColumnName = "backetid", nullable = false)
-	private Backet backet;
+	private Cart cart;
 	
 	public Order() {}
 
-	public Order(String firstname, String lastname, String country, String city, String street, String postcode, String status, String email, Backet backet, String password) {
+	public Order(String firstname, String lastname, String country, String city, String street, String postcode, String status, String email, Cart cart, String password) {
 		this.firstname = firstname;
 		this.lastname = lastname;
 		this.country = country;
@@ -63,12 +63,12 @@ public class Order {
 		this.postcode = postcode;
 		this.status = status;
 		this.email = email;
-		this.backet = backet;
+		this.cart = cart;
 		this.note = "";
 		this.password = password;
 	}
 
-	public Order(String firstname, String lastname, String country, String city, String street, String postcode, String email, Backet backet, String note, String password) {
+	public Order(String firstname, String lastname, String country, String city, String street, String postcode, String email, Cart cart, String note, String password) {
 		super();
 		this.firstname = firstname;
 		this.lastname = lastname;
@@ -78,7 +78,7 @@ public class Order {
 		this.postcode = postcode;
 		this.email = email;
 		this.note = note;
-		this.backet = backet;
+		this.cart = cart;
 		this.status = "Created";
 		this.password = password;
 	}
@@ -171,11 +171,11 @@ public class Order {
 		this.password = password;
 	}
 
-	public Backet getBacket() {
-		return backet;
+	public Cart getBacket() {
+		return cart;
 	}
 
-	public void setBacket(Backet backet) {
-		this.backet = backet;
+	public void setBacket(Cart cart) {
+		this.cart = cart;
 	}
 }

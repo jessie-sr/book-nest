@@ -11,11 +11,11 @@ import com.pro.mybooklist.sqlforms.QuantityOfBacket;
 import com.pro.mybooklist.sqlforms.TotalOfBacket;
 
 @Repository
-public interface BacketRepository extends CrudRepository<Backet, Long> {
-	Optional<Backet> findById(Long backetid);
+public interface BacketRepository extends CrudRepository<Cart, Long> {
+	Optional<Cart> findById(Long backetid);
 	
 	@Query(value="SELECT backet.* FROM backet WHERE current AND userid = ?1", nativeQuery=true)
-	List<Backet> findCurrentByUserid(Long userId);
+	List<Cart> findCurrentByUserid(Long userId);
 	
 	@Query(value="SELECT backetid FROM backet WHERE NOT current AND userid =?1", nativeQuery = true)
 	List<Long> findNotCurrentByUserid(Long userId);

@@ -19,7 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-public class Backet {
+public class Cart {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -48,16 +48,16 @@ public class Backet {
 	@OneToOne(cascade = CascadeType.ALL, mappedBy = "backet")
 	private Order order;
 	
-	public Backet() {}
+	public Cart() {}
 	
-	public Backet(boolean current, User user) {
+	public Cart(boolean current, User user) {
 		this.current = current;
 		this.user = user;
 		this.expiryDate = null;
 		this.passwordHash = null;
 	}
 	
-	public Backet(boolean current) {
+	public Cart(boolean current) {
 		this.current = current;
 		this.user = null;
 		this.expiryDate = LocalDate.now().plusDays(1).toString();
@@ -68,7 +68,7 @@ public class Backet {
 		this.passwordHash = hashPwd;
 	}
 	
-	public Backet(String passwordHash) {
+	public Cart(String passwordHash) {
 		this.current = true;
 		this.user = null;
 		this.expiryDate = LocalDate.now().plusDays(1).toString();
