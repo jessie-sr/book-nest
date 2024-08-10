@@ -140,8 +140,8 @@ public class BookRepositoryTest {
 
 	@Test
 	@Rollback
-	public void testFindBooksInBacket() {
-		List<BookInCurrentCart> booksInBacket = bookrepository.findBooksInBacket(Long.valueOf(1));
+	public void testfindBooksInCart() {
+		List<BookInCurrentCart> booksInBacket = bookrepository.findBooksInCart(Long.valueOf(1));
 		assertThat(booksInBacket).isEmpty();
 
 		Cart cart = this.createBacketNoUser(true);
@@ -149,13 +149,13 @@ public class BookRepositoryTest {
 		Book book1 = this.createBook("Little Women", "Other");
 		this.createBacketBookCustomQuantity(2, book1, cart);
 
-		booksInBacket = bookrepository.findBooksInBacket(backetId);
+		booksInBacket = bookrepository.findBooksInCart(backetId);
 		assertThat(booksInBacket).hasSize(1);
 
 		Book book2 = this.createBook("Little Women 2", "Other");
 		this.createBacketBookCustomQuantity(2, book2, cart);
 
-		booksInBacket = bookrepository.findBooksInBacket(backetId);
+		booksInBacket = bookrepository.findBooksInCart(backetId);
 		assertThat(booksInBacket).hasSize(2);
 	}
 
@@ -177,8 +177,8 @@ public class BookRepositoryTest {
 
 	@Test
 	@Rollback
-	public void testFindIdsOfBooksByBacketid() {
-		List<Long> idsOfBooks = bookrepository.findIdsOfBooksByBacketid(Long.valueOf(2));
+	public void testfindIdsOfBooksByCartid() {
+		List<Long> idsOfBooks = bookrepository.findIdsOfBooksByCartid(Long.valueOf(2));
 		assertThat(idsOfBooks).isEmpty();
 
 		Cart cart = this.createBacketNoUser(true);
@@ -186,20 +186,20 @@ public class BookRepositoryTest {
 		Book book1 = this.createBook("Little Women", "Other");
 		this.createBacketBookCustomQuantity(2, book1, cart);
 
-		idsOfBooks = bookrepository.findIdsOfBooksByBacketid(backetId);
+		idsOfBooks = bookrepository.findIdsOfBooksByCartid(backetId);
 		assertThat(idsOfBooks).hasSize(1);
 
 		Book book2 = this.createBook("Little Women 2", "Other");
 		this.createBacketBookCustomQuantity(2, book2, cart);
 
-		idsOfBooks = bookrepository.findIdsOfBooksByBacketid(backetId);
+		idsOfBooks = bookrepository.findIdsOfBooksByCartid(backetId);
 		assertThat(idsOfBooks).hasSize(2);
 	}
 
 	@Test
 	@Rollback
-	public void testFindBooksInCurrentBacketByUserid() {
-		List<BookInCurrentCart> booksInBacket = bookrepository.findBooksInCurrentBacketByUserid(Long.valueOf(2));
+	public void testfindBooksInCurrentCartByUserid() {
+		List<BookInCurrentCart> booksInBacket = bookrepository.findBooksInCurrentCartByUserid(Long.valueOf(2));
 		assertThat(booksInBacket).isEmpty();
 
 		String username = "user1";
@@ -210,13 +210,13 @@ public class BookRepositoryTest {
 		Book book1 = this.createBook("Little Women", "Other");
 		this.createBacketBookCustomQuantity(2, book1, cart);
 
-		booksInBacket = bookrepository.findBooksInCurrentBacketByUserid(userId);
+		booksInBacket = bookrepository.findBooksInCurrentCartByUserid(userId);
 		assertThat(booksInBacket).hasSize(1);
 
 		Book book2 = this.createBook("Little Women 2", "Other");
 		this.createBacketBookCustomQuantity(2, book2, cart);
 
-		booksInBacket = bookrepository.findBooksInCurrentBacketByUserid(userId);
+		booksInBacket = bookrepository.findBooksInCurrentCartByUserid(userId);
 		assertThat(booksInBacket).hasSize(2);
 	}
 
