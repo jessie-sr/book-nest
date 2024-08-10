@@ -7,28 +7,28 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import com.pro.mybooklist.sqlforms.QuantityOfBacket;
-import com.pro.mybooklist.sqlforms.TotalOfBacket;
+import com.pro.mybooklist.sqlforms.QuantityOfCart;
+import com.pro.mybooklist.sqlforms.TotalOfCart;
 
 @Repository
 public interface CartRepository extends CrudRepository<Cart, Long> {
-	Optional<Cart> findById(Long backetid);
+	Optional<Cart> findById(Long cartid);
 	
-	@Query(value="SELECT backet.* FROM backet WHERE current AND userid = ?1", nativeQuery=true)
+	@Query(value="SELECT cart.* FROM cart WHERE current AND userid = ?1", nativeQuery=true)
 	List<Cart> findCurrentByUserid(Long userId);
 	
-	@Query(value="SELECT backetid FROM backet WHERE NOT current AND userid =?1", nativeQuery = true)
+	@Query(value="SELECT cartid FROM cart WHERE NOT current AND userid =?1", nativeQuery = true)
 	List<Long> findNotCurrentByUserid(Long userId);
 	
-	@Query(value="SELECT ba.backetid AS backetid, SUM(quantity * price) AS total FROM backet AS ba JOIN backet_book AS bb ON (bb.backetid = ba.backetid) JOIN book AS bo ON (bo.id = bb.bookid) WHERE current AND userid=?1 GROUP BY ba.backetid", nativeQuery = true)
-	TotalOfBacket findTotalOfCurrentCart(Long userId);
+	@Query(value="SELECT ca.cartid AS cartid, SUM(quantity * price) AS total FROM cart AS ca JOIN cart_book AS cb ON (cb.cartid = ca.cartid) JOIN book AS bo ON (bo.id = cb.bookid) WHERE current AND userid=?1 GROUP BY ca.cartid", nativeQuery = true)
+	TotalOfCart findTotalOfCurrentCart(Long userId);
 	
-	@Query(value="SELECT ba.backetid AS backetid, SUM(quantity * price) AS total FROM backet AS ba JOIN orders AS o ON (o.backetid = ba.backetid) JOIN backet_book AS bb ON (bb.backetid = ba.backetid) JOIN book AS bo ON (bo.id = bb.bookid) WHERE orderid=?1 GROUP BY ba.backetid", nativeQuery = true)
-	TotalOfBacket findTotalOfOrder(Long orderid);
+	@Query(value="SELECT ca.cartid AS cartid, SUM(quantity * price) AS total FROM cart AS ca JOIN orders AS o ON (o.cartid = ca.cartid) JOIN cart_book AS cb ON (cb.cartid = ca.cartid) JOIN book AS bo ON (bo.id = cb.bookid) WHERE orderid=?1 GROUP BY ca.cartid", nativeQuery = true)
+	TotalOfCart findTotalOfOrder(Long orderid);
 	
-	@Query(value="SELECT ba.backetid AS backetid, SUM(quantity * price) AS total FROM backet AS ba JOIN backet_book AS bb ON (bb.backetid = ba.backetid) JOIN book AS bo ON (bo.id = bb.bookid) WHERE ba.backetid=?1 GROUP BY ba.backetid", nativeQuery = true)
-	TotalOfBacket findTotalOfBacket(Long backetid);
+	@Query(value="SELECT ca.cartid AS cartid, SUM(quantity * price) AS total FROM cart AS ca JOIN cart_book AS cb ON (cb.cartid = ca.cartid) JOIN book AS bo ON (bo.id = cb.bookid) WHERE ca.cartid=?1 GROUP BY ca.cartid", nativeQuery = true)
+	TotalOfCart findTotalOfCart(Long cartid);
 	
-	@Query(value="SELECT ba.backetid, SUM(quantity) AS items FROM backet AS ba JOIN backet_book AS bb ON (bb.backetid = ba.backetid) WHERE current AND userid =?1 GROUP BY ba.backetid", nativeQuery = true)
-	QuantityOfBacket findQuantityInCurrent(Long userId);
+	@Query(value="SELECT ca.cartid, SUM(quantity) AS items FROM cart AS ca JOIN cart_book AS cb ON (cb.cartid = ca.cartid) WHERE current AND userid =?1 GROUP BY ca.cartid", nativeQuery = true)
+	QuantityOfCart findQuantityInCurrent(Long userId);
 }
