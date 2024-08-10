@@ -59,7 +59,7 @@ public class BookService {
 	public List<Long> getIdsOfBooksByBacketid(Long backetId) {
 		commonService.findBacketAndCheckIsPrivate(backetId);
 
-		List<Long> idsOfBooksInBacket = bookRepository.findIdsOfBooksByBacketid(backetId);
+		List<Long> idsOfBooksInBacket = bookRepository.findIdsOfBooksByCartid(backetId);
 		return idsOfBooksInBacket;
 	}
 
@@ -81,7 +81,7 @@ public class BookService {
 
 		commonService.findBacketAndCheckIsPrivateAndCheckPassword(backetId, password);
 
-		List<BookInCurrentCart> booksInBacket = bookRepository.findBooksInBacket(backetId);
+		List<BookInCurrentCart> booksInBacket = bookRepository.findBooksInCart(backetId);
 		return booksInBacket;
 	}
 
@@ -91,7 +91,7 @@ public class BookService {
 		User user = commonService.checkAuthenticationAndAuthorize(authentication, userId);
 		commonService.findCurrentBacketOfUser(user);
 
-		List<BookInCurrentCart> booksInCurrentBacketOfUser = bookRepository.findBooksInCurrentBacketByUserid(userId);
+		List<BookInCurrentCart> booksInCurrentBacketOfUser = bookRepository.findBooksInCurrentCartByUserid(userId);
 		return booksInCurrentBacketOfUser;
 	}
 
