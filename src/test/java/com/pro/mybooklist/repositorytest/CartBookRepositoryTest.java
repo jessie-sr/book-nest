@@ -115,15 +115,15 @@ public class CartBookRepositoryTest {
 	
 	@Test
 	@Rollback
-	public void testFindByBacket() {
+	public void testfindByCart() {
 		Cart emptyCart = this.createBacketNoUser();
-		List<CartBook> cartBooks = cartBookRepository.findByBacket(emptyCart);
+		List<CartBook> cartBooks = cartBookRepository.findByCart(emptyCart);
 		assertThat(cartBooks).isEmpty();
 		
 		CartBook newCartBook = this.createBacketBookDefaultQuantityNoUser("Little Women", "Other");
 		Cart cart = newCartBook.getCart();
 		
-		cartBooks = cartBookRepository.findByBacket(cart);
+		cartBooks = cartBookRepository.findByCart(cart);
 		assertThat(cartBooks).hasSize(1);
 		
 		this.createBacketBookDefaultQuantityUser("user1", "Little Women", "Other");
@@ -131,7 +131,7 @@ public class CartBookRepositoryTest {
 		CartBook cartBook3User1 = this.createBacketBookCustomQuantityUser(2, "user1", "Fight Club", "Thriller");
 		Cart cartOfUser1 = cartBook3User1.getCart();
 		
-		cartBooks = cartBookRepository.findByBacket(cartOfUser1);
+		cartBooks = cartBookRepository.findByCart(cartOfUser1);
 		assertThat(cartBooks).hasSize(3);
 	}
 
