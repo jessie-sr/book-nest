@@ -10,26 +10,26 @@ import jakarta.persistence.Embeddable;
 public class CartBookKey implements Serializable {
 	private static final long serialVersionUID = -6860012402807015054L;
 
-	@Column(name = "backetid")
-	Long backetid;
+	@Column(name = "cartid")
+	Long cartid;
 	
 	@Column(name = "bookid")
 	Long bookid;
 	
 	public CartBookKey() {}
 
-	public CartBookKey(Long backetid, Long bookid) {
+	public CartBookKey(Long cartid, Long bookid) {
 		super();
-		this.backetid = backetid;
+		this.cartid = cartid;
 		this.bookid = bookid;
 	}
 
-	public Long getBacketid() {
-		return backetid;
+	public Long getCartid() {
+		return cartid;
 	}
 
-	public void setBacketid(Long backetid) {
-		this.backetid = backetid;
+	public void setCartid(Long cartid) {
+		this.cartid = cartid;
 	}
 
 	public Long getBookid() {
@@ -42,7 +42,7 @@ public class CartBookKey implements Serializable {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(backetid, bookid);
+		return Objects.hash(cartid, bookid);
 	}
 
 	@Override
@@ -54,6 +54,6 @@ public class CartBookKey implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		CartBookKey other = (CartBookKey) obj;
-		return Objects.equals(backetid, other.backetid) && Objects.equals(bookid, other.bookid);
+		return Objects.equals(cartid, other.cartid) && Objects.equals(bookid, other.bookid);
 	}
 }
