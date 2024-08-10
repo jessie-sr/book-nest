@@ -23,10 +23,10 @@ public class Cart {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "backetid", nullable = false, updatable = false)
-	private Long backetid;
+	@Column(name = "cartid", nullable = false, updatable = false)
+	private Long cartid;
 	
-	// The value indicates whether the backet is current or closed
+	// The value indicates whether the cart is current or closed
 	@Column(name = "current", nullable = false)
 	private boolean current;
 	
@@ -41,11 +41,11 @@ public class Cart {
 	private User user;
 	
 	@JsonIgnore
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "backet")
-	private List<CartBook> backetbooks;
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "cart")
+	private List<CartBook> cartbooks;
 	
 	@JsonIgnore
-	@OneToOne(cascade = CascadeType.ALL, mappedBy = "backet")
+	@OneToOne(cascade = CascadeType.ALL, mappedBy = "cart")
 	private Order order;
 	
 	public Cart() {}
@@ -76,12 +76,12 @@ public class Cart {
 		this.passwordHash = passwordHash;
 	}
 
-	public Long getBacketid() {
-		return backetid;
+	public Long getCartid() {
+		return cartid;
 	}
 
-	public void setBacketid(Long backetid) {
-		this.backetid = backetid;
+	public void setCartid(Long cartid) {
+		this.cartid = cartid;
 	}
 
 	public boolean isCurrent() {
@@ -100,12 +100,12 @@ public class Cart {
 		this.user = user;
 	}
 
-	public List<CartBook> getBacketbooks() {
-		return backetbooks;
+	public List<CartBook> getCartbooks() {
+		return cartbooks;
 	}
 
-	public void setBacketbooks(List<CartBook> backetbooks) {
-		this.backetbooks = backetbooks;
+	public void setCartbooks(List<CartBook> cartbooks) {
+		this.cartbooks = cartbooks;
 	}
 
 	public Order getOrder() {
@@ -131,7 +131,5 @@ public class Cart {
 	public void setPasswordHash(String passwordHash) {
 		this.passwordHash = passwordHash;
 	}
-	
-	
 	
 }
