@@ -11,6 +11,6 @@ import org.springframework.stereotype.Repository;
 public interface OrderRepository extends CrudRepository<Order, Long> {
 	Optional<Order> findById(Long orderid);
 	
-	@Query(value = "SELECT o.* FROM orders AS o JOIN backet AS ba ON (ba.backetid = o.backetid) WHERE userid = ?1", nativeQuery = true)
+	@Query(value = "SELECT o.* FROM orders AS o JOIN cart AS ca ON (ca.cartid = o.cartid) WHERE userid = ?1", nativeQuery = true)
 	List<Order> findByUserid(Long userId);
 }
