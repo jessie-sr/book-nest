@@ -9,7 +9,7 @@ import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "backet_book")
+@Table(name = "cart_book")
 public class CartBook {
 
 	@EmbeddedId
@@ -19,8 +19,8 @@ public class CartBook {
 	private int quantity;
 
 	@ManyToOne
-	@MapsId("backetid")
-	@JoinColumn(name = "backetid", nullable = false)
+	@MapsId("cartid")
+	@JoinColumn(name = "cartid", nullable = false)
 	private Cart cart;
 
 	@ManyToOne
@@ -32,7 +32,7 @@ public class CartBook {
 
 	public CartBook(int quantity, Cart cart, Book book) {
 		super();
-		CartBookKey cartBookKey = new CartBookKey(cart.getBacketid(), book.getId());
+		CartBookKey cartBookKey = new CartBookKey(cart.getCartid(), book.getId());
 		this.id = cartBookKey;
 		this.quantity = quantity;
 		this.cart = cart;
@@ -41,7 +41,7 @@ public class CartBook {
 
 	public CartBook(Cart cart, Book book) {
 		super();
-		CartBookKey cartBookKey = new CartBookKey(cart.getBacketid(), book.getId());
+		CartBookKey cartBookKey = new CartBookKey(cart.getCartid(), book.getId());
 		this.id = cartBookKey;
 		this.quantity = 1;
 		this.cart = cart;
@@ -64,11 +64,11 @@ public class CartBook {
 		this.quantity = quantity;
 	}
 
-	public Cart getBacket() {
+	public Cart getCart() {
 		return cart;
 	}
 
-	public void setBacket(Cart cart) {
+	public void setCart(Cart cart) {
 		this.cart = cart;
 	}
 
