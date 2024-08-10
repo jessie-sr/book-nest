@@ -34,7 +34,7 @@ public class Book {
 
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "book")
-	List<CartBook> backetbooks;
+	List<CartBook> cartbooks;
 
 	public Book() {}
 
@@ -113,12 +113,12 @@ public class Book {
 		this.category = category;
 	}
 
-	public List<CartBook> getBacketbooks() {
-		return backetbooks;
+	public List<CartBook> getCartbooks() {
+		return cartbooks;
 	}
 
-	public void setBacketbooks(List<CartBook> backetbooks) {
-		this.backetbooks = backetbooks;
+	public void setCarttbooks(List<CartBook> cartbooks) {
+		this.cartbooks = cartbooks;
 	}
 
 }
