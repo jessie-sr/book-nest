@@ -49,7 +49,7 @@ public class Order {
 	private String password;
 	
 	@OneToOne
-	@JoinColumn(name="backetid", referencedColumnName = "backetid", nullable = false)
+	@JoinColumn(name="cartid", referencedColumnName = "cartid", nullable = false)
 	private Cart cart;
 	
 	public Order() {}
@@ -171,11 +171,11 @@ public class Order {
 		this.password = password;
 	}
 
-	public Cart getBacket() {
+	public Cart getCart() {
 		return cart;
 	}
 
-	public void setBacket(Cart cart) {
+	public void setCart(Cart cart) {
 		this.cart = cart;
 	}
 }
