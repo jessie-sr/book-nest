@@ -33,7 +33,7 @@ public class CartRepositoryTest {
 	private UserRepository urepository;
 
 	@Autowired
-	private BacketBookRepository backetBookRepository;
+	private CartBookRepository cartBookRepository;
 
 	@Autowired
 	private BookRepository bookrepository;
@@ -50,7 +50,7 @@ public class CartRepositoryTest {
 	@BeforeAll
 	public void resetUserRepo() {
 		urepository.deleteAll();
-		backetBookRepository.deleteAll();
+		cartBookRepository.deleteAll();
 		bookrepository.deleteAll();
 		crepository.deleteAll();
 		orepository.deleteAll();
@@ -332,7 +332,7 @@ public class CartRepositoryTest {
 
 	private CartBook createBacketBookCustomQuantity(int quantity, Book book, Cart cart) {
 		CartBook newCartBook = new CartBook(quantity, cart, book);
-		backetBookRepository.save(newCartBook);
+		cartBookRepository.save(newCartBook);
 
 		return newCartBook;
 	}

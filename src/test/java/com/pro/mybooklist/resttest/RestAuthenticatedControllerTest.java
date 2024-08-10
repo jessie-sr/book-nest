@@ -75,7 +75,7 @@ public class RestAuthenticatedControllerTest {
 	private BookRepository bookRepository;
 
 	@Autowired
-	private BacketBookRepository backetBookRepository;
+	private CartBookRepository cartBookRepository;
 
 	@Autowired
 	private OrderRepository orepository;
@@ -180,7 +180,7 @@ public class RestAuthenticatedControllerTest {
 			mockMvc.perform(post(requestURIGood).header("Authorization", jwt).contentType(MediaType.APPLICATION_JSON)
 					.content(requestBody)).andExpect(status().isOk());
 
-			List<CartBook> cartBooks = (List<CartBook>) backetBookRepository.findAll();
+			List<CartBook> cartBooks = (List<CartBook>) cartBookRepository.findAll();
 			assertThat(cartBooks).hasSize(1);
 			assertThat(cartBooks.get(0).getQuantity()).isEqualTo(1);
 
@@ -188,7 +188,7 @@ public class RestAuthenticatedControllerTest {
 			mockMvc.perform(post(requestURIGood).header("Authorization", jwt).contentType(MediaType.APPLICATION_JSON)
 					.content(requestBody)).andExpect(status().isOk());
 
-			cartBooks = (List<CartBook>) backetBookRepository.findAll();
+			cartBooks = (List<CartBook>) cartBookRepository.findAll();
 			assertThat(cartBooks).hasSize(1);
 			assertThat(cartBooks.get(0).getQuantity()).isEqualTo(2);
 		}
@@ -208,7 +208,7 @@ public class RestAuthenticatedControllerTest {
 			mockMvc.perform(post(requestURIGood).header("Authorization", jwt).contentType(MediaType.APPLICATION_JSON)
 					.content(requestBody)).andExpect(status().isOk());
 
-			List<CartBook> cartBooks = (List<CartBook>) backetBookRepository.findAll();
+			List<CartBook> cartBooks = (List<CartBook>) cartBookRepository.findAll();
 			assertThat(cartBooks).hasSize(1);
 			assertThat(cartBooks.get(0).getQuantity()).isEqualTo(1);
 		}
@@ -229,7 +229,7 @@ public class RestAuthenticatedControllerTest {
 			mockMvc.perform(post(requestURIGood).header("Authorization", jwt).contentType(MediaType.APPLICATION_JSON)
 					.content(requestBody)).andExpect(status().isOk());
 
-			List<CartBook> cartBooks = (List<CartBook>) backetBookRepository.findAll();
+			List<CartBook> cartBooks = (List<CartBook>) cartBookRepository.findAll();
 			assertThat(cartBooks).hasSize(1);
 			assertThat(cartBooks.get(0).getQuantity()).isEqualTo(1);
 		}
@@ -468,7 +468,7 @@ public class RestAuthenticatedControllerTest {
 			mockMvc.perform(put(requestURIGood).header("Authorization", jwt)).andExpect(status().isOk())
 					.andExpect(content().string("The quantity of the book in the cart was reduced by one"));
 
-			List<CartBook> cartBooks = (List<CartBook>) backetBookRepository.findAll();
+			List<CartBook> cartBooks = (List<CartBook>) cartBookRepository.findAll();
 			assertThat(cartBooks).hasSize(1);
 			assertThat(cartBooks.get(0).getQuantity()).isEqualTo(1);
 
@@ -476,7 +476,7 @@ public class RestAuthenticatedControllerTest {
 			mockMvc.perform(put(requestURIGood).header("Authorization", jwt)).andExpect(status().isOk())
 					.andExpect(content().string("The book was deleted from the cart"));
 
-			cartBooks = (List<CartBook>) backetBookRepository.findAll();
+			cartBooks = (List<CartBook>) cartBookRepository.findAll();
 			assertThat(cartBooks).hasSize(0);
 		}
 	}
@@ -542,7 +542,7 @@ public class RestAuthenticatedControllerTest {
 
 			mockMvc.perform(delete(requestURIGood).header("Authorization", jwt)).andExpect(status().isOk());
 
-			List<CartBook> cartBooks = (List<CartBook>) backetBookRepository.findAll();
+			List<CartBook> cartBooks = (List<CartBook>) cartBookRepository.findAll();
 			assertThat(cartBooks).hasSize(0);
 		}
 	}
@@ -829,7 +829,7 @@ public class RestAuthenticatedControllerTest {
 
 	private CartBook createBacketBookCustomQuantity(int quantity, Book book, Cart cart) {
 		CartBook newCartBook = new CartBook(quantity, cart, book);
-		backetBookRepository.save(newCartBook);
+		cartBookRepository.save(newCartBook);
 
 		return newCartBook;
 	}
@@ -865,7 +865,7 @@ public class RestAuthenticatedControllerTest {
 		urepository.deleteAll();
 		backetRepository.deleteAll();
 		bookRepository.deleteAll();
-		backetBookRepository.deleteAll();
+		cartBookRepository.deleteAll();
 		orepository.deleteAll();
 	}
 

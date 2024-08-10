@@ -31,7 +31,7 @@ public class OrderService {
 	private BacketRepository backetRepository;
 
 	@Autowired
-	private BacketBookRepository backetBookRepository;
+	private CartBookRepository cartBookRepository;
 
 	@Autowired
 	private CommonService commonService;
@@ -158,7 +158,7 @@ public class OrderService {
 	}
 
 	private void checkIfBacketIsEmpty(Cart cart) {
-		List<CartBook> backetBooksInCart = backetBookRepository.findByBacket(cart);
+		List<CartBook> backetBooksInCart = cartBookRepository.findByBacket(cart);
 		if (backetBooksInCart.size() == 0)
 			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "The cart is empty");
 	}

@@ -29,7 +29,7 @@ public class MybooklistApplication {
 	private BacketRepository barepository;
 	
 	@Autowired
-	private BacketBookRepository bbrepository;
+	private CartBookRepository bbrepository;
 	
 	@Autowired
 	private OrderRepository orepository;

@@ -85,7 +85,7 @@ public class RestPublicControllerTest {
 	private BookRepository bookRepository;
 
 	@Autowired
-	private BacketBookRepository backetBookRepository;
+	private CartBookRepository cartBookRepository;
 
 	@Autowired
 	private OrderRepository orepository;
@@ -96,7 +96,7 @@ public class RestPublicControllerTest {
 		urepository.deleteAll();
 		backetRepository.deleteAll();
 		bookRepository.deleteAll();
-		backetBookRepository.deleteAll();
+		cartBookRepository.deleteAll();
 		orepository.deleteAll();
 	}
 
@@ -348,14 +348,14 @@ public class RestPublicControllerTest {
 			mockMvc.perform(post(requestURIGood).contentType(MediaType.APPLICATION_JSON).content(requestBody))
 					.andExpect(status().isOk());
 
-			List<CartBook> cartBooks = (List<CartBook>) backetBookRepository.findAll();
+			List<CartBook> cartBooks = (List<CartBook>) cartBookRepository.findAll();
 			assertThat(cartBooks).hasSize(1);
 			assertThat(cartBooks.get(0).getQuantity()).isEqualTo(2);
 
 			// Adding books quantity to the existing backetBook case:
 			mockMvc.perform(post(requestURIGood).contentType(MediaType.APPLICATION_JSON).content(requestBody))
 					.andExpect(status().isOk());
-			cartBooks = (List<CartBook>) backetBookRepository.findAll();
+			cartBooks = (List<CartBook>) cartBookRepository.findAll();
 			assertThat(cartBooks).hasSize(1);
 			assertThat(cartBooks.get(0).getQuantity()).isEqualTo(4);
 		}
@@ -726,7 +726,7 @@ public class RestPublicControllerTest {
 			mockMvc.perform(put(requestURIOk).contentType(MediaType.APPLICATION_JSON).content(requestBody))
 					.andExpect(status().isOk());
 
-			List<CartBook> cartBooks = (List<CartBook>) backetBookRepository.findAll();
+			List<CartBook> cartBooks = (List<CartBook>) cartBookRepository.findAll();
 			assertThat(cartBooks).hasSize(1);
 			assertThat(cartBooks.get(0).getQuantity()).isEqualTo(1);
 		}
@@ -751,7 +751,7 @@ public class RestPublicControllerTest {
 			mockMvc.perform(put(requestURIOk).contentType(MediaType.APPLICATION_JSON).content(requestBody))
 					.andExpect(status().isOk());
 
-			List<CartBook> cartBooks = (List<CartBook>) backetBookRepository.findAll();
+			List<CartBook> cartBooks = (List<CartBook>) cartBookRepository.findAll();
 			assertThat(cartBooks).hasSize(0);
 		}
 	}
@@ -881,7 +881,7 @@ public class RestPublicControllerTest {
 			mockMvc.perform(delete(requestURIOk).contentType(MediaType.APPLICATION_JSON).content(requestBody))
 					.andExpect(status().isOk());
 
-			List<CartBook> cartBooks = (List<CartBook>) backetBookRepository.findAll();
+			List<CartBook> cartBooks = (List<CartBook>) cartBookRepository.findAll();
 			assertThat(cartBooks).hasSize(0);
 		}
 
@@ -905,7 +905,7 @@ public class RestPublicControllerTest {
 			mockMvc.perform(delete(requestURIOk).contentType(MediaType.APPLICATION_JSON).content(requestBody))
 					.andExpect(status().isOk());
 
-			List<CartBook> cartBooks = (List<CartBook>) backetBookRepository.findAll();
+			List<CartBook> cartBooks = (List<CartBook>) cartBookRepository.findAll();
 			assertThat(cartBooks).hasSize(0);
 		}
 	}
@@ -1573,7 +1573,7 @@ public class RestPublicControllerTest {
 
 	private CartBook createBacketBookCustomQuantity(int quantity, Book book, Cart cart) {
 		CartBook newCartBook = new CartBook(quantity, cart, book);
-		backetBookRepository.save(newCartBook);
+		cartBookRepository.save(newCartBook);
 
 		return newCartBook;
 	}

@@ -24,7 +24,7 @@ public class BacketService {
 	private BacketRepository backetRepository;
 
 	@Autowired
-	private BacketBookRepository backetBookRepository;
+	private CartBookRepository cartBookRepository;
 
 	@Autowired
 	private CommonService commonService;
@@ -127,7 +127,7 @@ public class BacketService {
 
 	private void createBacketBook(int quantity, Cart cart, Book book) {
 		CartBook cartBook = new CartBook(quantity, cart, book);
-		backetBookRepository.save(cartBook);
+		cartBookRepository.save(cartBook);
 	}
 
 	// Method to reduce the amount of book by bookid and backetInfo
@@ -200,7 +200,7 @@ public class BacketService {
 		User user = commonService.checkAuthenticationAndAuthorize(authentication, userId);
 		Cart currentCart = commonService.findCurrentBacketOfUser(user);
 
-		long deleted = backetBookRepository.deleteByBacket(currentCart);
+		long deleted = cartBookRepository.deleteByBacket(currentCart);
 		return new ResponseEntity<>(deleted + " records were deleted from current cart", HttpStatus.OK);
 	}
 
@@ -218,19 +218,19 @@ public class BacketService {
 	private Optional<CartBook> getOptionalBacketBook(Long backetId, Long bookId) {
 		CartBookKey cartBookKey = new CartBookKey(backetId, bookId);
 
-		Optional<CartBook> optionalBacketBook = backetBookRepository.findById(cartBookKey);
+		Optional<CartBook> optionalBacketBook = cartBookRepository.findById(cartBookKey);
 		return optionalBacketBook;
 	}
 
 	// Method to set new quantity for the book in the backet
 	private void setBookQuantityInCart(int quantity, CartBook cartBook) {
 		cartBook.setQuantity(quantity);
-		backetBookRepository.save(cartBook);
+		cartBookRepository.save(cartBook);
 	}
 
 	// Method to delete the book from the backet by deleting cartBook record:
 	private ResponseEntity<?> deleteBookFromCart(CartBook cartBook) {
-		backetBookRepository.delete(cartBook);
+		cartBookRepository.delete(cartBook);
 		return new ResponseEntity<>("The book was deleted from the cart", HttpStatus.OK);
 	}
 }
