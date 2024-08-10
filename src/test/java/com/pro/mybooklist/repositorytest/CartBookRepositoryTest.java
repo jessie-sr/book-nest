@@ -121,7 +121,7 @@ public class CartBookRepositoryTest {
 		assertThat(cartBooks).isEmpty();
 		
 		CartBook newCartBook = this.createBacketBookDefaultQuantityNoUser("Little Women", "Other");
-		Cart cart = newCartBook.getBacket();
+		Cart cart = newCartBook.getCart();
 		
 		cartBooks = cartBookRepository.findByBacket(cart);
 		assertThat(cartBooks).hasSize(1);
@@ -129,7 +129,7 @@ public class CartBookRepositoryTest {
 		this.createBacketBookDefaultQuantityUser("user1", "Little Women", "Other");
 		this.createBacketBookDefaultQuantityUser("user1", "Little Women 2", "Other");
 		CartBook cartBook3User1 = this.createBacketBookCustomQuantityUser(2, "user1", "Fight Club", "Thriller");
-		Cart cartOfUser1 = cartBook3User1.getBacket();
+		Cart cartOfUser1 = cartBook3User1.getCart();
 		
 		cartBooks = cartBookRepository.findByBacket(cartOfUser1);
 		assertThat(cartBooks).hasSize(3);
@@ -165,19 +165,19 @@ public class CartBookRepositoryTest {
 	
 	@Test
 	@Rollback
-	public void testDeleteByBacket() {
+	public void testdeleteByCart() {
 		CartBook newCartBook = this.createBacketBookDefaultQuantityNoUser("Little Women", "Other");
-		Cart cart = newCartBook.getBacket();
+		Cart cart = newCartBook.getCart();
 
-		long quantityOfDeletedBacketBooks = cartBookRepository.deleteByBacket(cart);
+		long quantityOfDeletedBacketBooks = cartBookRepository.deleteByCart(cart);
 		assertThat(quantityOfDeletedBacketBooks).isEqualTo(1);
 
 		this.createBacketBookDefaultQuantityUser("user1", "Little Women", "Other");
 		this.createBacketBookDefaultQuantityUser("user1", "Little Women 2", "Other");
 		CartBook cartBook3User1 = this.createBacketBookCustomQuantityUser(2, "user1", "Fight Club", "Thriller");
-		Cart cartOfUser1 = cartBook3User1.getBacket();
+		Cart cartOfUser1 = cartBook3User1.getCart();
 
-		quantityOfDeletedBacketBooks = cartBookRepository.deleteByBacket(cartOfUser1);
+		quantityOfDeletedBacketBooks = cartBookRepository.deleteByCart(cartOfUser1);
 		assertThat(quantityOfDeletedBacketBooks).isEqualTo(3);
 	}
 

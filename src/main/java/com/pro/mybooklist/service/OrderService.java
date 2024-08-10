@@ -89,7 +89,7 @@ public class OrderService {
 	// Method to create order out of backet by backet id and backet password:
 	public OrderPasswordInfo makeSaleNoAuthentication(AddressInfoNoAuthentication addressInfo)
 			throws MessagingException, UnsupportedEncodingException {
-		Long backetId = addressInfo.getBacketid();
+		Long backetId = addressInfo.getCartid();
 		String backetPassword = addressInfo.getPassword();
 
 		Cart cart = commonService.findBacketAndCheckIsPrivateAndCheckPasswordAndCheckIsCurrent(backetId,
@@ -217,7 +217,7 @@ public class OrderService {
 	private Order handleStatusChangedCase(Order order, OrderInfo orderInfo, Long orderId)
 			throws MessagingException, UnsupportedEncodingException {
 		if (!order.getStatus().equals(orderInfo.getStatus())) {
-			Cart cart = order.getBacket();
+			Cart cart = order.getCart();
 			if (cart.getUser() != null) {
 				this.tryToSendStatusChangeEmail(orderInfo, cart.getUser().getEmail(), orderId);
 			}

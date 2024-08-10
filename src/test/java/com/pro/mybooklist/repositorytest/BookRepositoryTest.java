@@ -145,7 +145,7 @@ public class BookRepositoryTest {
 		assertThat(booksInBacket).isEmpty();
 
 		Cart cart = this.createBacketNoUser(true);
-		Long backetId = cart.getBacketid();
+		Long backetId = cart.getCartid();
 		Book book1 = this.createBook("Little Women", "Other");
 		this.createBacketBookCustomQuantity(2, book1, cart);
 
@@ -182,7 +182,7 @@ public class BookRepositoryTest {
 		assertThat(idsOfBooks).isEmpty();
 
 		Cart cart = this.createBacketNoUser(true);
-		Long backetId = cart.getBacketid();
+		Long backetId = cart.getCartid();
 		Book book1 = this.createBook("Little Women", "Other");
 		this.createBacketBookCustomQuantity(2, book1, cart);
 

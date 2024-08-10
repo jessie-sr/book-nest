@@ -76,7 +76,7 @@ public class AddressInfoNoAuthentication {
 	public void setNote(String note) {
 		this.note = note;
 	}
-	public Long getBacketid() {
+	public Long getCartid() {
 		return backetid;
 	}
 	public void setBacketid(Long backetid) {

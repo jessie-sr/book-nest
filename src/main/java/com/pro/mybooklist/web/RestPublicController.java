@@ -28,14 +28,14 @@ import com.pro.mybooklist.httpforms.TokenInfo;
 import com.pro.mybooklist.model.Book;
 import com.pro.mybooklist.model.Category;
 import com.pro.mybooklist.model.Order;
-import com.pro.mybooklist.service.BacketService;
+import com.pro.mybooklist.service.CartService;
 import com.pro.mybooklist.service.BookService;
 import com.pro.mybooklist.service.CategoryService;
 import com.pro.mybooklist.service.OrderService;
 import com.pro.mybooklist.service.UserService;
 import com.pro.mybooklist.sqlforms.BookInCurrentCart;
 import com.pro.mybooklist.sqlforms.RawBookInfo;
-import com.pro.mybooklist.sqlforms.TotalOfBacket;
+import com.pro.mybooklist.sqlforms.TotalOfCart;
 
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
@@ -53,7 +53,7 @@ public class RestPublicController {
 	private OrderService orderService;
 
 	@Autowired
-	private BacketService backetService;
+	private CartService backetService;
 
 	@Autowired
 	private UserService userService;
@@ -125,14 +125,14 @@ public class RestPublicController {
 	}
 
 	@PostMapping("/totalofbacket")
-	public @ResponseBody TotalOfBacket getTotalByBacketId(@RequestBody BacketInfo backetInfo) {
+	public @ResponseBody TotalOfCart getTotalByBacketId(@RequestBody BacketInfo backetInfo) {
 
 		return backetService.getTotalByBacketId(backetInfo);
 
 	}
 
 	@GetMapping("/getordertotal/{orderid}")
-	public @ResponseBody TotalOfBacket getTotalOfOrderByOrderId(@PathVariable("orderid") Long orderId) {
+	public @ResponseBody TotalOfCart getTotalOfOrderByOrderId(@PathVariable("orderid") Long orderId) {
 
 		return orderService.getTotalOfOrderByOrderId(orderId);
 

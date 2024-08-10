@@ -15,11 +15,11 @@ import com.pro.mybooklist.httpforms.BacketInfo;
 import com.pro.mybooklist.httpforms.BookQuantityInfo;
 import com.pro.mybooklist.httpforms.QuantityInfo;
 import com.pro.mybooklist.model.Cart;
-import com.pro.mybooklist.sqlforms.QuantityOfBacket;
-import com.pro.mybooklist.sqlforms.TotalOfBacket;
+import com.pro.mybooklist.sqlforms.QuantityOfCart;
+import com.pro.mybooklist.sqlforms.TotalOfCart;
 
 @Service
-public class BacketService {
+public class CartService {
 	@Autowired
 	private CartRepository cartRepository;
 
@@ -30,33 +30,33 @@ public class BacketService {
 	private CommonService commonService;
 
 	// Method to get the total price of the backet by backetId and backet password:
-	public TotalOfBacket getTotalByBacketId(BacketInfo backetInfo) {
+	public TotalOfCart getTotalByBacketId(BacketInfo backetInfo) {
 		Long backetId = backetInfo.getId();
 		String password = backetInfo.getPassword();
 		commonService.findBacketAndCheckIsPrivateAndCheckPassword(backetId, password);
 
-		TotalOfBacket totalOfBacket = cartRepository.findTotalOfBacket(backetId);
+		TotalOfCart totalOfBacket = cartRepository.findTotalOfCart(backetId);
 		return totalOfBacket;
 	}
 
 	// Method to get the total of current backet of user by authentication:
-	public TotalOfBacket getCurrentCartTotal(Authentication authentication) {
+	public TotalOfCart getCurrentCartTotal(Authentication authentication) {
 		User user = commonService.checkAuthentication(authentication);
 		Long userId = user.getId();
 		commonService.findCurrentBacketOfUser(user);
 
-		TotalOfBacket totalOfCurrentBacket = cartRepository.findTotalOfCurrentCart(userId);
+		TotalOfCart totalOfCurrentBacket = cartRepository.findTotalOfCurrentCart(userId);
 		return totalOfCurrentBacket;
 	}
 
 	// Method to get the total amount of books in the current backet of the user
 	// (returns interface with backetid and items fields):
-	public QuantityOfBacket getCurrentCartQuantity(Authentication authentication) {
+	public QuantityOfCart getCurrentCartQuantity(Authentication authentication) {
 		User user = commonService.checkAuthentication(authentication);
 		Long userId = user.getId();
 		commonService.findCurrentBacketOfUser(user);
 
-		QuantityOfBacket quantityOfCurrentBacket = cartRepository.findQuantityInCurrent(userId);
+		QuantityOfCart quantityOfCurrentBacket = cartRepository.findQuantityInCurrent(userId);
 		return quantityOfCurrentBacket;
 	}
 
@@ -74,7 +74,7 @@ public class BacketService {
 	private Long createBacket(String hashedPassword) {
 		Cart cart = new Cart(hashedPassword);
 		cartRepository.save(cart);
-		Long backetId = cart.getBacketid();
+		Long backetId = cart.getCartid();
 
 		return backetId;
 	}
@@ -105,7 +105,7 @@ public class BacketService {
 	}
 
 	private ResponseEntity<?> addQuantityOfBookToTheBacket(Cart cart, Long bookId, int additionalQuantity) {
-		Long backetId = cart.getBacketid();
+		Long backetId = cart.getCartid();
 		Book book = commonService.findBook(bookId);
 		Optional<CartBook> optionalBacketBook = this.getOptionalBacketBook(backetId, bookId);
 
@@ -150,7 +150,7 @@ public class BacketService {
 	}
 
 	private ResponseEntity<?> reduceQuantityOfBookInBacket(Cart cart, Long bookId) {
-		Long backetId = cart.getBacketid();
+		Long backetId = cart.getCartid();
 		commonService.findBook(bookId);
 
 		CartBook cartBook = this.findBacketBook(bookId, backetId);
@@ -188,7 +188,7 @@ public class BacketService {
 	}
 
 	private ResponseEntity<?> deleteBookFromBacket(Cart cart, Long bookId) {
-		Long backetId = cart.getBacketid();
+		Long backetId = cart.getCartid();
 		commonService.findBook(bookId);
 		CartBook cartBook = this.findBacketBook(bookId, backetId);
 
@@ -200,7 +200,7 @@ public class BacketService {
 		User user = commonService.checkAuthenticationAndAuthorize(authentication, userId);
 		Cart currentCart = commonService.findCurrentBacketOfUser(user);
 
-		long deleted = cartBookRepository.deleteByBacket(currentCart);
+		long deleted = cartBookRepository.deleteByCart(currentCart);
 		return new ResponseEntity<>(deleted + " records were deleted from current cart", HttpStatus.OK);
 	}
 

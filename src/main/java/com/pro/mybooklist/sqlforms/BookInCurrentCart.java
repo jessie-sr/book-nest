@@ -2,7 +2,7 @@ package com.pro.mybooklist.sqlforms;
 
 public interface BookInCurrentCart {
 	Long getBookid();
-	Long getBacketid();
+	Long getCartid();
 	String getTitle();
 	String getAuthor();
 	String getIsbn();

@@ -1,6 +1,6 @@
 package com.pro.mybooklist.sqlforms;
 
-public interface QuantityOfBacket {
-	Long getBacketid();
+public interface QuantityOfCart {
+	Long getCartid();
 	Integer getItems();
 }
