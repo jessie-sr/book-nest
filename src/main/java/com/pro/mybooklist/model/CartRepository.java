@@ -11,7 +11,7 @@ import com.pro.mybooklist.sqlforms.QuantityOfBacket;
 import com.pro.mybooklist.sqlforms.TotalOfBacket;
 
 @Repository
-public interface BacketRepository extends CrudRepository<Cart, Long> {
+public interface CartRepository extends CrudRepository<Cart, Long> {
 	Optional<Cart> findById(Long backetid);
 	
 	@Query(value="SELECT backet.* FROM backet WHERE current AND userid = ?1", nativeQuery=true)

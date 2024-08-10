@@ -70,7 +70,7 @@ public class RestAdminControllerTest {
 	private UserRepository urepository;
 
 	@Autowired
-	private BacketRepository backetRepository;
+	private CartRepository cartRepository;
 
 	@Autowired
 	private BookRepository bookRepository;
@@ -366,12 +366,12 @@ public class RestAdminControllerTest {
 	private Cart createBacketWithUser(boolean current, String username, String email) {
 		User user = this.createUser(username, email);
 
-		List<Cart> currentCarts = backetRepository.findCurrentByUserid(user.getId());
+		List<Cart> currentCarts = cartRepository.findCurrentByUserid(user.getId());
 		if (currentCarts.size() != 0 && current)
 			return currentCarts.get(0);
 
 		Cart newCart = new Cart(current, user);
-		backetRepository.save(newCart);
+		cartRepository.save(newCart);
 
 		return newCart;
 	}
@@ -436,7 +436,7 @@ public class RestAdminControllerTest {
 	private void resetRepos() {
 		crepository.deleteAll();
 		urepository.deleteAll();
-		backetRepository.deleteAll();
+		cartRepository.deleteAll();
 		bookRepository.deleteAll();
 		cartBookRepository.deleteAll();
 		orepository.deleteAll();
@@ -472,7 +472,7 @@ public class RestAdminControllerTest {
 
 	private Cart createBacketNoUser(boolean current) {
 		Cart newCart = new Cart(current);
-		backetRepository.save(newCart);
+		cartRepository.save(newCart);
 
 		return newCart;
 	}

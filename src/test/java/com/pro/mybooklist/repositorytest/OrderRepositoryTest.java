@@ -33,7 +33,7 @@ public class OrderRepositoryTest {
 	private UserRepository urepository;
 
 	@Autowired
-	private BacketRepository backetRepository;
+	private CartRepository cartRepository;
 
 	@Autowired
 	private BookRepository bookRepository;
@@ -48,7 +48,7 @@ public class OrderRepositoryTest {
 	public void resetRepos() {
 		crepository.deleteAll();
 		urepository.deleteAll();
-		backetRepository.deleteAll();
+		cartRepository.deleteAll();
 		bookRepository.deleteAll();
 		cartBookRepository.deleteAll();
 		orepository.deleteAll();
@@ -315,19 +315,19 @@ public class OrderRepositoryTest {
 	private Cart createBacketWithUser(boolean current, String username) {
 		User user = this.createUser(username);
 
-		List<Cart> currentCarts = backetRepository.findCurrentByUserid(user.getId());
+		List<Cart> currentCarts = cartRepository.findCurrentByUserid(user.getId());
 		if (currentCarts.size() != 0 && current)
 			return currentCarts.get(0);
 
 		Cart newCart = new Cart(current, user);
-		backetRepository.save(newCart);
+		cartRepository.save(newCart);
 
 		return newCart;
 	}
 
 	private Cart createBacketNoUser(boolean current) {
 		Cart newCart = new Cart(current);
-		backetRepository.save(newCart);
+		cartRepository.save(newCart);
 
 		return newCart;
 	}

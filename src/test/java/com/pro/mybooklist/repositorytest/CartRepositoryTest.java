@@ -45,7 +45,7 @@ public class CartRepositoryTest {
 	private OrderRepository orepository;
 
 	@Autowired
-	private BacketRepository backetrepository;
+	private CartRepository backetrepository;
 
 	@BeforeAll
 	public void resetUserRepo() {

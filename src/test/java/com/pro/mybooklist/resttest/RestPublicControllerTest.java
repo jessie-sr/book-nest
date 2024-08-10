@@ -79,7 +79,7 @@ public class RestPublicControllerTest {
 	private UserRepository urepository;
 
 	@Autowired
-	private BacketRepository backetRepository;
+	private CartRepository cartRepository;
 
 	@Autowired
 	private BookRepository bookRepository;
@@ -94,7 +94,7 @@ public class RestPublicControllerTest {
 	public void setUp() throws Exception {
 		crepository.deleteAll();
 		urepository.deleteAll();
-		backetRepository.deleteAll();
+		cartRepository.deleteAll();
 		bookRepository.deleteAll();
 		cartBookRepository.deleteAll();
 		orepository.deleteAll();
@@ -241,7 +241,7 @@ public class RestPublicControllerTest {
 		mockMvc.perform(post(requestURI)).andExpect(status().isOk()).andExpect(jsonPath("$.id").exists())
 				.andExpect(jsonPath("$.password").exists());
 
-		List<Cart> carts = (List<Cart>) backetRepository.findAll();
+		List<Cart> carts = (List<Cart>) cartRepository.findAll();
 		assertThat(carts).hasSize(1);
 	}
 
@@ -1204,7 +1204,7 @@ public class RestPublicControllerTest {
 						.andExpect(status().isOk());
 
 				assertThat(user.isAccountVerified()).isTrue();
-				List<Cart> currentCarts = backetRepository.findCurrentByUserid(user.getId());
+				List<Cart> currentCarts = cartRepository.findCurrentByUserid(user.getId());
 				assertThat(currentCarts).hasSize(1);
 			}
 
@@ -1221,7 +1221,7 @@ public class RestPublicControllerTest {
 						.andExpect(status().isOk());
 
 				assertThat(user.isAccountVerified()).isTrue();
-				List<Cart> currentCarts = backetRepository.findCurrentByUserid(user.getId());
+				List<Cart> currentCarts = cartRepository.findCurrentByUserid(user.getId());
 				assertThat(currentCarts).hasSize(1);
 			}
 		}
@@ -1236,7 +1236,7 @@ public class RestPublicControllerTest {
 			// By username case:
 			AccountCredentials credentials = new AccountCredentials(USERNAME, DEFAULT_PASSWORD);
 			String requestBody = objectMapper.writeValueAsString(credentials);
-			List<Cart> carts = (List<Cart>) backetRepository.findAll();
+			List<Cart> carts = (List<Cart>) cartRepository.findAll();
 			assertThat(carts).isEmpty();
 
 			if (springMailUsername.equals("default_value")) {
@@ -1246,12 +1246,12 @@ public class RestPublicControllerTest {
 						.andExpect(header().string("Allow", "USER"));
 
 				assertThat(user.isAccountVerified()).isTrue();
-				carts = (List<Cart>) backetRepository.findAll();
+				carts = (List<Cart>) cartRepository.findAll();
 				assertThat(carts).hasSize(1);
 				assertThat(carts.get(0).getUser()).isEqualTo(user);
 			}
 
-			backetRepository.deleteAll();
+			cartRepository.deleteAll();
 			user.setAccountVerified(false);
 			urepository.save(user);
 
@@ -1266,7 +1266,7 @@ public class RestPublicControllerTest {
 						.andExpect(header().string("Allow", "USER"));
 
 				assertThat(user.isAccountVerified()).isTrue();
-				carts = (List<Cart>) backetRepository.findAll();
+				carts = (List<Cart>) cartRepository.findAll();
 				assertThat(carts).hasSize(1);
 				assertThat(carts.get(0).getUser()).isEqualTo(user);
 			}
@@ -1427,7 +1427,7 @@ public class RestPublicControllerTest {
 			assertThat(verifiedUser.isAccountVerified()).isTrue();
 			assertThat(verifiedUser.getVerificationCode()).isNull();
 
-			List<Cart> carts = (List<Cart>) backetRepository.findAll();
+			List<Cart> carts = (List<Cart>) cartRepository.findAll();
 			assertThat(carts).hasSize(1);
 			assertThat(carts.get(0).getUser()).isEqualTo(verifiedUser);
 			assertThat(carts.get(0).isCurrent()).isTrue();
@@ -1472,7 +1472,7 @@ public class RestPublicControllerTest {
 			BCryptPasswordEncoder bc = new BCryptPasswordEncoder();
 			assertThat(bc.matches(DEFAULT_PASSWORD, user.getPassword())).isTrue();
 
-			List<Cart> carts = (List<Cart>) backetRepository.findAll();
+			List<Cart> carts = (List<Cart>) cartRepository.findAll();
 			assertThat(carts).hasSize(1);
 			assertThat(carts.get(0).isCurrent()).isTrue();
 
@@ -1485,13 +1485,13 @@ public class RestPublicControllerTest {
 				mockMvc.perform(put(requestURI).contentType(MediaType.APPLICATION_JSON).content(requestBody))
 						.andExpect(status().isOk());
 				assertThat(user.isAccountVerified()).isTrue();
-				carts = (List<Cart>) backetRepository.findAll();
+				carts = (List<Cart>) cartRepository.findAll();
 				assertThat(carts).hasSize(1);
 			} else {
 				mockMvc.perform(put(requestURI).contentType(MediaType.APPLICATION_JSON).content(requestBody))
 						.andExpect(status().isNotImplemented());
 				assertThat(user.isAccountVerified()).isTrue();
-				carts = (List<Cart>) backetRepository.findAll();
+				carts = (List<Cart>) cartRepository.findAll();
 				assertThat(carts).hasSize(1);
 			}
 		}
@@ -1541,19 +1541,19 @@ public class RestPublicControllerTest {
 	private Cart createBacketWithUser(boolean current, String username) {
 		User user = this.createUser(username);
 
-		List<Cart> currentCarts = backetRepository.findCurrentByUserid(user.getId());
+		List<Cart> currentCarts = cartRepository.findCurrentByUserid(user.getId());
 		if (currentCarts.size() != 0 && current)
 			return currentCarts.get(0);
 
 		Cart newCart = new Cart(current, user);
-		backetRepository.save(newCart);
+		cartRepository.save(newCart);
 
 		return newCart;
 	}
 
 	private Cart createBacketNoUser(boolean current) {
 		Cart newCart = new Cart(current);
-		backetRepository.save(newCart);
+		cartRepository.save(newCart);
 
 		return newCart;
 	}

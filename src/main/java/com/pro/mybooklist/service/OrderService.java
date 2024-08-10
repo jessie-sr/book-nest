@@ -28,7 +28,7 @@ public class OrderService {
 	private OrderRepository orderRepository;
 
 	@Autowired
-	private BacketRepository backetRepository;
+	private CartRepository cartRepository;
 
 	@Autowired
 	private CartBookRepository cartBookRepository;
@@ -72,7 +72,7 @@ public class OrderService {
 	public TotalOfBacket getTotalOfOrderByOrderId(Long orderId) {
 		commonService.findOrder(orderId);
 
-		TotalOfBacket totalOfOrder = backetRepository.findTotalOfOrder(orderId);
+		TotalOfBacket totalOfOrder = cartRepository.findTotalOfOrder(orderId);
 		return totalOfOrder;
 	}
 
@@ -165,7 +165,7 @@ public class OrderService {
 
 	private void setBacketNotCurrent(Cart cart) {
 		cart.setCurrent(false);
-		backetRepository.save(cart);
+		cartRepository.save(cart);
 	}
 
 	private void tryToSendOrderInfoEmail(String firstnameOrUsername, String email, Long orderId, String password)

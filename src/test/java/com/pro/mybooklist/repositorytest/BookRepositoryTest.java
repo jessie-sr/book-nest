@@ -34,7 +34,7 @@ public class BookRepositoryTest {
 	private CategoryRepository crepository;
 
 	@Autowired
-	private BacketRepository backetrepository;
+	private CartRepository backetrepository;
 
 	@Autowired
 	private CartBookRepository cartBookRepository;

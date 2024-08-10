@@ -32,7 +32,7 @@ public class CartBookRepositoryTest {
 	private UserRepository urepository;
 
 	@Autowired
-	private BacketRepository backetRepository;
+	private CartRepository cartRepository;
 
 	@Autowired
 	private BookRepository bookRepository;
@@ -44,7 +44,7 @@ public class CartBookRepositoryTest {
 	public void resetUserRepo() {
 		crepository.deleteAll();
 		urepository.deleteAll();
-		backetRepository.deleteAll();
+		cartRepository.deleteAll();
 		bookRepository.deleteAll();
 		cartBookRepository.deleteAll();
 	}
@@ -238,19 +238,19 @@ public class CartBookRepositoryTest {
 	}
 
 	private Cart createBacketWithUser(User user) {
-		List<Cart> currentCarts = backetRepository.findCurrentByUserid(user.getId());
+		List<Cart> currentCarts = cartRepository.findCurrentByUserid(user.getId());
 		if (currentCarts.size() != 0)
 			return currentCarts.get(0);
 
 		Cart newCart = new Cart(true, user);
-		backetRepository.save(newCart);
+		cartRepository.save(newCart);
 
 		return newCart;
 	}
 
 	private Cart createBacketNoUser() {
 		Cart newCart = new Cart(true);
-		backetRepository.save(newCart);
+		cartRepository.save(newCart);
 
 		return newCart;
 	}

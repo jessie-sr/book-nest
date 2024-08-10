@@ -21,7 +21,7 @@ import com.pro.mybooklist.sqlforms.TotalOfBacket;
 @Service
 public class BacketService {
 	@Autowired
-	private BacketRepository backetRepository;
+	private CartRepository cartRepository;
 
 	@Autowired
 	private CartBookRepository cartBookRepository;
@@ -35,7 +35,7 @@ public class BacketService {
 		String password = backetInfo.getPassword();
 		commonService.findBacketAndCheckIsPrivateAndCheckPassword(backetId, password);
 
-		TotalOfBacket totalOfBacket = backetRepository.findTotalOfBacket(backetId);
+		TotalOfBacket totalOfBacket = cartRepository.findTotalOfBacket(backetId);
 		return totalOfBacket;
 	}
 
@@ -45,7 +45,7 @@ public class BacketService {
 		Long userId = user.getId();
 		commonService.findCurrentBacketOfUser(user);
 
-		TotalOfBacket totalOfCurrentBacket = backetRepository.findTotalOfCurrentCart(userId);
+		TotalOfBacket totalOfCurrentBacket = cartRepository.findTotalOfCurrentCart(userId);
 		return totalOfCurrentBacket;
 	}
 
@@ -56,7 +56,7 @@ public class BacketService {
 		Long userId = user.getId();
 		commonService.findCurrentBacketOfUser(user);
 
-		QuantityOfBacket quantityOfCurrentBacket = backetRepository.findQuantityInCurrent(userId);
+		QuantityOfBacket quantityOfCurrentBacket = cartRepository.findQuantityInCurrent(userId);
 		return quantityOfCurrentBacket;
 	}
 
@@ -73,7 +73,7 @@ public class BacketService {
 
 	private Long createBacket(String hashedPassword) {
 		Cart cart = new Cart(hashedPassword);
-		backetRepository.save(cart);
+		cartRepository.save(cart);
 		Long backetId = cart.getBacketid();
 
 		return backetId;

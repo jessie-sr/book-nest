@@ -69,7 +69,7 @@ public class RestAuthenticatedControllerTest {
 	private UserRepository urepository;
 
 	@Autowired
-	private BacketRepository backetRepository;
+	private CartRepository cartRepository;
 
 	@Autowired
 	private BookRepository bookRepository;
@@ -203,7 +203,7 @@ public class RestAuthenticatedControllerTest {
 			String requestURIGood = requestURI + bookId;
 			QuantityInfo quantityInfo = new QuantityInfo(1);
 			String requestBody = objectMapper.writeValueAsString(quantityInfo);
-			backetRepository.deleteAll();
+			cartRepository.deleteAll();
 
 			mockMvc.perform(post(requestURIGood).header("Authorization", jwt).contentType(MediaType.APPLICATION_JSON)
 					.content(requestBody)).andExpect(status().isOk());
@@ -242,7 +242,7 @@ public class RestAuthenticatedControllerTest {
 		public void testGetIdsOfBooksInCurrentCartNoCurrentBacketsCase() throws Exception {
 			String requestURI = "/booksids";
 
-			backetRepository.deleteAll();
+			cartRepository.deleteAll();
 
 			mockMvc.perform(get(requestURI).header("Authorization", jwt)).andExpect(status().isOk())
 					.andExpect(jsonPath("$.size()").value(0));
@@ -293,7 +293,7 @@ public class RestAuthenticatedControllerTest {
 			String requestURIGood = requestURI + authenticatedUserId;
 
 			// No current backet case:
-			backetRepository.deleteAll();
+			cartRepository.deleteAll();
 
 			mockMvc.perform(get(requestURIGood).header("Authorization", jwt)).andExpect(status().isOk())
 					.andExpect(jsonPath("$.size()").value(0));
@@ -330,7 +330,7 @@ public class RestAuthenticatedControllerTest {
 			String requestURI = "/getcurrenttotal";
 
 			// No current backet case:
-			backetRepository.deleteAll();
+			cartRepository.deleteAll();
 
 			MvcResult result = mockMvc.perform(get(requestURI).header("Authorization", jwt)).andExpect(status().isOk())
 					.andReturn();
@@ -380,7 +380,7 @@ public class RestAuthenticatedControllerTest {
 			String requestURIGood = requestURI + authenticatedUserId;
 
 			// No current backet case:
-			backetRepository.deleteAll();
+			cartRepository.deleteAll();
 
 			mockMvc.perform(delete(requestURIGood).header("Authorization", jwt)).andExpect(status().isOk());
 
@@ -440,7 +440,7 @@ public class RestAuthenticatedControllerTest {
 			String requestURIBookNotInBacket = requestURI + bookId;
 
 			// No current backet case:
-			backetRepository.deleteAll();
+			cartRepository.deleteAll();
 
 			mockMvc.perform(put(requestURIBookNotInBacket).header("Authorization", jwt))
 			.andExpect(status().isConflict());
@@ -518,7 +518,7 @@ public class RestAuthenticatedControllerTest {
 			String requestURIGood = requestURI + bookId;
 
 			// No current backet case:
-			backetRepository.deleteAll();
+			cartRepository.deleteAll();
 
 			mockMvc.perform(delete(requestURIGood).header("Authorization", jwt)).andExpect(status().isConflict());
 
@@ -565,7 +565,7 @@ public class RestAuthenticatedControllerTest {
 			String requestURI = "/currentbacketquantity";
 
 			// No current backet case:
-			backetRepository.deleteAll();
+			cartRepository.deleteAll();
 
 			MvcResult result = mockMvc.perform(get(requestURI).header("Authorization", jwt)).andExpect(status().isOk())
 					.andReturn();
@@ -618,7 +618,7 @@ public class RestAuthenticatedControllerTest {
 			String requestBody = objectMapper.writeValueAsString(addressInfoDefaultEmail);
 
 			// No current backet case:
-			backetRepository.deleteAll();
+			cartRepository.deleteAll();
 
 			mockMvc.perform(post(requestURIGood).header("Authorization", jwt).contentType(MediaType.APPLICATION_JSON)
 					.content(requestBody)).andExpect(status().isNotAcceptable());
@@ -659,9 +659,9 @@ public class RestAuthenticatedControllerTest {
 					.content(requestBody)).andExpect(status().isOk()).andExpect(jsonPath("$.orderid").exists())
 					.andExpect(jsonPath("$.password").exists());
 
-			List<Long> idsOfNotCurrentBacketsOfUser = backetRepository.findNotCurrentByUserid(authenticatedUserId);
+			List<Long> idsOfNotCurrentBacketsOfUser = cartRepository.findNotCurrentByUserid(authenticatedUserId);
 			assertThat(idsOfNotCurrentBacketsOfUser).hasSize(1);
-			List<Cart> carts = (List<Cart>) backetRepository.findAll();
+			List<Cart> carts = (List<Cart>) cartRepository.findAll();
 			assertThat(carts).hasSize(2);
 		}
 	}
@@ -779,7 +779,7 @@ public class RestAuthenticatedControllerTest {
 	}
 
 	private Order createOrderOutOfCurrentBacketOfAuthenticatedUser(int quantity, List<Book> books) {
-		List<Cart> backetsCurrentOfUser = backetRepository.findCurrentByUserid(authenticatedUserId);
+		List<Cart> backetsCurrentOfUser = cartRepository.findCurrentByUserid(authenticatedUserId);
 
 		Cart cart = backetsCurrentOfUser.get(0);
 
@@ -799,12 +799,12 @@ public class RestAuthenticatedControllerTest {
 	private Cart createBacketWithUser(boolean current, String username, String email) {
 		User user = this.createUser(username, email);
 
-		List<Cart> currentCarts = backetRepository.findCurrentByUserid(user.getId());
+		List<Cart> currentCarts = cartRepository.findCurrentByUserid(user.getId());
 		if (currentCarts.size() != 0 && current)
 			return currentCarts.get(0);
 
 		Cart newCart = new Cart(current, user);
-		backetRepository.save(newCart);
+		cartRepository.save(newCart);
 
 		return newCart;
 	}
@@ -863,7 +863,7 @@ public class RestAuthenticatedControllerTest {
 	private void resetRepos() {
 		crepository.deleteAll();
 		urepository.deleteAll();
-		backetRepository.deleteAll();
+		cartRepository.deleteAll();
 		bookRepository.deleteAll();
 		cartBookRepository.deleteAll();
 		orepository.deleteAll();
@@ -893,7 +893,7 @@ public class RestAuthenticatedControllerTest {
 
 	private void createSecondCurrentBacketForAuthenticatedUser() {
 		Cart newCurrentCart = new Cart(true, authenticatedUser);
-		backetRepository.save(newCurrentCart);
+		cartRepository.save(newCurrentCart);
 	}
 
 	private void addTwoBooksToAuthenticatedUserCurrentBacket() {

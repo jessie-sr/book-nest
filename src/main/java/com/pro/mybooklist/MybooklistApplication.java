@@ -26,7 +26,7 @@ public class MybooklistApplication {
 	private BookRepository repository;
 	
 	@Autowired
-	private BacketRepository barepository;
+	private CartRepository barepository;
 	
 	@Autowired
 	private CartBookRepository bbrepository;

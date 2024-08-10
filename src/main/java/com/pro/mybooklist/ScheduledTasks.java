@@ -11,12 +11,12 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.pro.mybooklist.model.Cart;
-import com.pro.mybooklist.model.BacketRepository;
+import com.pro.mybooklist.model.CartRepository;
 
 @Component
 public class ScheduledTasks {
 	@Autowired
-	private BacketRepository barepository;
+	private CartRepository barepository;
 
 	@Scheduled(fixedRate = 1, timeUnit = TimeUnit.DAYS)
 	@Transactional

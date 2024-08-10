@@ -12,7 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.pro.mybooklist.MyUser;
 import com.pro.mybooklist.model.Cart;
-import com.pro.mybooklist.model.BacketRepository;
+import com.pro.mybooklist.model.CartRepository;
 import com.pro.mybooklist.model.Book;
 import com.pro.mybooklist.model.BookRepository;
 import com.pro.mybooklist.model.Order;
@@ -26,7 +26,7 @@ public class CommonService {
 	private OrderRepository orderRepository;
 
 	@Autowired
-	private BacketRepository backetRepository;
+	private CartRepository cartRepository;
 
 	@Autowired
 	private UserRepository userRepository;
@@ -60,7 +60,7 @@ public class CommonService {
 	// The method to find out if the user has exactly one current backet:
 	public Cart findCurrentBacketOfUser(User user) {
 		Long userId = user.getId();
-		List<Cart> currentBacketsOfUser = backetRepository.findCurrentByUserid(userId);
+		List<Cart> currentBacketsOfUser = cartRepository.findCurrentByUserid(userId);
 
 		if (currentBacketsOfUser.size() != 1) {
 			return this.handleUserHasMoreOrLessThanOneCurrentBacketCase(currentBacketsOfUser, user);
@@ -72,10 +72,10 @@ public class CommonService {
 	
 	private Cart handleUserHasMoreOrLessThanOneCurrentBacketCase(List<Cart> currentBacketsOfUser, User user) {
 		for (Cart currentCartOfUser : currentBacketsOfUser) {
-			backetRepository.delete(currentCartOfUser);
+			cartRepository.delete(currentCartOfUser);
 		}
 		Cart newCurrentCartForUser = new Cart(true, user);
-		backetRepository.save(newCurrentCartForUser);
+		cartRepository.save(newCurrentCartForUser);
 		return newCurrentCartForUser;
 	}
 
@@ -84,21 +84,21 @@ public class CommonService {
 		Long userId = user.getId();
 		this.checkCurrentBacketsOfUser(userId);
 		Cart newCurrentCartForUser = new Cart(true, user);
-		backetRepository.save(newCurrentCartForUser);
+		cartRepository.save(newCurrentCartForUser);
 	}
 
 	private void checkCurrentBacketsOfUser(Long userId) {
-		List<Cart> currentCarts = backetRepository.findCurrentByUserid(userId);
+		List<Cart> currentCarts = cartRepository.findCurrentByUserid(userId);
 
 		if (currentCarts.size() > 0) {
 			for (Cart currentCartOfUser : currentCarts) {
-				backetRepository.delete(currentCartOfUser);
+				cartRepository.delete(currentCartOfUser);
 			}
 		}
 	}
 
 	private Cart findBacket(Long backetId) {
-		Optional<Cart> optionalBacket = backetRepository.findById(backetId);
+		Optional<Cart> optionalBacket = cartRepository.findById(backetId);
 
 		if (!optionalBacket.isPresent())
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The cart wasn't found by id");
