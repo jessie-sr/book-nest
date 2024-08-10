@@ -180,17 +180,17 @@ public class RestAuthenticatedControllerTest {
 			mockMvc.perform(post(requestURIGood).header("Authorization", jwt).contentType(MediaType.APPLICATION_JSON)
 					.content(requestBody)).andExpect(status().isOk());
 
-			List<BacketBook> backetBooks = (List<BacketBook>) backetBookRepository.findAll();
-			assertThat(backetBooks).hasSize(1);
-			assertThat(backetBooks.get(0).getQuantity()).isEqualTo(1);
+			List<CartBook> cartBooks = (List<CartBook>) backetBookRepository.findAll();
+			assertThat(cartBooks).hasSize(1);
+			assertThat(cartBooks.get(0).getQuantity()).isEqualTo(1);
 
 			// Book is already in the backet case:
 			mockMvc.perform(post(requestURIGood).header("Authorization", jwt).contentType(MediaType.APPLICATION_JSON)
 					.content(requestBody)).andExpect(status().isOk());
 
-			backetBooks = (List<BacketBook>) backetBookRepository.findAll();
-			assertThat(backetBooks).hasSize(1);
-			assertThat(backetBooks.get(0).getQuantity()).isEqualTo(2);
+			cartBooks = (List<CartBook>) backetBookRepository.findAll();
+			assertThat(cartBooks).hasSize(1);
+			assertThat(cartBooks.get(0).getQuantity()).isEqualTo(2);
 		}
 
 		@Test
@@ -208,9 +208,9 @@ public class RestAuthenticatedControllerTest {
 			mockMvc.perform(post(requestURIGood).header("Authorization", jwt).contentType(MediaType.APPLICATION_JSON)
 					.content(requestBody)).andExpect(status().isOk());
 
-			List<BacketBook> backetBooks = (List<BacketBook>) backetBookRepository.findAll();
-			assertThat(backetBooks).hasSize(1);
-			assertThat(backetBooks.get(0).getQuantity()).isEqualTo(1);
+			List<CartBook> cartBooks = (List<CartBook>) backetBookRepository.findAll();
+			assertThat(cartBooks).hasSize(1);
+			assertThat(cartBooks.get(0).getQuantity()).isEqualTo(1);
 		}
 
 		@Test
@@ -229,9 +229,9 @@ public class RestAuthenticatedControllerTest {
 			mockMvc.perform(post(requestURIGood).header("Authorization", jwt).contentType(MediaType.APPLICATION_JSON)
 					.content(requestBody)).andExpect(status().isOk());
 
-			List<BacketBook> backetBooks = (List<BacketBook>) backetBookRepository.findAll();
-			assertThat(backetBooks).hasSize(1);
-			assertThat(backetBooks.get(0).getQuantity()).isEqualTo(1);
+			List<CartBook> cartBooks = (List<CartBook>) backetBookRepository.findAll();
+			assertThat(cartBooks).hasSize(1);
+			assertThat(cartBooks.get(0).getQuantity()).isEqualTo(1);
 		}
 	}
 
@@ -468,16 +468,16 @@ public class RestAuthenticatedControllerTest {
 			mockMvc.perform(put(requestURIGood).header("Authorization", jwt)).andExpect(status().isOk())
 					.andExpect(content().string("The quantity of the book in the cart was reduced by one"));
 
-			List<BacketBook> backetBooks = (List<BacketBook>) backetBookRepository.findAll();
-			assertThat(backetBooks).hasSize(1);
-			assertThat(backetBooks.get(0).getQuantity()).isEqualTo(1);
+			List<CartBook> cartBooks = (List<CartBook>) backetBookRepository.findAll();
+			assertThat(cartBooks).hasSize(1);
+			assertThat(cartBooks.get(0).getQuantity()).isEqualTo(1);
 
 			// Book is reduced from the backet case:
 			mockMvc.perform(put(requestURIGood).header("Authorization", jwt)).andExpect(status().isOk())
 					.andExpect(content().string("The book was deleted from the cart"));
 
-			backetBooks = (List<BacketBook>) backetBookRepository.findAll();
-			assertThat(backetBooks).hasSize(0);
+			cartBooks = (List<CartBook>) backetBookRepository.findAll();
+			assertThat(cartBooks).hasSize(0);
 		}
 	}
 
@@ -542,8 +542,8 @@ public class RestAuthenticatedControllerTest {
 
 			mockMvc.perform(delete(requestURIGood).header("Authorization", jwt)).andExpect(status().isOk());
 
-			List<BacketBook> backetBooks = (List<BacketBook>) backetBookRepository.findAll();
-			assertThat(backetBooks).hasSize(0);
+			List<CartBook> cartBooks = (List<CartBook>) backetBookRepository.findAll();
+			assertThat(cartBooks).hasSize(0);
 		}
 	}
 
@@ -827,11 +827,11 @@ public class RestAuthenticatedControllerTest {
 		return user;
 	}
 
-	private BacketBook createBacketBookCustomQuantity(int quantity, Book book, Cart cart) {
-		BacketBook newBacketBook = new BacketBook(quantity, cart, book);
-		backetBookRepository.save(newBacketBook);
+	private CartBook createBacketBookCustomQuantity(int quantity, Book book, Cart cart) {
+		CartBook newCartBook = new CartBook(quantity, cart, book);
+		backetBookRepository.save(newCartBook);
 
-		return newBacketBook;
+		return newCartBook;
 	}
 
 	private Book createBook(String title, String categoryName, double price) {

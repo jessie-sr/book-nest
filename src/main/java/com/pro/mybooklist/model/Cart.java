@@ -42,7 +42,7 @@ public class Cart {
 	
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "backet")
-	private List<BacketBook> backetbooks;
+	private List<CartBook> backetbooks;
 	
 	@JsonIgnore
 	@OneToOne(cascade = CascadeType.ALL, mappedBy = "backet")
@@ -100,11 +100,11 @@ public class Cart {
 		this.user = user;
 	}
 
-	public List<BacketBook> getBacketbooks() {
+	public List<CartBook> getBacketbooks() {
 		return backetbooks;
 	}
 
-	public void setBacketbooks(List<BacketBook> backetbooks) {
+	public void setBacketbooks(List<CartBook> backetbooks) {
 		this.backetbooks = backetbooks;
 	}
 

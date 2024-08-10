@@ -10,7 +10,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "backet_book")
-public class BacketBook {
+public class CartBook {
 
 	@EmbeddedId
 	private BacketBookKey id;
@@ -28,9 +28,9 @@ public class BacketBook {
 	@JoinColumn(name = "bookid", nullable = false)
 	private Book book;
 
-	public BacketBook() {}
+	public CartBook() {}
 
-	public BacketBook(int quantity, Cart cart, Book book) {
+	public CartBook(int quantity, Cart cart, Book book) {
 		super();
 		BacketBookKey backetBookKey = new BacketBookKey(cart.getBacketid(), book.getId());
 		this.id = backetBookKey;
@@ -39,7 +39,7 @@ public class BacketBook {
 		this.book = book;
 	}
 
-	public BacketBook(Cart cart, Book book) {
+	public CartBook(Cart cart, Book book) {
 		super();
 		BacketBookKey backetBookKey = new BacketBookKey(cart.getBacketid(), book.getId());
 		this.id = backetBookKey;

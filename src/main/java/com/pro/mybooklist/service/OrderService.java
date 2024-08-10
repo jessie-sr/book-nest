@@ -158,8 +158,8 @@ public class OrderService {
 	}
 
 	private void checkIfBacketIsEmpty(Cart cart) {
-		List<BacketBook> backetBooksInBacket = backetBookRepository.findByBacket(cart);
-		if (backetBooksInBacket.size() == 0)
+		List<CartBook> backetBooksInCart = backetBookRepository.findByBacket(cart);
+		if (backetBooksInCart.size() == 0)
 			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "The cart is empty");
 	}
 

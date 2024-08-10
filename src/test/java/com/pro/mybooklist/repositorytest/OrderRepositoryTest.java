@@ -344,11 +344,11 @@ public class OrderRepositoryTest {
 		return user;
 	}
 
-	private BacketBook createBacketBookCustomQuantity(int quantity, Book book, Cart cart) {
-		BacketBook newBacketBook = new BacketBook(quantity, cart, book);
-		backetBookRepository.save(newBacketBook);
+	private CartBook createBacketBookCustomQuantity(int quantity, Book book, Cart cart) {
+		CartBook newCartBook = new CartBook(quantity, cart, book);
+		backetBookRepository.save(newCartBook);
 
-		return newBacketBook;
+		return newCartBook;
 	}
 
 	private Book createBook(String title, String categoryName, double price) {

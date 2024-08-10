@@ -7,10 +7,10 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface BacketBookRepository extends CrudRepository<BacketBook, Long>{
-	Optional<BacketBook> findById(BacketBookKey backetBookId);
+public interface BacketBookRepository extends CrudRepository<CartBook, Long>{
+	Optional<CartBook> findById(BacketBookKey backetBookId);
 	
-	List<BacketBook> findByBacket(Cart cart);
+	List<CartBook> findByBacket(Cart cart);
 	
 	long deleteByBacket(Cart cart);
 	

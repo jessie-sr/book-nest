@@ -168,33 +168,33 @@ public class MybooklistApplication {
 			barepository.save(cart2Admin);
 			
 			
-			bbrepository.save(new BacketBook(3, cart1User1, book1));
-			bbrepository.save(new BacketBook(3, cart1User1, book2));
-			bbrepository.save(new BacketBook(2, cart1User1, book3));
-			bbrepository.save(new BacketBook(1, cart1User1, book4));
-			bbrepository.save(new BacketBook(3, cart1User1, book5));
-			bbrepository.save(new BacketBook(2, cart1User1, book6));
-			bbrepository.save(new BacketBook(1, cart1User1, book7));
-			bbrepository.save(new BacketBook(4, cart1User1, book8));
-			bbrepository.save(new BacketBook(3, cart1User1, book9));
-			bbrepository.save(new BacketBook(4, cart1User1, book10));
+			bbrepository.save(new CartBook(3, cart1User1, book1));
+			bbrepository.save(new CartBook(3, cart1User1, book2));
+			bbrepository.save(new CartBook(2, cart1User1, book3));
+			bbrepository.save(new CartBook(1, cart1User1, book4));
+			bbrepository.save(new CartBook(3, cart1User1, book5));
+			bbrepository.save(new CartBook(2, cart1User1, book6));
+			bbrepository.save(new CartBook(1, cart1User1, book7));
+			bbrepository.save(new CartBook(4, cart1User1, book8));
+			bbrepository.save(new CartBook(3, cart1User1, book9));
+			bbrepository.save(new CartBook(4, cart1User1, book10));
 
 			
-			bbrepository.save(new BacketBook(1, cart1Admin, book2));
-			bbrepository.save(new BacketBook(3, cart1Admin, book11));
-			bbrepository.save(new BacketBook(2, cart1Admin, book4));
-			bbrepository.save(new BacketBook(1, cart1Admin, book5));
-			bbrepository.save(new BacketBook(3, cart1Admin, book7));
-			bbrepository.save(new BacketBook(2, cart1Admin, book8));
-			bbrepository.save(new BacketBook(1, cart1Admin, book9));
-			bbrepository.save(new BacketBook(4, cart1Admin, book10));
-			bbrepository.save(new BacketBook(3, cart1Admin, book12));
-			bbrepository.save(new BacketBook(4, cart1Admin, book13));
-			bbrepository.save(new BacketBook(1, cart1Admin, book14));
-			bbrepository.save(new BacketBook(2, cart1Admin, book15));
+			bbrepository.save(new CartBook(1, cart1Admin, book2));
+			bbrepository.save(new CartBook(3, cart1Admin, book11));
+			bbrepository.save(new CartBook(2, cart1Admin, book4));
+			bbrepository.save(new CartBook(1, cart1Admin, book5));
+			bbrepository.save(new CartBook(3, cart1Admin, book7));
+			bbrepository.save(new CartBook(2, cart1Admin, book8));
+			bbrepository.save(new CartBook(1, cart1Admin, book9));
+			bbrepository.save(new CartBook(4, cart1Admin, book10));
+			bbrepository.save(new CartBook(3, cart1Admin, book12));
+			bbrepository.save(new CartBook(4, cart1Admin, book13));
+			bbrepository.save(new CartBook(1, cart1Admin, book14));
+			bbrepository.save(new CartBook(2, cart1Admin, book15));
 			
-			bbrepository.save(new BacketBook(1, cart2Admin, book14));
-			bbrepository.save(new BacketBook(2, cart2Admin, book15));
+			bbrepository.save(new CartBook(1, cart2Admin, book14));
+			bbrepository.save(new CartBook(2, cart2Admin, book15));
 			
 			orepository.save(new Order("First", "Admin", "Finland", "Helsinki", "Juustenintie 3J 110", "00410", "In progress", "mymail@mail.com", cart1Admin, hashPwd));
 			orepository.save(new Order("First", "Userok","Jiji", "Hur", "Mesti 28 177", "511120", "In progress", "mymail2@mail.com", cart1User1, hashPwd));

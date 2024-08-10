@@ -107,11 +107,11 @@ public class BacketService {
 	private ResponseEntity<?> addQuantityOfBookToTheBacket(Cart cart, Long bookId, int additionalQuantity) {
 		Long backetId = cart.getBacketid();
 		Book book = commonService.findBook(bookId);
-		Optional<BacketBook> optionalBacketBook = this.getOptionalBacketBook(backetId, bookId);
+		Optional<CartBook> optionalBacketBook = this.getOptionalBacketBook(backetId, bookId);
 
 		if (optionalBacketBook.isPresent()) {
-			BacketBook backetBook = optionalBacketBook.get();
-			this.addQuantityToBacketBook(backetBook, additionalQuantity);
+			CartBook cartBook = optionalBacketBook.get();
+			this.addQuantityToBacketBook(cartBook, additionalQuantity);
 		} else {
 			this.createBacketBook(additionalQuantity, cart, book);
 		}
@@ -119,15 +119,15 @@ public class BacketService {
 		return new ResponseEntity<>("Book was added to cart successfully", HttpStatus.OK);
 	}
 
-	private void addQuantityToBacketBook(BacketBook backetBook, int additionalQuantity) {
-		int currentQuantity = backetBook.getQuantity();
+	private void addQuantityToBacketBook(CartBook cartBook, int additionalQuantity) {
+		int currentQuantity = cartBook.getQuantity();
 		int newQuantity = currentQuantity + additionalQuantity;
-		this.setBookQuantityInCart(newQuantity, backetBook);
+		this.setBookQuantityInCart(newQuantity, cartBook);
 	}
 
 	private void createBacketBook(int quantity, Cart cart, Book book) {
-		BacketBook backetBook = new BacketBook(quantity, cart, book);
-		backetBookRepository.save(backetBook);
+		CartBook cartBook = new CartBook(quantity, cart, book);
+		backetBookRepository.save(cartBook);
 	}
 
 	// Method to reduce the amount of book by bookid and backetInfo
@@ -153,19 +153,19 @@ public class BacketService {
 		Long backetId = cart.getBacketid();
 		commonService.findBook(bookId);
 
-		BacketBook backetBook = this.findBacketBook(bookId, backetId);
-		int quantity = backetBook.getQuantity();
+		CartBook cartBook = this.findBacketBook(bookId, backetId);
+		int quantity = cartBook.getQuantity();
 		quantity = quantity - 1;
 
-		return this.reduceQuantityOfBookInBacket(quantity, backetBook);
+		return this.reduceQuantityOfBookInBacket(quantity, cartBook);
 	}
 
-	private ResponseEntity<?> reduceQuantityOfBookInBacket(int quantity, BacketBook backetBook) {
+	private ResponseEntity<?> reduceQuantityOfBookInBacket(int quantity, CartBook cartBook) {
 		if (quantity > 0) {
-			this.setBookQuantityInCart(quantity, backetBook);
+			this.setBookQuantityInCart(quantity, cartBook);
 			return new ResponseEntity<>("The quantity of the book in the cart was reduced by one", HttpStatus.OK);
 		} else {
-			return this.deleteBookFromCart(backetBook);
+			return this.deleteBookFromCart(cartBook);
 		}
 	}
 
@@ -190,9 +190,9 @@ public class BacketService {
 	private ResponseEntity<?> deleteBookFromBacket(Cart cart, Long bookId) {
 		Long backetId = cart.getBacketid();
 		commonService.findBook(bookId);
-		BacketBook backetBook = this.findBacketBook(bookId, backetId);
+		CartBook cartBook = this.findBacketBook(bookId, backetId);
 
-		return this.deleteBookFromCart(backetBook);
+		return this.deleteBookFromCart(cartBook);
 	}
 
 	// Method to clear current backet of the authenticated user:
@@ -204,33 +204,33 @@ public class BacketService {
 		return new ResponseEntity<>(deleted + " records were deleted from current cart", HttpStatus.OK);
 	}
 
-	// Method to find BacketBook:
-	private BacketBook findBacketBook(Long bookId, Long backetId) {
-		Optional<BacketBook> optionalBacketBook = this.getOptionalBacketBook(backetId, bookId);
+	// Method to find CartBook:
+	private CartBook findBacketBook(Long bookId, Long backetId) {
+		Optional<CartBook> optionalBacketBook = this.getOptionalBacketBook(backetId, bookId);
 		if (!optionalBacketBook.isPresent())
 			throw new ResponseStatusException(HttpStatus.CONFLICT, "The book is not in the backet");
 
-		BacketBook backetBook = optionalBacketBook.get();
-		return backetBook;
+		CartBook cartBook = optionalBacketBook.get();
+		return cartBook;
 	}
 
 	// Method to find optional backet book by backetId and bookId:
-	private Optional<BacketBook> getOptionalBacketBook(Long backetId, Long bookId) {
+	private Optional<CartBook> getOptionalBacketBook(Long backetId, Long bookId) {
 		BacketBookKey backetBookKey = new BacketBookKey(backetId, bookId);
 
-		Optional<BacketBook> optionalBacketBook = backetBookRepository.findById(backetBookKey);
+		Optional<CartBook> optionalBacketBook = backetBookRepository.findById(backetBookKey);
 		return optionalBacketBook;
 	}
 
 	// Method to set new quantity for the book in the backet
-	private void setBookQuantityInCart(int quantity, BacketBook backetBook) {
-		backetBook.setQuantity(quantity);
-		backetBookRepository.save(backetBook);
+	private void setBookQuantityInCart(int quantity, CartBook cartBook) {
+		cartBook.setQuantity(quantity);
+		backetBookRepository.save(cartBook);
 	}
 
-	// Method to delete the book from the backet by deleting backetBook record:
-	private ResponseEntity<?> deleteBookFromCart(BacketBook backetBook) {
-		backetBookRepository.delete(backetBook);
+	// Method to delete the book from the backet by deleting cartBook record:
+	private ResponseEntity<?> deleteBookFromCart(CartBook cartBook) {
+		backetBookRepository.delete(cartBook);
 		return new ResponseEntity<>("The book was deleted from the cart", HttpStatus.OK);
 	}
 }
