@@ -97,12 +97,12 @@ public class CartBookRepositoryTest {
 		List<CartBook> cartBooks = (List<CartBook>) backetBookRepository.findAll();
 		assertThat(cartBooks).isEmpty();
 
-		BacketBookKey wrongKey = new BacketBookKey(Long.valueOf(2), Long.valueOf(2));
+		CartBookKey wrongKey = new CartBookKey(Long.valueOf(2), Long.valueOf(2));
 		Optional<CartBook> optionalBacketBook = backetBookRepository.findById(wrongKey);
 		assertThat(optionalBacketBook).isNotPresent();
 
 		CartBook newCartBook = this.createBacketBookDefaultQuantityNoUser("Little Women", "Other");
-		BacketBookKey goodKey = newCartBook.getId();
+		CartBookKey goodKey = newCartBook.getId();
 
 		optionalBacketBook = backetBookRepository.findById(goodKey);
 		assertThat(optionalBacketBook).isPresent();
@@ -149,7 +149,7 @@ public class CartBookRepositoryTest {
 	@Rollback
 	public void testDeleteByIdAndDeleteAll() {
 		CartBook cartBookToDelete = this.createBacketBookCustomQuantityNoUser(2, "Little Women", "Other");
-		BacketBookKey key = cartBookToDelete.getId();
+		CartBookKey key = cartBookToDelete.getId();
 		backetBookRepository.deleteById(key);
 		
 		Optional<CartBook> optionalBacketBook = backetBookRepository.findById(key);

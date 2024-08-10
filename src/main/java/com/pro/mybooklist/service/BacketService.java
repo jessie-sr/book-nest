@@ -216,9 +216,9 @@ public class BacketService {
 
 	// Method to find optional backet book by backetId and bookId:
 	private Optional<CartBook> getOptionalBacketBook(Long backetId, Long bookId) {
-		BacketBookKey backetBookKey = new BacketBookKey(backetId, bookId);
+		CartBookKey cartBookKey = new CartBookKey(backetId, bookId);
 
-		Optional<CartBook> optionalBacketBook = backetBookRepository.findById(backetBookKey);
+		Optional<CartBook> optionalBacketBook = backetBookRepository.findById(cartBookKey);
 		return optionalBacketBook;
 	}
 

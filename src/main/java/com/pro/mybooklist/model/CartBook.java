@@ -13,7 +13,7 @@ import jakarta.persistence.Table;
 public class CartBook {
 
 	@EmbeddedId
-	private BacketBookKey id;
+	private CartBookKey id;
 
 	@Column(name = "quantity")
 	private int quantity;
@@ -32,8 +32,8 @@ public class CartBook {
 
 	public CartBook(int quantity, Cart cart, Book book) {
 		super();
-		BacketBookKey backetBookKey = new BacketBookKey(cart.getBacketid(), book.getId());
-		this.id = backetBookKey;
+		CartBookKey cartBookKey = new CartBookKey(cart.getBacketid(), book.getId());
+		this.id = cartBookKey;
 		this.quantity = quantity;
 		this.cart = cart;
 		this.book = book;
@@ -41,18 +41,18 @@ public class CartBook {
 
 	public CartBook(Cart cart, Book book) {
 		super();
-		BacketBookKey backetBookKey = new BacketBookKey(cart.getBacketid(), book.getId());
-		this.id = backetBookKey;
+		CartBookKey cartBookKey = new CartBookKey(cart.getBacketid(), book.getId());
+		this.id = cartBookKey;
 		this.quantity = 1;
 		this.cart = cart;
 		this.book = book;
 	}
 
-	public BacketBookKey getId() {
+	public CartBookKey getId() {
 		return id;
 	}
 
-	public void setId(BacketBookKey id) {
+	public void setId(CartBookKey id) {
 		this.id = id;
 	}
 

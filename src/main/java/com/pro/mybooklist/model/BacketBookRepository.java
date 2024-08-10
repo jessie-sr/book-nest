@@ -8,11 +8,11 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BacketBookRepository extends CrudRepository<CartBook, Long>{
-	Optional<CartBook> findById(BacketBookKey backetBookId);
+	Optional<CartBook> findById(CartBookKey backetBookId);
 	
 	List<CartBook> findByBacket(Cart cart);
 	
 	long deleteByBacket(Cart cart);
 	
-	long deleteById(BacketBookKey backetBookId);
+	long deleteById(CartBookKey backetBookId);
 }

@@ -7,7 +7,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
 @Embeddable
-public class BacketBookKey implements Serializable {
+public class CartBookKey implements Serializable {
 	private static final long serialVersionUID = -6860012402807015054L;
 
 	@Column(name = "backetid")
@@ -16,9 +16,9 @@ public class BacketBookKey implements Serializable {
 	@Column(name = "bookid")
 	Long bookid;
 	
-	public BacketBookKey() {}
+	public CartBookKey() {}
 
-	public BacketBookKey(Long backetid, Long bookid) {
+	public CartBookKey(Long backetid, Long bookid) {
 		super();
 		this.backetid = backetid;
 		this.bookid = bookid;
@@ -53,7 +53,7 @@ public class BacketBookKey implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		BacketBookKey other = (BacketBookKey) obj;
+		CartBookKey other = (CartBookKey) obj;
 		return Objects.equals(backetid, other.backetid) && Objects.equals(bookid, other.bookid);
 	}
 }
