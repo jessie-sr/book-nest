@@ -269,11 +269,11 @@ public class RestPublicControllerTest {
 			String requestURI = "/addbook/";
 
 			Cart newCart = createBacketWithUser(true, USERNAME);
-			Long privateBacketId = newCart.getCartid();
+			Long privatecartid = newCart.getCartid();
 
 			BookQuantityInfo bookQuantityInfo = new BookQuantityInfo(2, Long.valueOf(2), WRONG_PWD);
 			String requestBody = objectMapper.writeValueAsString(bookQuantityInfo);
-			String requestURIBacketIsPrivate = requestURI + privateBacketId;
+			String requestURIBacketIsPrivate = requestURI + privatecartid;
 			mockMvc.perform(
 					post(requestURIBacketIsPrivate).contentType(MediaType.APPLICATION_JSON).content(requestBody))
 					.andExpect(status().isUnauthorized());
@@ -285,9 +285,9 @@ public class RestPublicControllerTest {
 			String requestURI = "/addbook/";
 
 			Cart cart = createBacketNoUser(true);
-			Long backetId = cart.getCartid();
+			Long cartid = cart.getCartid();
 
-			String goodRequestURI = requestURI + backetId;
+			String goodRequestURI = requestURI + cartid;
 
 			BookQuantityInfo bookQuantityInfoWrongPwd = new BookQuantityInfo(2, Long.valueOf(2), WRONG_PWD);
 			String requestBodyWrongPwd = objectMapper.writeValueAsString(bookQuantityInfoWrongPwd);
@@ -301,8 +301,8 @@ public class RestPublicControllerTest {
 			String requestURI = "/addbook/";
 
 			Cart cart = createBacketNoUser(false);
-			Long backetId = cart.getCartid();
-			String requestURINotCurrentBacket = requestURI + backetId;
+			Long cartid = cart.getCartid();
+			String requestURINotCurrentBacket = requestURI + cartid;
 
 			BookQuantityInfo bookQuantityInfo = new BookQuantityInfo(2, Long.valueOf(2), DEFAULT_PASSWORD);
 			String requestBody = objectMapper.writeValueAsString(bookQuantityInfo);
@@ -317,8 +317,8 @@ public class RestPublicControllerTest {
 			String requestURI = "/addbook/";
 
 			Cart cart = createBacketNoUser(true);
-			Long backetId = cart.getCartid();
-			String requestURIGood = requestURI + backetId;
+			Long cartid = cart.getCartid();
+			String requestURIGood = requestURI + cartid;
 
 			BookQuantityInfo bookQuantityInfo = new BookQuantityInfo(2, Long.valueOf(2), DEFAULT_PASSWORD);
 			String requestBody = objectMapper.writeValueAsString(bookQuantityInfo);
@@ -336,8 +336,8 @@ public class RestPublicControllerTest {
 			String requestURI = "/addbook/";
 
 			Cart cart = createBacketNoUser(true);
-			Long backetId = cart.getCartid();
-			String requestURIGood = requestURI + backetId;
+			Long cartid = cart.getCartid();
+			String requestURIGood = requestURI + cartid;
 
 			Book book = createBook(BOOK_TITLE, OTHER_CATEGORY, DEFAULT_PRICE);
 			Long bookId = book.getId();
@@ -362,10 +362,10 @@ public class RestPublicControllerTest {
 	}
 
 	@Nested
-	class testGetIdsOfBooksByBacketid {
+	class testGetIdsOfBooksBycartid {
 		@Test
 		@Rollback
-		public void testGetIdsOfBooksByBacketidBacketNotFoundCase() throws Exception {
+		public void testGetIdsOfBooksBycartidBacketNotFoundCase() throws Exception {
 			String requestURI = "/booksids/";
 
 			String requestURIBacketNotFound = requestURI + Long.valueOf(2);
@@ -375,26 +375,26 @@ public class RestPublicControllerTest {
 
 		@Test
 		@Rollback
-		public void testGetIdsOfBooksByBacketidBacketHasUserCase() throws Exception {
+		public void testGetIdsOfBooksBycartidBacketHasUserCase() throws Exception {
 			String requestURI = "/booksids/";
 
 			Cart cart = createBacketWithUser(true, USERNAME);
-			Long backetId = cart.getCartid();
+			Long cartid = cart.getCartid();
 
-			String requestURIBacketHasUser = requestURI + backetId;
+			String requestURIBacketHasUser = requestURI + cartid;
 
 			mockMvc.perform(get(requestURIBacketHasUser)).andExpect(status().isUnauthorized());
 		}
 
 		@Test
 		@Rollback
-		public void testGetIdsOfBooksByBacketidGoodCases() throws Exception {
+		public void testGetIdsOfBooksBycartidGoodCases() throws Exception {
 			String requestURI = "/booksids/";
 
 			Cart cart = createBacketNoUser(true);
-			Long backetId = cart.getCartid();
+			Long cartid = cart.getCartid();
 
-			String requestURIGood = requestURI + backetId;
+			String requestURIGood = requestURI + cartid;
 			// Empty lost case
 			mockMvc.perform(get(requestURIGood)).andExpect(status().isOk()).andExpect(jsonPath("$.size()").value(0));
 
@@ -425,9 +425,9 @@ public class RestPublicControllerTest {
 			String requestURI = "/showcart";
 
 			Cart cartWithOwner = createBacketWithUser(false, USERNAME);
-			Long backetId = cartWithOwner.getCartid();
+			Long cartid = cartWithOwner.getCartid();
 
-			BacketInfo backetInfo = new BacketInfo(backetId, WRONG_PWD);
+			BacketInfo backetInfo = new BacketInfo(cartid, WRONG_PWD);
 			String requestBody = objectMapper.writeValueAsString(backetInfo);
 			mockMvc.perform(post(requestURI).contentType(MediaType.APPLICATION_JSON).content(requestBody))
 					.andExpect(status().isUnauthorized());
@@ -439,9 +439,9 @@ public class RestPublicControllerTest {
 			String requestURI = "/showcart";
 
 			Cart cart = createBacketNoUser(false);
-			Long backetId = cart.getCartid();
+			Long cartid = cart.getCartid();
 
-			BacketInfo backetInfoWrongPwd = new BacketInfo(backetId, WRONG_PWD);
+			BacketInfo backetInfoWrongPwd = new BacketInfo(cartid, WRONG_PWD);
 			String requestBodyWrongPwd = objectMapper.writeValueAsString(backetInfoWrongPwd);
 			mockMvc.perform(post(requestURI).contentType(MediaType.APPLICATION_JSON).content(requestBodyWrongPwd))
 					.andExpect(status().isBadRequest());
@@ -453,9 +453,9 @@ public class RestPublicControllerTest {
 			String requestURI = "/showcart";
 
 			Cart cart = createBacketNoUser(false);
-			Long backetId = cart.getCartid();
+			Long cartid = cart.getCartid();
 
-			BacketInfo backetInfo = new BacketInfo(backetId, DEFAULT_PASSWORD);
+			BacketInfo backetInfo = new BacketInfo(cartid, DEFAULT_PASSWORD);
 			String requestBody = objectMapper.writeValueAsString(backetInfo);
 			// Empty cart case;
 			mockMvc.perform(post(requestURI).contentType(MediaType.APPLICATION_JSON).content(requestBody))
@@ -502,7 +502,7 @@ public class RestPublicControllerTest {
 	class testGetTotalByCartId {
 		@Test
 		@Rollback
-		public void testGetTotalByBacketIdBacketNotFoundCase() throws Exception {
+		public void testGetTotalBycartidBacketNotFoundCase() throws Exception {
 			String requestURI = "/totalofbacket";
 
 			BacketInfo backetInfoNotFound = new BacketInfo(Long.valueOf(2), DEFAULT_PASSWORD);
@@ -514,13 +514,13 @@ public class RestPublicControllerTest {
 
 		@Test
 		@Rollback
-		public void testGetTotalByBacketIdBacketIsPrivateCase() throws Exception {
+		public void testGetTotalBycartidBacketIsPrivateCase() throws Exception {
 			String requestURI = "/totalofbacket";
 
 			Cart newCart = createBacketWithUser(true, USERNAME);
-			Long backetId = newCart.getCartid();
+			Long cartid = newCart.getCartid();
 
-			BacketInfo backetInfoPrivateBacket = new BacketInfo(backetId, DEFAULT_PASSWORD);
+			BacketInfo backetInfoPrivateBacket = new BacketInfo(cartid, DEFAULT_PASSWORD);
 			String requestBodyPrivateBacket = objectMapper.writeValueAsString(backetInfoPrivateBacket);
 
 			mockMvc.perform(post(requestURI).contentType(MediaType.APPLICATION_JSON).content(requestBodyPrivateBacket))
@@ -529,13 +529,13 @@ public class RestPublicControllerTest {
 
 		@Test
 		@Rollback
-		public void testGetTotalByBacketIdWrongPasswordCase() throws Exception {
+		public void testGetTotalBycartidWrongPasswordCase() throws Exception {
 			String requestURI = "/totalofbacket";
 
 			Cart newCart = createBacketNoUser(true);
-			Long backetId = newCart.getCartid();
+			Long cartid = newCart.getCartid();
 
-			BacketInfo backetInfoWrongPwd = new BacketInfo(backetId, WRONG_PWD);
+			BacketInfo backetInfoWrongPwd = new BacketInfo(cartid, WRONG_PWD);
 			String requestBodyWrongPwd = objectMapper.writeValueAsString(backetInfoWrongPwd);
 
 			mockMvc.perform(post(requestURI).contentType(MediaType.APPLICATION_JSON).content(requestBodyWrongPwd))
@@ -544,13 +544,13 @@ public class RestPublicControllerTest {
 
 		@Test
 		@Rollback
-		public void testGetTotalByBacketIdGoodCases() throws Exception {
+		public void testGetTotalBycartidGoodCases() throws Exception {
 			String requestURI = "/totalofbacket";
 
 			Cart newCart = createBacketNoUser(true);
-			Long backetId = newCart.getCartid();
+			Long cartid = newCart.getCartid();
 
-			BacketInfo backetInfo = new BacketInfo(backetId, DEFAULT_PASSWORD);
+			BacketInfo backetInfo = new BacketInfo(cartid, DEFAULT_PASSWORD);
 			String requestBody = objectMapper.writeValueAsString(backetInfo);
 
 			// Empty backet case
@@ -625,9 +625,9 @@ public class RestPublicControllerTest {
 			String requestURI = "/reduceitemnoauth/";
 
 			Cart cartWithOwner = createBacketWithUser(true, USERNAME);
-			Long backetId = cartWithOwner.getCartid();
+			Long cartid = cartWithOwner.getCartid();
 
-			BacketInfo backetInfoPrivateBacket = new BacketInfo(backetId, WRONG_PWD);
+			BacketInfo backetInfoPrivateBacket = new BacketInfo(cartid, WRONG_PWD);
 			String requestBody = objectMapper.writeValueAsString(backetInfoPrivateBacket);
 			String requestURIBookNotFound = requestURI + Long.valueOf(2);
 
@@ -641,9 +641,9 @@ public class RestPublicControllerTest {
 			String requestURI = "/reduceitemnoauth/";
 
 			Cart cart = createBacketNoUser(true);
-			Long backetId = cart.getCartid();
+			Long cartid = cart.getCartid();
 
-			BacketInfo backetInfoWrongPwd = new BacketInfo(backetId, WRONG_PWD);
+			BacketInfo backetInfoWrongPwd = new BacketInfo(cartid, WRONG_PWD);
 			String requestBody = objectMapper.writeValueAsString(backetInfoWrongPwd);
 			String requestURIBookNotFound = requestURI + Long.valueOf(2);
 
@@ -657,9 +657,9 @@ public class RestPublicControllerTest {
 			String requestURI = "/reduceitemnoauth/";
 
 			Cart cart = createBacketNoUser(false);
-			Long backetId = cart.getCartid();
+			Long cartid = cart.getCartid();
 
-			BacketInfo backetInfoNotCurrent = new BacketInfo(backetId, DEFAULT_PASSWORD);
+			BacketInfo backetInfoNotCurrent = new BacketInfo(cartid, DEFAULT_PASSWORD);
 			String requestBody = objectMapper.writeValueAsString(backetInfoNotCurrent);
 			String requestURIBookNotFound = requestURI + Long.valueOf(2);
 
@@ -673,9 +673,9 @@ public class RestPublicControllerTest {
 			String requestURI = "/reduceitemnoauth/";
 
 			Cart cart = createBacketNoUser(true);
-			Long backetId = cart.getCartid();
+			Long cartid = cart.getCartid();
 
-			BacketInfo backetInfoGood = new BacketInfo(backetId, DEFAULT_PASSWORD);
+			BacketInfo backetInfoGood = new BacketInfo(cartid, DEFAULT_PASSWORD);
 			String requestBodyGood = objectMapper.writeValueAsString(backetInfoGood);
 			String requestURIBookNotFound = requestURI + Long.valueOf(2);
 
@@ -693,12 +693,12 @@ public class RestPublicControllerTest {
 			String requestURI = "/reduceitemnoauth/";
 
 			Cart cart = createBacketNoUser(true);
-			Long backetId = cart.getCartid();
+			Long cartid = cart.getCartid();
 
 			Book book = createBook(BOOK_TITLE, OTHER_CATEGORY, DEFAULT_PRICE);
 			Long bookId = book.getId();
 
-			BacketInfo backetInfo = new BacketInfo(backetId, DEFAULT_PASSWORD);
+			BacketInfo backetInfo = new BacketInfo(cartid, DEFAULT_PASSWORD);
 			String requestBody = objectMapper.writeValueAsString(backetInfo);
 			String requestURIBookNotinBacket = requestURI + bookId;
 
@@ -712,14 +712,14 @@ public class RestPublicControllerTest {
 			String requestURI = "/reduceitemnoauth/";
 
 			Cart cart = createBacketNoUser(true);
-			Long backetId = cart.getCartid();
+			Long cartid = cart.getCartid();
 
 			Book book = createBook(BOOK_TITLE, OTHER_CATEGORY, DEFAULT_PRICE);
 			Long bookId = book.getId();
 
 			createBacketBookCustomQuantity(2, book, cart);
 
-			BacketInfo backetInfo = new BacketInfo(backetId, DEFAULT_PASSWORD);
+			BacketInfo backetInfo = new BacketInfo(cartid, DEFAULT_PASSWORD);
 			String requestBody = objectMapper.writeValueAsString(backetInfo);
 			String requestURIOk = requestURI + bookId;
 
@@ -737,14 +737,14 @@ public class RestPublicControllerTest {
 			String requestURI = "/reduceitemnoauth/";
 
 			Cart cart = createBacketNoUser(true);
-			Long backetId = cart.getCartid();
+			Long cartid = cart.getCartid();
 
 			Book book = createBook(BOOK_TITLE, OTHER_CATEGORY, DEFAULT_PRICE);
 			Long bookId = book.getId();
 
 			createBacketBookCustomQuantity(1, book, cart);
 
-			BacketInfo backetInfo = new BacketInfo(backetId, DEFAULT_PASSWORD);
+			BacketInfo backetInfo = new BacketInfo(cartid, DEFAULT_PASSWORD);
 			String requestBody = objectMapper.writeValueAsString(backetInfo);
 			String requestURIOk = requestURI + bookId;
 
@@ -782,9 +782,9 @@ public class RestPublicControllerTest {
 			String requestURI = "/deletebook/";
 
 			Cart cartWithOwner = createBacketWithUser(true, USERNAME);
-			Long backetId = cartWithOwner.getCartid();
+			Long cartid = cartWithOwner.getCartid();
 
-			BacketInfo backetInfoPrivatBacket = new BacketInfo(backetId, WRONG_PWD);
+			BacketInfo backetInfoPrivatBacket = new BacketInfo(cartid, WRONG_PWD);
 			String requestBody = objectMapper.writeValueAsString(backetInfoPrivatBacket);
 			String requestURIBookNotFound = requestURI + Long.valueOf(2);
 
@@ -798,9 +798,9 @@ public class RestPublicControllerTest {
 			String requestURI = "/deletebook/";
 
 			Cart cart = createBacketNoUser(true);
-			Long backetId = cart.getCartid();
+			Long cartid = cart.getCartid();
 
-			BacketInfo backetInfoWrongPwd = new BacketInfo(backetId, WRONG_PWD);
+			BacketInfo backetInfoWrongPwd = new BacketInfo(cartid, WRONG_PWD);
 			String requestBody = objectMapper.writeValueAsString(backetInfoWrongPwd);
 			String requestURIBookNotFound = requestURI + Long.valueOf(2);
 
@@ -814,9 +814,9 @@ public class RestPublicControllerTest {
 			String requestURI = "/deletebook/";
 
 			Cart cart = createBacketNoUser(false);
-			Long backetId = cart.getCartid();
+			Long cartid = cart.getCartid();
 
-			BacketInfo backetInfoNotCurrent = new BacketInfo(backetId, DEFAULT_PASSWORD);
+			BacketInfo backetInfoNotCurrent = new BacketInfo(cartid, DEFAULT_PASSWORD);
 			String requestBody = objectMapper.writeValueAsString(backetInfoNotCurrent);
 			String requestURIBookNotFound = requestURI + Long.valueOf(2);
 
@@ -830,9 +830,9 @@ public class RestPublicControllerTest {
 			String requestURI = "/deletebook/";
 
 			Cart cart = createBacketNoUser(true);
-			Long backetId = cart.getCartid();
+			Long cartid = cart.getCartid();
 
-			BacketInfo backetInfo = new BacketInfo(backetId, DEFAULT_PASSWORD);
+			BacketInfo backetInfo = new BacketInfo(cartid, DEFAULT_PASSWORD);
 			String requestBodyBookNotFound = objectMapper.writeValueAsString(backetInfo);
 			String requestURIBookNotFound = requestURI + Long.valueOf(2);
 
@@ -846,12 +846,12 @@ public class RestPublicControllerTest {
 			String requestURI = "/deletebook/";
 
 			Cart cart = createBacketNoUser(true);
-			Long backetId = cart.getCartid();
+			Long cartid = cart.getCartid();
 
 			Book book = createBook(BOOK_TITLE, OTHER_CATEGORY, DEFAULT_PRICE);
 			Long bookId = book.getId();
 
-			BacketInfo backetInfo = new BacketInfo(backetId, DEFAULT_PASSWORD);
+			BacketInfo backetInfo = new BacketInfo(cartid, DEFAULT_PASSWORD);
 			String requestBody = objectMapper.writeValueAsString(backetInfo);
 			String requestURIBookNotInBacket = requestURI + bookId;
 
@@ -867,14 +867,14 @@ public class RestPublicControllerTest {
 			String requestURI = "/deletebook/";
 
 			Cart cart = createBacketNoUser(true);
-			Long backetId = cart.getCartid();
+			Long cartid = cart.getCartid();
 
 			Book book = createBook(BOOK_TITLE, OTHER_CATEGORY, DEFAULT_PRICE);
 			Long bookId = book.getId();
 
 			createBacketBookCustomQuantity(3, book, cart);
 
-			BacketInfo backetInfoWithBookId = new BacketInfo(backetId, DEFAULT_PASSWORD);
+			BacketInfo backetInfoWithBookId = new BacketInfo(cartid, DEFAULT_PASSWORD);
 			String requestBody = objectMapper.writeValueAsString(backetInfoWithBookId);
 			String requestURIOk = requestURI + bookId;
 
@@ -891,14 +891,14 @@ public class RestPublicControllerTest {
 			String requestURI = "/deletebook/";
 
 			Cart cart = createBacketNoUser(true);
-			Long backetId = cart.getCartid();
+			Long cartid = cart.getCartid();
 
 			Book book = createBook(BOOK_TITLE, OTHER_CATEGORY, DEFAULT_PRICE);
 			Long bookId = book.getId();
 
 			createBacketBookCustomQuantity(1, book, cart);
 
-			BacketInfo backetInfo = new BacketInfo(backetId, DEFAULT_PASSWORD);
+			BacketInfo backetInfo = new BacketInfo(cartid, DEFAULT_PASSWORD);
 			String requestBody = objectMapper.writeValueAsString(backetInfo);
 			String requestURIOk = requestURI + bookId;
 

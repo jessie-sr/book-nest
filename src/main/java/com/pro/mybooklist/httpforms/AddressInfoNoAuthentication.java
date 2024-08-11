@@ -9,13 +9,13 @@ public class AddressInfoNoAuthentication {
 	private String postcode;
 	private String email;
 	private String note;
-	private Long backetid;
+	private Long cartid;
 	private String password;
 	
 	public AddressInfoNoAuthentication() {}
 	
 	public AddressInfoNoAuthentication(String firstname, String lastname, String country, String city, String street,
-			String postcode, String email, String note, Long backetid, String password) {
+			String postcode, String email, String note, Long cartid, String password) {
 		this.firstname = firstname;
 		this.lastname = lastname;
 		this.country = country;
@@ -24,7 +24,7 @@ public class AddressInfoNoAuthentication {
 		this.postcode = postcode;
 		this.email = email;
 		this.note = note;
-		this.backetid = backetid;
+		this.cartid = cartid;
 		this.password = password;
 	}
 
@@ -77,10 +77,10 @@ public class AddressInfoNoAuthentication {
 		this.note = note;
 	}
 	public Long getCartid() {
-		return backetid;
+		return cartid;
 	}
-	public void setBacketid(Long backetid) {
-		this.backetid = backetid;
+	public void setcartid(Long cartid) {
+		this.cartid = cartid;
 	}
 	public String getPassword() {
 		return password;

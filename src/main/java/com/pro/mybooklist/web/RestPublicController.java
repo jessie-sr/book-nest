@@ -103,10 +103,10 @@ public class RestPublicController {
 
 	}
 
-	@GetMapping("/booksids/{backetid}")
-	public @ResponseBody List<Long> getIdsOfBooksByBacketid(@PathVariable("backetid") Long backetId) {
+	@GetMapping("/booksids/{cartid}")
+	public @ResponseBody List<Long> getIdsOfBooksBycartid(@PathVariable("cartid") Long cartid) {
 
-		return bookService.getIdsOfBooksByBacketid(backetId);
+		return bookService.getIdsOfBooksBycartid(cartid);
 
 	}
 
@@ -125,9 +125,9 @@ public class RestPublicController {
 	}
 
 	@PostMapping("/totalofbacket")
-	public @ResponseBody TotalOfCart getTotalByBacketId(@RequestBody BacketInfo backetInfo) {
+	public @ResponseBody TotalOfCart getTotalBycartid(@RequestBody BacketInfo backetInfo) {
 
-		return backetService.getTotalByBacketId(backetInfo);
+		return backetService.getTotalBycartid(backetInfo);
 
 	}
 
@@ -152,11 +152,11 @@ public class RestPublicController {
 
 	}
 
-	@PostMapping("/addbook/{backetid}")
-	public ResponseEntity<?> addBookToCartNoAuthentication(@PathVariable("backetid") Long backetId,
+	@PostMapping("/addbook/{cartid}")
+	public ResponseEntity<?> addBookToCartNoAuthentication(@PathVariable("cartid") Long cartid,
 			@RequestBody BookQuantityInfo bookQuantity) {
 
-		return backetService.addBookToCartNoAuthentication(backetId, bookQuantity);
+		return backetService.addBookToCartNoAuthentication(cartid, bookQuantity);
 
 	}
 

@@ -91,9 +91,9 @@ public class CartRepositoryTest {
 		assertThat(optionalBacket).isNotPresent();
 
 		Cart cart = this.createBacketNoUser(true);
-		Long backetId = cart.getCartid();
+		Long cartid = cart.getCartid();
 
-		optionalBacket = backetrepository.findById(backetId);
+		optionalBacket = backetrepository.findById(cartid);
 		assertThat(optionalBacket).isPresent();
 
 		this.createBacketNoUser(true);
@@ -134,20 +134,20 @@ public class CartRepositoryTest {
 
 		String username = "user1";
 		Cart cart = this.createBacketWithUser(true, username);
-		Long backetId = cart.getCartid();
+		Long cartid = cart.getCartid();
 
 		double price1 = 10.2;
 		Book book1 = this.createBook("Little Women", "Other", price1);
 		this.createBacketBookCustomQuantity(2, book1, cart);
 
-		totalOfBacket = backetrepository.findTotalOfCart(backetId);
+		totalOfBacket = backetrepository.findTotalOfCart(cartid);
 		assertThat(totalOfBacket).isNotNull();
 		assertThat(totalOfBacket.getTotal()).isEqualTo(price1 * 2);
 
 		double price2 = 8.2;
 		Book book2 = this.createBook("Little Women 2", "Other", price2);
 		this.createBacketBookCustomQuantity(3, book2, cart);
-		totalOfBacket = backetrepository.findTotalOfCart(backetId);
+		totalOfBacket = backetrepository.findTotalOfCart(cartid);
 		assertThat(totalOfBacket).isNotNull();
 		assertThat(totalOfBacket.getTotal()).isEqualTo(price1 * 2 + price2 * 3);
 
@@ -223,13 +223,13 @@ public class CartRepositoryTest {
 		String username = "user1";
 		Cart cart = this.createBacketWithUser(false, username);
 		this.createBacketWithUser(true, username);
-		Long backetId = cart.getCartid();
+		Long cartid = cart.getCartid();
 
 		Long user1Id = urepository.findByUsername(username).get().getId();
 
 		idsOfNotCurrentBackets = backetrepository.findNotCurrentByUserid(user1Id);
 		assertThat(idsOfNotCurrentBackets).hasSize(1);
-		assertThat(idsOfNotCurrentBackets.get(0)).isEqualTo(backetId);
+		assertThat(idsOfNotCurrentBackets.get(0)).isEqualTo(cartid);
 	}
 	
 	@Test
@@ -268,10 +268,10 @@ public class CartRepositoryTest {
 	@Rollback
 	public void testDeleteBacket() {
 		Cart cartToDelete = this.createBacketNoUser(false);
-		Long backetId = cartToDelete.getCartid();
-		backetrepository.deleteById(backetId);
+		Long cartid = cartToDelete.getCartid();
+		backetrepository.deleteById(cartid);
 		
-		Optional<Cart> optionalBacket = backetrepository.findById(backetId);
+		Optional<Cart> optionalBacket = backetrepository.findById(cartid);
 		assertThat(optionalBacket).isNotPresent();
 		
 		this.createBacketNoUser(false);

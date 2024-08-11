@@ -145,17 +145,17 @@ public class BookRepositoryTest {
 		assertThat(booksInBacket).isEmpty();
 
 		Cart cart = this.createBacketNoUser(true);
-		Long backetId = cart.getCartid();
+		Long cartid = cart.getCartid();
 		Book book1 = this.createBook("Little Women", "Other");
 		this.createBacketBookCustomQuantity(2, book1, cart);
 
-		booksInBacket = bookrepository.findBooksInCart(backetId);
+		booksInBacket = bookrepository.findBooksInCart(cartid);
 		assertThat(booksInBacket).hasSize(1);
 
 		Book book2 = this.createBook("Little Women 2", "Other");
 		this.createBacketBookCustomQuantity(2, book2, cart);
 
-		booksInBacket = bookrepository.findBooksInCart(backetId);
+		booksInBacket = bookrepository.findBooksInCart(cartid);
 		assertThat(booksInBacket).hasSize(2);
 	}
 
@@ -182,17 +182,17 @@ public class BookRepositoryTest {
 		assertThat(idsOfBooks).isEmpty();
 
 		Cart cart = this.createBacketNoUser(true);
-		Long backetId = cart.getCartid();
+		Long cartid = cart.getCartid();
 		Book book1 = this.createBook("Little Women", "Other");
 		this.createBacketBookCustomQuantity(2, book1, cart);
 
-		idsOfBooks = bookrepository.findIdsOfBooksByCartid(backetId);
+		idsOfBooks = bookrepository.findIdsOfBooksByCartid(cartid);
 		assertThat(idsOfBooks).hasSize(1);
 
 		Book book2 = this.createBook("Little Women 2", "Other");
 		this.createBacketBookCustomQuantity(2, book2, cart);
 
-		idsOfBooks = bookrepository.findIdsOfBooksByCartid(backetId);
+		idsOfBooks = bookrepository.findIdsOfBooksByCartid(cartid);
 		assertThat(idsOfBooks).hasSize(2);
 	}
 

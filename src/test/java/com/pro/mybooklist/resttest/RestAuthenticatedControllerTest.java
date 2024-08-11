@@ -366,7 +366,7 @@ public class RestAuthenticatedControllerTest {
 	class testClearCurrentCart {
 		@Test
 		@Rollback
-		public void testClearCurrentBacketIdMissmatchCase() throws Exception {
+		public void testClearCurrentcartidMissmatchCase() throws Exception {
 			String requestURIIdMissmatch = "/clearbacket/22";
 
 			mockMvc.perform(delete(requestURIIdMissmatch).header("Authorization", jwt))

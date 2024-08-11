@@ -35,24 +35,24 @@ public class CommonService {
 	private BookRepository bookRepository;
 
 	// Method to find the backet and check if it's private:
-	public Cart findBacketAndCheckIsPrivate(Long backetId) {
-		Cart cart = this.findBacket(backetId);
+	public Cart findBacketAndCheckIsPrivate(Long cartid) {
+		Cart cart = this.findBacket(cartid);
 		this.checkIfBacketIsPrivate(cart);
 		return cart;
 	}
 
 	// Method to find backet, check if it is private and check the provided
 	// password:
-	public Cart findBacketAndCheckIsPrivateAndCheckPassword(Long backetId, String password) {
-		Cart cart = this.findBacketAndCheckIsPrivate(backetId);
+	public Cart findBacketAndCheckIsPrivateAndCheckPassword(Long cartid, String password) {
+		Cart cart = this.findBacketAndCheckIsPrivate(cartid);
 		this.checkPassword(password, cart.getPasswordHash());
 		return cart;
 	}
 
 	// Method to find backet, check if it's private, it's password and check if it's
 	// current
-	public Cart findBacketAndCheckIsPrivateAndCheckPasswordAndCheckIsCurrent(Long backetId, String password) {
-		Cart cart = this.findBacketAndCheckIsPrivateAndCheckPassword(backetId, password);
+	public Cart findBacketAndCheckIsPrivateAndCheckPasswordAndCheckIsCurrent(Long cartid, String password) {
+		Cart cart = this.findBacketAndCheckIsPrivateAndCheckPassword(cartid, password);
 		this.checkIfBacketIsCurrent(cart);
 		return cart;
 	}
@@ -97,8 +97,8 @@ public class CommonService {
 		}
 	}
 
-	private Cart findBacket(Long backetId) {
-		Optional<Cart> optionalBacket = cartRepository.findById(backetId);
+	private Cart findBacket(Long cartid) {
+		Optional<Cart> optionalBacket = cartRepository.findById(cartid);
 
 		if (!optionalBacket.isPresent())
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The cart wasn't found by id");

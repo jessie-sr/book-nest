@@ -29,13 +29,13 @@ public class CartService {
 	@Autowired
 	private CommonService commonService;
 
-	// Method to get the total price of the backet by backetId and backet password:
-	public TotalOfCart getTotalByBacketId(BacketInfo backetInfo) {
-		Long backetId = backetInfo.getId();
+	// Method to get the total price of the backet by cartid and backet password:
+	public TotalOfCart getTotalBycartid(BacketInfo backetInfo) {
+		Long cartid = backetInfo.getId();
 		String password = backetInfo.getPassword();
-		commonService.findBacketAndCheckIsPrivateAndCheckPassword(backetId, password);
+		commonService.findBacketAndCheckIsPrivateAndCheckPassword(cartid, password);
 
-		TotalOfCart totalOfBacket = cartRepository.findTotalOfCart(backetId);
+		TotalOfCart totalOfBacket = cartRepository.findTotalOfCart(cartid);
 		return totalOfBacket;
 	}
 
@@ -50,7 +50,7 @@ public class CartService {
 	}
 
 	// Method to get the total amount of books in the current backet of the user
-	// (returns interface with backetid and items fields):
+	// (returns interface with cartid and items fields):
 	public QuantityOfCart getCurrentCartQuantity(Authentication authentication) {
 		User user = commonService.checkAuthentication(authentication);
 		Long userId = user.getId();
@@ -65,29 +65,29 @@ public class CartService {
 	public BacketInfo createBacketNoAuthentication() {
 		String password = RandomStringUtils.randomAlphanumeric(15);
 		String hashedPassword = commonService.encodePassword(password);
-		Long backetId = this.createBacket(hashedPassword);
+		Long cartid = this.createBacket(hashedPassword);
 
-		BacketInfo createdBacketInfo = new BacketInfo(backetId, password);
+		BacketInfo createdBacketInfo = new BacketInfo(cartid, password);
 		return createdBacketInfo;
 	}
 
 	private Long createBacket(String hashedPassword) {
 		Cart cart = new Cart(hashedPassword);
 		cartRepository.save(cart);
-		Long backetId = cart.getCartid();
+		Long cartid = cart.getCartid();
 
-		return backetId;
+		return cartid;
 	}
 
-	// Method to add the certain quantity of the book to the backet by backetId and
+	// Method to add the certain quantity of the book to the backet by cartid and
 	// backet password:
-	public ResponseEntity<?> addBookToCartNoAuthentication(Long backetId,
+	public ResponseEntity<?> addBookToCartNoAuthentication(Long cartid,
 			BookQuantityInfo bookQuantityAndBacketPassword) {
 		Long bookId = bookQuantityAndBacketPassword.getBookid();
 		int additionalQuantity = bookQuantityAndBacketPassword.getQuantity();
 		String password = bookQuantityAndBacketPassword.getPassword();
 
-		Cart cart = commonService.findBacketAndCheckIsPrivateAndCheckPasswordAndCheckIsCurrent(backetId, password);
+		Cart cart = commonService.findBacketAndCheckIsPrivateAndCheckPasswordAndCheckIsCurrent(cartid, password);
 
 		return this.addQuantityOfBookToTheBacket(cart, bookId, additionalQuantity);
 	}
@@ -105,9 +105,9 @@ public class CartService {
 	}
 
 	private ResponseEntity<?> addQuantityOfBookToTheBacket(Cart cart, Long bookId, int additionalQuantity) {
-		Long backetId = cart.getCartid();
+		Long cartid = cart.getCartid();
 		Book book = commonService.findBook(bookId);
-		Optional<CartBook> optionalBacketBook = this.getOptionalBacketBook(backetId, bookId);
+		Optional<CartBook> optionalBacketBook = this.getOptionalBacketBook(cartid, bookId);
 
 		if (optionalBacketBook.isPresent()) {
 			CartBook cartBook = optionalBacketBook.get();
@@ -132,10 +132,10 @@ public class CartService {
 
 	// Method to reduce the amount of book by bookid and backetInfo
 	public ResponseEntity<?> reduceBookNoAuthentication(Long bookId, BacketInfo backetInfo) {
-		Long backetId = backetInfo.getId();
+		Long cartid = backetInfo.getId();
 		String password = backetInfo.getPassword();
 
-		Cart cart = commonService.findBacketAndCheckIsPrivateAndCheckPasswordAndCheckIsCurrent(backetId, password);
+		Cart cart = commonService.findBacketAndCheckIsPrivateAndCheckPasswordAndCheckIsCurrent(cartid, password);
 
 		return this.reduceQuantityOfBookInBacket(cart, bookId);
 	}
@@ -150,10 +150,10 @@ public class CartService {
 	}
 
 	private ResponseEntity<?> reduceQuantityOfBookInBacket(Cart cart, Long bookId) {
-		Long backetId = cart.getCartid();
+		Long cartid = cart.getCartid();
 		commonService.findBook(bookId);
 
-		CartBook cartBook = this.findBacketBook(bookId, backetId);
+		CartBook cartBook = this.findBacketBook(bookId, cartid);
 		int quantity = cartBook.getQuantity();
 		quantity = quantity - 1;
 
@@ -171,10 +171,10 @@ public class CartService {
 
 	// Method to delete book from backet By bookid and backetInfo
 	public ResponseEntity<?> deleteBookNoAuthentication(Long bookId, BacketInfo backetInfo) {
-		Long backetId = backetInfo.getId();
+		Long cartid = backetInfo.getId();
 		String password = backetInfo.getPassword();
 
-		Cart cart = commonService.findBacketAndCheckIsPrivateAndCheckPasswordAndCheckIsCurrent(backetId, password);
+		Cart cart = commonService.findBacketAndCheckIsPrivateAndCheckPasswordAndCheckIsCurrent(cartid, password);
 
 		return this.deleteBookFromBacket(cart, bookId);
 	}
@@ -188,9 +188,9 @@ public class CartService {
 	}
 
 	private ResponseEntity<?> deleteBookFromBacket(Cart cart, Long bookId) {
-		Long backetId = cart.getCartid();
+		Long cartid = cart.getCartid();
 		commonService.findBook(bookId);
-		CartBook cartBook = this.findBacketBook(bookId, backetId);
+		CartBook cartBook = this.findBacketBook(bookId, cartid);
 
 		return this.deleteBookFromCart(cartBook);
 	}
@@ -205,8 +205,8 @@ public class CartService {
 	}
 
 	// Method to find CartBook:
-	private CartBook findBacketBook(Long bookId, Long backetId) {
-		Optional<CartBook> optionalBacketBook = this.getOptionalBacketBook(backetId, bookId);
+	private CartBook findBacketBook(Long bookId, Long cartid) {
+		Optional<CartBook> optionalBacketBook = this.getOptionalBacketBook(cartid, bookId);
 		if (!optionalBacketBook.isPresent())
 			throw new ResponseStatusException(HttpStatus.CONFLICT, "The book is not in the backet");
 
@@ -214,9 +214,9 @@ public class CartService {
 		return cartBook;
 	}
 
-	// Method to find optional backet book by backetId and bookId:
-	private Optional<CartBook> getOptionalBacketBook(Long backetId, Long bookId) {
-		CartBookKey cartBookKey = new CartBookKey(backetId, bookId);
+	// Method to find optional backet book by cartid and bookId:
+	private Optional<CartBook> getOptionalBacketBook(Long cartid, Long bookId) {
+		CartBookKey cartBookKey = new CartBookKey(cartid, bookId);
 
 		Optional<CartBook> optionalBacketBook = cartBookRepository.findById(cartBookKey);
 		return optionalBacketBook;

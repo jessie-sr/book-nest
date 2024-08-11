@@ -56,10 +56,10 @@ public class BookService {
 	}
 
 	// Method to get list of Ids of books by backet id
-	public List<Long> getIdsOfBooksByBacketid(Long backetId) {
-		commonService.findBacketAndCheckIsPrivate(backetId);
+	public List<Long> getIdsOfBooksBycartid(Long cartid) {
+		commonService.findBacketAndCheckIsPrivate(cartid);
 
-		List<Long> idsOfBooksInBacket = bookRepository.findIdsOfBooksByCartid(backetId);
+		List<Long> idsOfBooksInBacket = bookRepository.findIdsOfBooksByCartid(cartid);
 		return idsOfBooksInBacket;
 	}
 
@@ -74,14 +74,14 @@ public class BookService {
 		return idsOfBooksInCurrentCart;
 	}
 
-	// Method to get list of Books in Cart by backetId and backet password:
+	// Method to get list of Books in Cart by cartid and backet password:
 	public List<BookInCurrentCart> getBooksInBacketByIdAndPassword(BacketInfo backetInfo) {
-		Long backetId = backetInfo.getId();
+		Long cartid = backetInfo.getId();
 		String password = backetInfo.getPassword();
 
-		commonService.findBacketAndCheckIsPrivateAndCheckPassword(backetId, password);
+		commonService.findBacketAndCheckIsPrivateAndCheckPassword(cartid, password);
 
-		List<BookInCurrentCart> booksInBacket = bookRepository.findBooksInCart(backetId);
+		List<BookInCurrentCart> booksInBacket = bookRepository.findBooksInCart(cartid);
 		return booksInBacket;
 	}
 

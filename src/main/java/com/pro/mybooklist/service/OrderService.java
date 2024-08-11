@@ -89,10 +89,10 @@ public class OrderService {
 	// Method to create order out of backet by backet id and backet password:
 	public OrderPasswordInfo makeSaleNoAuthentication(AddressInfoNoAuthentication addressInfo)
 			throws MessagingException, UnsupportedEncodingException {
-		Long backetId = addressInfo.getCartid();
+		Long cartid = addressInfo.getCartid();
 		String backetPassword = addressInfo.getPassword();
 
-		Cart cart = commonService.findBacketAndCheckIsPrivateAndCheckPasswordAndCheckIsCurrent(backetId,
+		Cart cart = commonService.findBacketAndCheckIsPrivateAndCheckPasswordAndCheckIsCurrent(cartid,
 				backetPassword);
 		String passwordRandom = this.checkIfBacketIsEmptyAndSetBacketNotCurrentAndGeneratePassword(cart);
 		String hashedPassword = commonService.encodePassword(passwordRandom);
