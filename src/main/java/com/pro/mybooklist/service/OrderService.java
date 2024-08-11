@@ -86,15 +86,15 @@ public class OrderService {
 		return new ResponseEntity<>("The order number and password are correct", HttpStatus.OK);
 	}
 
-	// Method to create order out of backet by backet id and backet password:
+	// Method to create order out of cart by cart id and cart password:
 	public OrderPasswordInfo makeSaleNoAuthentication(AddressInfoNoAuthentication addressInfo)
 			throws MessagingException, UnsupportedEncodingException {
 		Long cartid = addressInfo.getCartid();
-		String backetPassword = addressInfo.getPassword();
+		String cartPassword = addressInfo.getPassword();
 
-		Cart cart = commonService.findBacketAndCheckIsPrivateAndCheckPasswordAndCheckIsCurrent(cartid,
-				backetPassword);
-		String passwordRandom = this.checkIfBacketIsEmptyAndSetBacketNotCurrentAndGeneratePassword(cart);
+		Cart cart = commonService.findCartAndCheckIsPrivateAndCheckPasswordAndCheckIsCurrent(cartid,
+				cartPassword);
+		String passwordRandom = this.checkIfCartIsEmptyAndSetCartNotCurrentAndGeneratePassword(cart);
 		String hashedPassword = commonService.encodePassword(passwordRandom);
 
 		Long orderId = this.createOrderByAddressInfoNoAuthentication(addressInfo, cart, hashedPassword);
@@ -116,13 +116,13 @@ public class OrderService {
 		return orderId;
 	}
 
-	// Method to create order out of authenticated user's current backet:
+	// Method to create order out of authenticated user's current cart:
 	public OrderPasswordInfo makeSaleByUserId(Long userId, AddressInfo addressInfo, Authentication authentication)
 			throws MessagingException, UnsupportedEncodingException {
 		User user = commonService.checkAuthenticationAndAuthorize(authentication, userId);
-		Cart currentCart = commonService.findCurrentBacketOfUser(user);
+		Cart currentCart = commonService.findCurrentCartOfUser(user);
 
-		String passwordRandom = this.checkIfBacketIsEmptyAndSetBacketNotCurrentAndGeneratePassword(currentCart);
+		String passwordRandom = this.checkIfCartIsEmptyAndSetCartNotCurrentAndGeneratePassword(currentCart);
 		String hashedPassword = commonService.encodePassword(passwordRandom);
 
 		Long orderId = this.createOrderByAddressInfo(addressInfo, currentCart, hashedPassword);
@@ -134,7 +134,7 @@ public class OrderService {
 			this.tryToSendOrderInfoEmail(user.getUsername(), addressInfo.getEmail(), orderId, passwordRandom);
 		}
 
-		commonService.addCurrentBacketForUser(user);
+		commonService.addCurrentCartForUser(user);
 
 		return orderPassword;
 	}
@@ -149,21 +149,21 @@ public class OrderService {
 		return orderId;
 	}
 
-	private String checkIfBacketIsEmptyAndSetBacketNotCurrentAndGeneratePassword(Cart cart) {
-		this.checkIfBacketIsEmpty(cart);
-		this.setBacketNotCurrent(cart);
+	private String checkIfCartIsEmptyAndSetCartNotCurrentAndGeneratePassword(Cart cart) {
+		this.checkIfCartIsEmpty(cart);
+		this.setCartNotCurrent(cart);
 
 		String passwordRandom = RandomStringUtils.randomAlphanumeric(15);
 		return passwordRandom;
 	}
 
-	private void checkIfBacketIsEmpty(Cart cart) {
-		List<CartBook> backetBooksInCart = cartBookRepository.findByCart(cart);
-		if (backetBooksInCart.size() == 0)
+	private void checkIfCartIsEmpty(Cart cart) {
+		List<CartBook> cartBooksInCart = cartBookRepository.findByCart(cart);
+		if (cartBooksInCart.size() == 0)
 			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "The cart is empty");
 	}
 
-	private void setBacketNotCurrent(Cart cart) {
+	private void setCartNotCurrent(Cart cart) {
 		cart.setCurrent(false);
 		cartRepository.save(cart);
 	}

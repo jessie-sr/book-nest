@@ -249,10 +249,10 @@ public class OrderRepositoryTest {
 	}
 
 	private Order createOrderWithStatusNoNoteNoUser(int quantity, List<Book> books, String status) {
-		Cart cart = this.createBacketNoUser(false);
+		Cart cart = this.createCartNoUser(false);
 
 		for (Book book : books) {
-			this.createBacketBookCustomQuantity(quantity, book, cart);
+			this.createCartBookCustomQuantity(quantity, book, cart);
 		}
 
 		String stringField = "field";
@@ -265,10 +265,10 @@ public class OrderRepositoryTest {
 	}
 
 	private Order createOrderWithStatusNoNoteWithUser(int quantity, List<Book> books, String status, String username) {
-		Cart cart = this.createBacketWithUser(false, username);
+		Cart cart = this.createCartWithUser(false, username);
 
 		for (Book book : books) {
-			this.createBacketBookCustomQuantity(quantity, book, cart);
+			this.createCartBookCustomQuantity(quantity, book, cart);
 		}
 
 		String stringField = "field";
@@ -281,10 +281,10 @@ public class OrderRepositoryTest {
 	}
 
 	private Order createOrderWithDefaultStatusNoUser(int quantity, List<Book> books) {
-		Cart cart = this.createBacketNoUser(false);
+		Cart cart = this.createCartNoUser(false);
 
 		for (Book book : books) {
-			this.createBacketBookCustomQuantity(quantity, book, cart);
+			this.createCartBookCustomQuantity(quantity, book, cart);
 		}
 
 		String stringField = "field";
@@ -297,10 +297,10 @@ public class OrderRepositoryTest {
 	}
 
 	private Order createOrderWithDefaultStatusWithUser(int quantity, List<Book> books, String username) {
-		Cart cart = this.createBacketWithUser(false, username);
+		Cart cart = this.createCartWithUser(false, username);
 
 		for (Book book : books) {
-			this.createBacketBookCustomQuantity(quantity, book, cart);
+			this.createCartBookCustomQuantity(quantity, book, cart);
 		}
 
 		String stringField = "field";
@@ -312,7 +312,7 @@ public class OrderRepositoryTest {
 		return newOrder;
 	}
 
-	private Cart createBacketWithUser(boolean current, String username) {
+	private Cart createCartWithUser(boolean current, String username) {
 		User user = this.createUser(username);
 
 		List<Cart> currentCarts = cartRepository.findCurrentByUserid(user.getId());
@@ -325,7 +325,7 @@ public class OrderRepositoryTest {
 		return newCart;
 	}
 
-	private Cart createBacketNoUser(boolean current) {
+	private Cart createCartNoUser(boolean current) {
 		Cart newCart = new Cart(current);
 		cartRepository.save(newCart);
 
@@ -344,7 +344,7 @@ public class OrderRepositoryTest {
 		return user;
 	}
 
-	private CartBook createBacketBookCustomQuantity(int quantity, Book book, Cart cart) {
+	private CartBook createCartBookCustomQuantity(int quantity, Book book, Cart cart) {
 		CartBook newCartBook = new CartBook(quantity, cart, book);
 		cartBookRepository.save(newCartBook);
 

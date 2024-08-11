@@ -23,13 +23,13 @@ import com.pro.mybooklist.httpforms.PasswordInfo;
 import com.pro.mybooklist.httpforms.QuantityInfo;
 import com.pro.mybooklist.model.Order;
 import com.pro.mybooklist.model.User;
-import com.pro.mybooklist.service.BacketService;
+import com.pro.mybooklist.service.CartService;
 import com.pro.mybooklist.service.BookService;
 import com.pro.mybooklist.service.OrderService;
 import com.pro.mybooklist.service.UserService;
 import com.pro.mybooklist.sqlforms.BookInCurrentCart;
-import com.pro.mybooklist.sqlforms.QuantityOfBacket;
-import com.pro.mybooklist.sqlforms.TotalOfBacket;
+import com.pro.mybooklist.sqlforms.QuantityOfCart;
+import com.pro.mybooklist.sqlforms.TotalOfCart;
 
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
@@ -48,7 +48,7 @@ public class RestAuthenticatedController {
 	private BookService bookService;
 
 	@Autowired
-	private BacketService backetService;
+	private CartService cartService;
 
 	@PutMapping("/updateuser/{userid}")
 	public ResponseEntity<?> updateUser(@PathVariable("userid") Long userId, @RequestBody User user,
@@ -96,24 +96,24 @@ public class RestAuthenticatedController {
 	}
 
 	@GetMapping("/getcurrenttotal")
-	public @ResponseBody TotalOfBacket getCurrentCartTotal(Authentication authentication) {
+	public @ResponseBody TotalOfCart getCurrentCartTotal(Authentication authentication) {
 
-		return backetService.getCurrentCartTotal(authentication);
+		return cartService.getCurrentCartTotal(authentication);
 
 	}
 
-	@GetMapping("/currentbacketquantity")
-	public @ResponseBody QuantityOfBacket getCurrentCartQuantity(Authentication authentication) {
+	@GetMapping("/currentcartquantity")
+	public @ResponseBody QuantityOfCart getCurrentCartQuantity(Authentication authentication) {
 
-		return backetService.getCurrentCartQuantity(authentication);
+		return cartService.getCurrentCartQuantity(authentication);
 
 	}
 
 	@PostMapping("/additem/{bookid}")
-	public ResponseEntity<?> addBookToCurrentBacket(@PathVariable("bookid") Long bookId,
+	public ResponseEntity<?> addBookToCurrentCart(@PathVariable("bookid") Long bookId,
 			@RequestBody QuantityInfo quantityInfo, Authentication authentication) {
 
-		return backetService.addBookToCurrentBacket(bookId, quantityInfo, authentication);
+		return cartService.addBookToCurrentCart(bookId, quantityInfo, authentication);
 
 	}
 
@@ -131,24 +131,24 @@ public class RestAuthenticatedController {
 	public ResponseEntity<?> reduceBookAuthenticated(@PathVariable("bookid") Long bookId,
 			Authentication authentication) {
 
-		return backetService.reduceBookAuthenticated(bookId, authentication);
+		return cartService.reduceBookAuthenticated(bookId, authentication);
 
 	}
 
 	@DeleteMapping("/deleteitem/{bookid}")
 	@Transactional
-	public ResponseEntity<?> deleteBookFromCurrentBacket(@PathVariable("bookid") Long bookId,
+	public ResponseEntity<?> deleteBookFromCurrentCart(@PathVariable("bookid") Long bookId,
 			Authentication authentication) {
 
-		return backetService.deleteBookFromCurrentBacket(bookId, authentication);
+		return cartService.deleteBookFromCurrentCart(bookId, authentication);
 
 	}
 
-	@DeleteMapping("/clearbacket/{userid}")
+	@DeleteMapping("/clearcart/{userid}")
 	@Transactional
-	public ResponseEntity<?> clearCurrentBacket(@PathVariable("userid") Long userId, Authentication authentication) {
+	public ResponseEntity<?> clearCurrentCart(@PathVariable("userid") Long userId, Authentication authentication) {
 		
-		return backetService.clearCurrentBacket(userId, authentication);
+		return cartService.clearCurrentCart(userId, authentication);
 		
 	}
 }

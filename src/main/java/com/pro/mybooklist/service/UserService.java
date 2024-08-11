@@ -127,7 +127,7 @@ public class UserService {
 			mailService.sendVerificationEmail(newUser);
 			return new ResponseEntity<>("We sent verification link to your email address :)", HttpStatus.OK);
 		} catch (MailAuthenticationException e) {
-			this.verifyUserAndCreateCurrentBacket(newUser);
+			this.verifyUserAndCreateCurrentCart(newUser);
 			return new ResponseEntity<>("Registration went well, you can login now", HttpStatus.ACCEPTED);
 		}
 	}
@@ -169,7 +169,7 @@ public class UserService {
 		if (user.isAccountVerified())
 			return new ResponseEntity<>("User is already verified", HttpStatus.CONFLICT);
 
-		this.verifyUserAndCreateCurrentBacket(user);
+		this.verifyUserAndCreateCurrentCart(user);
 		return new ResponseEntity<>("Verification went well", HttpStatus.OK);
 	}
 
@@ -184,9 +184,9 @@ public class UserService {
 		return user;
 	}
 
-	private void verifyUserAndCreateCurrentBacket(User user) {
+	private void verifyUserAndCreateCurrentCart(User user) {
 		this.verifyUser(user);
-		commonService.addCurrentBacketForUser(user);
+		commonService.addCurrentCartForUser(user);
 	}
 
 	private void verifyUser(User user) {
@@ -306,7 +306,7 @@ public class UserService {
 			if (!this.springMailUsername.equals("default_value"))
 				throw new ResponseStatusException(HttpStatus.CONFLICT, "Email is not verified");
 
-			this.verifyUserAndCreateCurrentBacket(user);
+			this.verifyUserAndCreateCurrentCart(user);
 		}
 	}
 }

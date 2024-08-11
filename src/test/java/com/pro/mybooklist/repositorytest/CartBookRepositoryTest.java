@@ -49,44 +49,44 @@ public class CartBookRepositoryTest {
 		cartBookRepository.deleteAll();
 	}
 
-	// CRUD tests for the backetbook repository
+	// CRUD tests for the cartbook repository
 	// Create functionality
 	@Test
 	@Rollback
-	public void testCreateBacketBookDefaultQuantity() {
-		// Testing backetBook creating with backet with no user;
-		CartBook newCartBook1 = this.createBacketBookDefaultQuantityNoUser("Little Women", "Other");
+	public void testCreateCartBookDefaultQuantity() {
+		// Testing cartBook creating with cart with no user;
+		CartBook newCartBook1 = this.createCartBookDefaultQuantityNoUser("Little Women", "Other");
 		assertThat(newCartBook1.getId()).isNotNull();
 
-		this.createBacketBookDefaultQuantityNoUser("Little Women 2", "Other");
+		this.createCartBookDefaultQuantityNoUser("Little Women 2", "Other");
 		List<CartBook> cartBooks = (List<CartBook>) cartBookRepository.findAll();
 		assertThat(cartBooks).hasSize(2);
 
-		// Testing backetBook creating with backet with user;
-		CartBook newCartBookUser1 = this.createBacketBookDefaultQuantityUser("user1", "Little Women 3", "Other");
+		// Testing cartBook creating with cart with user;
+		CartBook newCartBookUser1 = this.createCartBookDefaultQuantityUser("user1", "Little Women 3", "Other");
 		assertThat(newCartBookUser1.getId()).isNotNull();
 
-		this.createBacketBookDefaultQuantityUser("user2", "Little Women 4", "Other");
+		this.createCartBookDefaultQuantityUser("user2", "Little Women 4", "Other");
 		cartBooks = (List<CartBook>) cartBookRepository.findAll();
 		assertThat(cartBooks).hasSize(4);
 	}
 
 	@Test
 	@Rollback
-	public void testCreateBacketBookCustomQuantity() {
-		// Testing backetBook creating with backet with no user;
-		CartBook newCartBook1 = this.createBacketBookCustomQuantityNoUser(2, "Little Women", "Other");
+	public void testCreateCartBookCustomQuantity() {
+		// Testing cartBook creating with cart with no user;
+		CartBook newCartBook1 = this.createCartBookCustomQuantityNoUser(2, "Little Women", "Other");
 		assertThat(newCartBook1.getId()).isNotNull();
 
-		this.createBacketBookCustomQuantityNoUser(3, "Little Women 2", "Other");
+		this.createCartBookCustomQuantityNoUser(3, "Little Women 2", "Other");
 		List<CartBook> cartBooks = (List<CartBook>) cartBookRepository.findAll();
 		assertThat(cartBooks).hasSize(2);
 
-		// Testing backetBook creating with backet with user;
-		CartBook newCartBookUser1 = this.createBacketBookCustomQuantityUser(2, "user1", "Little Women 3", "Other");
+		// Testing cartBook creating with cart with user;
+		CartBook newCartBookUser1 = this.createCartBookCustomQuantityUser(2, "user1", "Little Women 3", "Other");
 		assertThat(newCartBookUser1.getId()).isNotNull();
 
-		this.createBacketBookCustomQuantityUser(4, "user2", "Little Women 4", "Other");
+		this.createCartBookCustomQuantityUser(4, "user2", "Little Women 4", "Other");
 		cartBooks = (List<CartBook>) cartBookRepository.findAll();
 		assertThat(cartBooks).hasSize(4);
 	}
@@ -98,16 +98,16 @@ public class CartBookRepositoryTest {
 		assertThat(cartBooks).isEmpty();
 
 		CartBookKey wrongKey = new CartBookKey(Long.valueOf(2), Long.valueOf(2));
-		Optional<CartBook> optionalBacketBook = cartBookRepository.findById(wrongKey);
-		assertThat(optionalBacketBook).isNotPresent();
+		Optional<CartBook> optionalCartBook = cartBookRepository.findById(wrongKey);
+		assertThat(optionalCartBook).isNotPresent();
 
-		CartBook newCartBook = this.createBacketBookDefaultQuantityNoUser("Little Women", "Other");
+		CartBook newCartBook = this.createCartBookDefaultQuantityNoUser("Little Women", "Other");
 		CartBookKey goodKey = newCartBook.getId();
 
-		optionalBacketBook = cartBookRepository.findById(goodKey);
-		assertThat(optionalBacketBook).isPresent();
+		optionalCartBook = cartBookRepository.findById(goodKey);
+		assertThat(optionalCartBook).isPresent();
 
-		this.createBacketBookDefaultQuantityNoUser("Little Women 2", "Other");
+		this.createCartBookDefaultQuantityNoUser("Little Women 2", "Other");
 
 		cartBooks = (List<CartBook>) cartBookRepository.findAll();
 		assertThat(cartBooks).hasSize(2);
@@ -116,19 +116,19 @@ public class CartBookRepositoryTest {
 	@Test
 	@Rollback
 	public void testfindByCart() {
-		Cart emptyCart = this.createBacketNoUser();
+		Cart emptyCart = this.createCartNoUser();
 		List<CartBook> cartBooks = cartBookRepository.findByCart(emptyCart);
 		assertThat(cartBooks).isEmpty();
 		
-		CartBook newCartBook = this.createBacketBookDefaultQuantityNoUser("Little Women", "Other");
+		CartBook newCartBook = this.createCartBookDefaultQuantityNoUser("Little Women", "Other");
 		Cart cart = newCartBook.getCart();
 		
 		cartBooks = cartBookRepository.findByCart(cart);
 		assertThat(cartBooks).hasSize(1);
 		
-		this.createBacketBookDefaultQuantityUser("user1", "Little Women", "Other");
-		this.createBacketBookDefaultQuantityUser("user1", "Little Women 2", "Other");
-		CartBook cartBook3User1 = this.createBacketBookCustomQuantityUser(2, "user1", "Fight Club", "Thriller");
+		this.createCartBookDefaultQuantityUser("user1", "Little Women", "Other");
+		this.createCartBookDefaultQuantityUser("user1", "Little Women 2", "Other");
+		CartBook cartBook3User1 = this.createCartBookCustomQuantityUser(2, "user1", "Fight Club", "Thriller");
 		Cart cartOfUser1 = cartBook3User1.getCart();
 		
 		cartBooks = cartBookRepository.findByCart(cartOfUser1);
@@ -138,7 +138,7 @@ public class CartBookRepositoryTest {
 	@Test
 	@Rollback
 	public void testUpdate() {
-		CartBook cartBook = this.createBacketBookDefaultQuantityNoUser("Little Women", "Other");
+		CartBook cartBook = this.createCartBookDefaultQuantityNoUser("Little Women", "Other");
 		cartBook.setQuantity(3);
 		cartBookRepository.save(cartBook);
 		
@@ -148,15 +148,15 @@ public class CartBookRepositoryTest {
 	@Test
 	@Rollback
 	public void testDeleteByIdAndDeleteAll() {
-		CartBook cartBookToDelete = this.createBacketBookCustomQuantityNoUser(2, "Little Women", "Other");
+		CartBook cartBookToDelete = this.createCartBookCustomQuantityNoUser(2, "Little Women", "Other");
 		CartBookKey key = cartBookToDelete.getId();
 		cartBookRepository.deleteById(key);
 		
-		Optional<CartBook> optionalBacketBook = cartBookRepository.findById(key);
-		assertThat(optionalBacketBook).isNotPresent();
+		Optional<CartBook> optionalCartBook = cartBookRepository.findById(key);
+		assertThat(optionalCartBook).isNotPresent();
 		
-		this.createBacketBookCustomQuantityNoUser(2, "Little Women", "Other");
-		this.createBacketBookCustomQuantityNoUser(2, "Little Women 2", "Other");
+		this.createCartBookCustomQuantityNoUser(2, "Little Women", "Other");
+		this.createCartBookCustomQuantityNoUser(2, "Little Women 2", "Other");
 		cartBookRepository.deleteAll();
 		
 		List<CartBook> cartBooks = (List<CartBook>) cartBookRepository.findAll();
@@ -166,23 +166,23 @@ public class CartBookRepositoryTest {
 	@Test
 	@Rollback
 	public void testdeleteByCart() {
-		CartBook newCartBook = this.createBacketBookDefaultQuantityNoUser("Little Women", "Other");
+		CartBook newCartBook = this.createCartBookDefaultQuantityNoUser("Little Women", "Other");
 		Cart cart = newCartBook.getCart();
 
-		long quantityOfDeletedBacketBooks = cartBookRepository.deleteByCart(cart);
-		assertThat(quantityOfDeletedBacketBooks).isEqualTo(1);
+		long quantityOfDeletedCartBooks = cartBookRepository.deleteByCart(cart);
+		assertThat(quantityOfDeletedCartBooks).isEqualTo(1);
 
-		this.createBacketBookDefaultQuantityUser("user1", "Little Women", "Other");
-		this.createBacketBookDefaultQuantityUser("user1", "Little Women 2", "Other");
-		CartBook cartBook3User1 = this.createBacketBookCustomQuantityUser(2, "user1", "Fight Club", "Thriller");
+		this.createCartBookDefaultQuantityUser("user1", "Little Women", "Other");
+		this.createCartBookDefaultQuantityUser("user1", "Little Women 2", "Other");
+		CartBook cartBook3User1 = this.createCartBookCustomQuantityUser(2, "user1", "Fight Club", "Thriller");
 		Cart cartOfUser1 = cartBook3User1.getCart();
 
-		quantityOfDeletedBacketBooks = cartBookRepository.deleteByCart(cartOfUser1);
-		assertThat(quantityOfDeletedBacketBooks).isEqualTo(3);
+		quantityOfDeletedCartBooks = cartBookRepository.deleteByCart(cartOfUser1);
+		assertThat(quantityOfDeletedCartBooks).isEqualTo(3);
 	}
 
-	private CartBook createBacketBookCustomQuantityNoUser(int quantity, String title, String categoryName) {
-		Cart cart = this.createBacketNoUser();
+	private CartBook createCartBookCustomQuantityNoUser(int quantity, String title, String categoryName) {
+		Cart cart = this.createCartNoUser();
 		Book book = this.createBook(title, categoryName);
 
 		CartBook newCartBook = new CartBook(quantity, cart, book);
@@ -191,11 +191,11 @@ public class CartBookRepositoryTest {
 		return newCartBook;
 	}
 
-	private CartBook createBacketBookCustomQuantityUser(int quantity, String username, String title,
+	private CartBook createCartBookCustomQuantityUser(int quantity, String username, String title,
 														String categoryName) {
 		User user = this.createUser(username);
 
-		Cart cart = this.createBacketWithUser(user);
+		Cart cart = this.createCartWithUser(user);
 		Book book = this.createBook(title, categoryName);
 
 		CartBook newCartBook = new CartBook(quantity, cart, book);
@@ -204,8 +204,8 @@ public class CartBookRepositoryTest {
 		return newCartBook;
 	}
 
-	private CartBook createBacketBookDefaultQuantityNoUser(String title, String categoryName) {
-		Cart cart = this.createBacketNoUser();
+	private CartBook createCartBookDefaultQuantityNoUser(String title, String categoryName) {
+		Cart cart = this.createCartNoUser();
 		Book book = this.createBook(title, categoryName);
 
 		CartBook newCartBook = new CartBook(cart, book);
@@ -214,10 +214,10 @@ public class CartBookRepositoryTest {
 		return newCartBook;
 	}
 
-	private CartBook createBacketBookDefaultQuantityUser(String username, String title, String categoryName) {
+	private CartBook createCartBookDefaultQuantityUser(String username, String title, String categoryName) {
 		User user = this.createUser(username);
 
-		Cart cart = this.createBacketWithUser(user);
+		Cart cart = this.createCartWithUser(user);
 		Book book = this.createBook(title, categoryName);
 
 		CartBook newCartBook = new CartBook(cart, book);
@@ -237,7 +237,7 @@ public class CartBookRepositoryTest {
 		return newUser;
 	}
 
-	private Cart createBacketWithUser(User user) {
+	private Cart createCartWithUser(User user) {
 		List<Cart> currentCarts = cartRepository.findCurrentByUserid(user.getId());
 		if (currentCarts.size() != 0)
 			return currentCarts.get(0);
@@ -248,7 +248,7 @@ public class CartBookRepositoryTest {
 		return newCart;
 	}
 
-	private Cart createBacketNoUser() {
+	private Cart createCartNoUser() {
 		Cart newCart = new Cart(true);
 		cartRepository.save(newCart);
 

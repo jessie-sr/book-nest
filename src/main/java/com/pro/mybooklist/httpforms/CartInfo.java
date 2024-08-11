@@ -1,12 +1,12 @@
 package com.pro.mybooklist.httpforms;
 
-public class BacketInfo {
+public class CartInfo {
 	private Long id;
 	private String password;
 	
-	public BacketInfo() {}
+	public CartInfo() {}
 	
-	public BacketInfo(Long id, String password) {
+	public CartInfo(Long id, String password) {
 		this.id = id;
 		this.password = password;
 	}

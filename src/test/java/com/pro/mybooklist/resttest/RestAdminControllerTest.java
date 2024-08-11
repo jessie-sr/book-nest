@@ -363,7 +363,7 @@ public class RestAdminControllerTest {
 		}
 	}
 
-	private Cart createBacketWithUser(boolean current, String username, String email) {
+	private Cart createCartWithUser(boolean current, String username, String email) {
 		User user = this.createUser(username, email);
 
 		List<Cart> currentCarts = cartRepository.findCurrentByUserid(user.getId());
@@ -394,7 +394,7 @@ public class RestAdminControllerTest {
 		return user;
 	}
 
-	private CartBook createBacketBookCustomQuantity(int quantity, Book book, Cart cart) {
+	private CartBook createCartBookCustomQuantity(int quantity, Book book, Cart cart) {
 		CartBook newCartBook = new CartBook(quantity, cart, book);
 		cartBookRepository.save(newCartBook);
 
@@ -448,7 +448,7 @@ public class RestAdminControllerTest {
 		// Adding verified user to the database
 		this.createAdmin();
 
-		this.createBacketWithUser(true, ADMIN_USERNAME, ADMIN_EMAIL);
+		this.createCartWithUser(true, ADMIN_USERNAME, ADMIN_EMAIL);
 
 		AccountCredentials creds = new AccountCredentials(ADMIN_USERNAME, DEFAULT_PASSWORD);
 		String requestBody = objectMapper.writeValueAsString(creds);
@@ -470,7 +470,7 @@ public class RestAdminControllerTest {
 		return newAdmin;
 	}
 
-	private Cart createBacketNoUser(boolean current) {
+	private Cart createCartNoUser(boolean current) {
 		Cart newCart = new Cart(current);
 		cartRepository.save(newCart);
 
@@ -478,7 +478,7 @@ public class RestAdminControllerTest {
 	}
 
 	private Order createOrderWithDefaultStatusNoUser() {
-		Cart cart = this.createBacketNoUser(false);
+		Cart cart = this.createCartNoUser(false);
 
 		List<Book> booksInOrder = new ArrayList<Book>();
 		Book book1 = this.createBook(BOOK_TITLE, OTHER_CATEGORY, DEFAULT_PRICE);
@@ -487,7 +487,7 @@ public class RestAdminControllerTest {
 		booksInOrder.add(book2);
 
 		for (Book book : booksInOrder) {
-			this.createBacketBookCustomQuantity(1, book, cart);
+			this.createCartBookCustomQuantity(1, book, cart);
 		}
 
 		String hashPwd = this.encodePassword(DEFAULT_PASSWORD);

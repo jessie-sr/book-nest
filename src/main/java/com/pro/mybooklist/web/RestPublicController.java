@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.pro.mybooklist.httpforms.AccountCredentials;
 import com.pro.mybooklist.httpforms.AddressInfoNoAuthentication;
-import com.pro.mybooklist.httpforms.BacketInfo;
+import com.pro.mybooklist.httpforms.CartInfo;
 import com.pro.mybooklist.httpforms.BookQuantityInfo;
 import com.pro.mybooklist.httpforms.EmailInfo;
 import com.pro.mybooklist.httpforms.OrderPasswordInfo;
@@ -53,7 +53,7 @@ public class RestPublicController {
 	private OrderService orderService;
 
 	@Autowired
-	private CartService backetService;
+	private CartService cartService;
 
 	@Autowired
 	private UserService userService;
@@ -111,9 +111,9 @@ public class RestPublicController {
 	}
 
 	@PostMapping("/showcart")
-	public @ResponseBody List<BookInCurrentCart> getBooksInBacketByIdAndPassword(@RequestBody BacketInfo backetInfo) {
+	public @ResponseBody List<BookInCurrentCart> getBooksInCartByIdAndPassword(@RequestBody CartInfo cartInfo) {
 
-		return bookService.getBooksInBacketByIdAndPassword(backetInfo);
+		return bookService.getBooksInCartByIdAndPassword(cartInfo);
 
 	}
 
@@ -124,10 +124,10 @@ public class RestPublicController {
 
 	}
 
-	@PostMapping("/totalofbacket")
-	public @ResponseBody TotalOfCart getTotalBycartid(@RequestBody BacketInfo backetInfo) {
+	@PostMapping("/totalofcart")
+	public @ResponseBody TotalOfCart getTotalBycartid(@RequestBody CartInfo cartInfo) {
 
-		return backetService.getTotalBycartid(backetInfo);
+		return cartService.getTotalBycartid(cartInfo);
 
 	}
 
@@ -145,10 +145,10 @@ public class RestPublicController {
 
 	}
 
-	@PostMapping("/createbacket")
-	public @ResponseBody BacketInfo createBacketNoAuthentication() {
+	@PostMapping("/createcart")
+	public @ResponseBody CartInfo createCartNoAuthentication() {
 
-		return backetService.createBacketNoAuthentication();
+		return cartService.createCartNoAuthentication();
 
 	}
 
@@ -156,7 +156,7 @@ public class RestPublicController {
 	public ResponseEntity<?> addBookToCartNoAuthentication(@PathVariable("cartid") Long cartid,
 			@RequestBody BookQuantityInfo bookQuantity) {
 
-		return backetService.addBookToCartNoAuthentication(cartid, bookQuantity);
+		return cartService.addBookToCartNoAuthentication(cartid, bookQuantity);
 
 	}
 
@@ -172,18 +172,18 @@ public class RestPublicController {
 	@PutMapping("/reduceitemnoauth/{bookid}")
 	@Transactional
 	public ResponseEntity<?> reduceBookNoAuthentication(@PathVariable("bookid") Long bookId,
-			@RequestBody BacketInfo backetInfo) {
+			@RequestBody CartInfo cartInfo) {
 
-		return backetService.reduceBookNoAuthentication(bookId, backetInfo);
+		return cartService.reduceBookNoAuthentication(bookId, cartInfo);
 
 	}
 
 	@DeleteMapping("/deletebook/{bookid}")
 	@Transactional
 	public ResponseEntity<?> deleteBookNoAuthentication(@PathVariable("bookid") Long bookId,
-			@RequestBody BacketInfo backetInfo) {
+			@RequestBody CartInfo cartInfo) {
 
-		return backetService.deleteBookNoAuthentication(bookId, backetInfo);
+		return cartService.deleteBookNoAuthentication(bookId, cartInfo);
 
 	}
 

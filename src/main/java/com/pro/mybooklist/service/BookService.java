@@ -10,7 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.pro.mybooklist.httpforms.BacketInfo;
+import com.pro.mybooklist.httpforms.CartInfo;
 import com.pro.mybooklist.httpforms.BookUpdate;
 import com.pro.mybooklist.model.Book;
 import com.pro.mybooklist.model.BookRepository;
@@ -55,44 +55,44 @@ public class BookService {
 		return booksTopSaled;
 	}
 
-	// Method to get list of Ids of books by backet id
+	// Method to get list of Ids of books by cart id
 	public List<Long> getIdsOfBooksBycartid(Long cartid) {
-		commonService.findBacketAndCheckIsPrivate(cartid);
+		commonService.findCartAndCheckIsPrivate(cartid);
 
-		List<Long> idsOfBooksInBacket = bookRepository.findIdsOfBooksByCartid(cartid);
-		return idsOfBooksInBacket;
+		List<Long> idsOfBooksInCart = bookRepository.findIdsOfBooksByCartid(cartid);
+		return idsOfBooksInCart;
 	}
 
-	// Method to get the list of IDs of the books in the current backet of the user
+	// Method to get the list of IDs of the books in the current cart of the user
 	// by user authentication:
 	public List<Long> getIdsOfBooksInCurrentCart(Authentication authentication) {
 		User user = commonService.checkAuthentication(authentication);
 		Long userId = user.getId();
-		commonService.findCurrentBacketOfUser(user);
+		commonService.findCurrentCartOfUser(user);
 
 		List<Long> idsOfBooksInCurrentCart = bookRepository.findIdsOfBooksInCurrentCart(userId);
 		return idsOfBooksInCurrentCart;
 	}
 
-	// Method to get list of Books in Cart by cartid and backet password:
-	public List<BookInCurrentCart> getBooksInBacketByIdAndPassword(BacketInfo backetInfo) {
-		Long cartid = backetInfo.getId();
-		String password = backetInfo.getPassword();
+	// Method to get list of Books in Cart by cartid and cart password:
+	public List<BookInCurrentCart> getBooksInCartByIdAndPassword(CartInfo cartInfo) {
+		Long cartid = cartInfo.getId();
+		String password = cartInfo.getPassword();
 
-		commonService.findBacketAndCheckIsPrivateAndCheckPassword(cartid, password);
+		commonService.findCartAndCheckIsPrivateAndCheckPassword(cartid, password);
 
-		List<BookInCurrentCart> booksInBacket = bookRepository.findBooksInCart(cartid);
-		return booksInBacket;
+		List<BookInCurrentCart> booksInCart = bookRepository.findBooksInCart(cartid);
+		return booksInCart;
 	}
 
-	// Method to get the list of books in current backet of the user by user id and
+	// Method to get the list of books in current cart of the user by user id and
 	// authentication
 	public List<BookInCurrentCart> getCurrentCartByUserId(Long userId, Authentication authentication) {
 		User user = commonService.checkAuthenticationAndAuthorize(authentication, userId);
-		commonService.findCurrentBacketOfUser(user);
+		commonService.findCurrentCartOfUser(user);
 
-		List<BookInCurrentCart> booksInCurrentBacketOfUser = bookRepository.findBooksInCurrentCartByUserid(userId);
-		return booksInCurrentBacketOfUser;
+		List<BookInCurrentCart> booksInCurrentCartOfUser = bookRepository.findBooksInCurrentCartByUserid(userId);
+		return booksInCurrentCartOfUser;
 	}
 
 	// Method to get list of Books in order by orderId:

@@ -34,44 +34,44 @@ public class CommonService {
 	@Autowired
 	private BookRepository bookRepository;
 
-	// Method to find the backet and check if it's private:
-	public Cart findBacketAndCheckIsPrivate(Long cartid) {
-		Cart cart = this.findBacket(cartid);
-		this.checkIfBacketIsPrivate(cart);
+	// Method to find the cart and check if it's private:
+	public Cart findCartAndCheckIsPrivate(Long cartid) {
+		Cart cart = this.findCart(cartid);
+		this.checkIfCartIsPrivate(cart);
 		return cart;
 	}
 
-	// Method to find backet, check if it is private and check the provided
+	// Method to find cart, check if it is private and check the provided
 	// password:
-	public Cart findBacketAndCheckIsPrivateAndCheckPassword(Long cartid, String password) {
-		Cart cart = this.findBacketAndCheckIsPrivate(cartid);
+	public Cart findCartAndCheckIsPrivateAndCheckPassword(Long cartid, String password) {
+		Cart cart = this.findCartAndCheckIsPrivate(cartid);
 		this.checkPassword(password, cart.getPasswordHash());
 		return cart;
 	}
 
-	// Method to find backet, check if it's private, it's password and check if it's
+	// Method to find cart, check if it's private, it's password and check if it's
 	// current
-	public Cart findBacketAndCheckIsPrivateAndCheckPasswordAndCheckIsCurrent(Long cartid, String password) {
-		Cart cart = this.findBacketAndCheckIsPrivateAndCheckPassword(cartid, password);
-		this.checkIfBacketIsCurrent(cart);
+	public Cart findCartAndCheckIsPrivateAndCheckPasswordAndCheckIsCurrent(Long cartid, String password) {
+		Cart cart = this.findCartAndCheckIsPrivateAndCheckPassword(cartid, password);
+		this.checkIfCartIsCurrent(cart);
 		return cart;
 	}
 
-	// The method to find out if the user has exactly one current backet:
-	public Cart findCurrentBacketOfUser(User user) {
+	// The method to find out if the user has exactly one current cart:
+	public Cart findCurrentCartOfUser(User user) {
 		Long userId = user.getId();
-		List<Cart> currentBacketsOfUser = cartRepository.findCurrentByUserid(userId);
+		List<Cart> currentCartsOfUser = cartRepository.findCurrentByUserid(userId);
 
-		if (currentBacketsOfUser.size() != 1) {
-			return this.handleUserHasMoreOrLessThanOneCurrentBacketCase(currentBacketsOfUser, user);
+		if (currentCartsOfUser.size() != 1) {
+			return this.handleUserHasMoreOrLessThanOneCurrentCartCase(currentCartsOfUser, user);
 		}
 
-		Cart currentCart = currentBacketsOfUser.get(0);
+		Cart currentCart = currentCartsOfUser.get(0);
 		return currentCart;
 	}
 	
-	private Cart handleUserHasMoreOrLessThanOneCurrentBacketCase(List<Cart> currentBacketsOfUser, User user) {
-		for (Cart currentCartOfUser : currentBacketsOfUser) {
+	private Cart handleUserHasMoreOrLessThanOneCurrentCartCase(List<Cart> currentCartsOfUser, User user) {
+		for (Cart currentCartOfUser : currentCartsOfUser) {
 			cartRepository.delete(currentCartOfUser);
 		}
 		Cart newCurrentCartForUser = new Cart(true, user);
@@ -80,14 +80,14 @@ public class CommonService {
 	}
 
 	// Method to add new current Cart for the user
-	public void addCurrentBacketForUser(User user) {
+	public void addCurrentCartForUser(User user) {
 		Long userId = user.getId();
-		this.checkCurrentBacketsOfUser(userId);
+		this.checkCurrentCartsOfUser(userId);
 		Cart newCurrentCartForUser = new Cart(true, user);
 		cartRepository.save(newCurrentCartForUser);
 	}
 
-	private void checkCurrentBacketsOfUser(Long userId) {
+	private void checkCurrentCartsOfUser(Long userId) {
 		List<Cart> currentCarts = cartRepository.findCurrentByUserid(userId);
 
 		if (currentCarts.size() > 0) {
@@ -97,24 +97,24 @@ public class CommonService {
 		}
 	}
 
-	private Cart findBacket(Long cartid) {
-		Optional<Cart> optionalBacket = cartRepository.findById(cartid);
+	private Cart findCart(Long cartid) {
+		Optional<Cart> optionalCart = cartRepository.findById(cartid);
 
-		if (!optionalBacket.isPresent())
+		if (!optionalCart.isPresent())
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The cart wasn't found by id");
 
-		Cart cart = optionalBacket.get();
+		Cart cart = optionalCart.get();
 		return cart;
 	}
 
-	private void checkIfBacketIsPrivate(Cart cart) {
-		User backetOwner = cart.getUser();
+	private void checkIfCartIsPrivate(Cart cart) {
+		User cartOwner = cart.getUser();
 
-		if (backetOwner != null)
+		if (cartOwner != null)
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "The cart is private");
 	}
 
-	private void checkIfBacketIsCurrent(Cart cart) {
+	private void checkIfCartIsCurrent(Cart cart) {
 		if (!cart.isCurrent())
 			throw new ResponseStatusException(HttpStatus.CONFLICT, "You can't change not current cart");
 	}

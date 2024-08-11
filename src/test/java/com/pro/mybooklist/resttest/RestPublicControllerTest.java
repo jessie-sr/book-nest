@@ -29,7 +29,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pro.mybooklist.httpforms.AccountCredentials;
 import com.pro.mybooklist.httpforms.AddressInfoNoAuthentication;
-import com.pro.mybooklist.httpforms.BacketInfo;
+import com.pro.mybooklist.httpforms.CartInfo;
 import com.pro.mybooklist.httpforms.BookQuantityInfo;
 import com.pro.mybooklist.httpforms.EmailInfo;
 import com.pro.mybooklist.httpforms.OrderPasswordInfo;
@@ -235,8 +235,8 @@ public class RestPublicControllerTest {
 
 	@Test
 	@Rollback
-	public void testCreateBacketNoAuthenticationAllCases() throws Exception {
-		String requestURI = "/createbacket";
+	public void testCreateCartNoAuthenticationAllCases() throws Exception {
+		String requestURI = "/createcart";
 
 		mockMvc.perform(post(requestURI)).andExpect(status().isOk()).andExpect(jsonPath("$.id").exists())
 				.andExpect(jsonPath("$.password").exists());
@@ -249,33 +249,33 @@ public class RestPublicControllerTest {
 	class testAddBookToCartNoAuthentication {
 		@Test
 		@Rollback
-		public void testAddBookToCartNoAuthenticationBacketNotFoundCase() throws Exception {
+		public void testAddBookToCartNoAuthenticationCartNotFoundCase() throws Exception {
 			String requestURI = "/addbook/";
 
 			BookQuantityInfo bookQuantityInfo = new BookQuantityInfo(2, Long.valueOf(2), WRONG_PWD);
 			String requestBody = objectMapper.writeValueAsString(bookQuantityInfo);
-			String requestURIBacketNotFound = requestURI + Long.valueOf(2);
+			String requestURICartNotFound = requestURI + Long.valueOf(2);
 			MvcResult result = mockMvc
 					.perform(
-							post(requestURIBacketNotFound).contentType(MediaType.APPLICATION_JSON).content(requestBody))
+							post(requestURICartNotFound).contentType(MediaType.APPLICATION_JSON).content(requestBody))
 					.andExpect(status().isNotFound()).andReturn();
 			String message = result.getResponse().getErrorMessage();
-			assertThat(message).isEqualTo("The backet wasn't found by id");
+			assertThat(message).isEqualTo("The cart wasn't found by id");
 		}
 
 		@Test
 		@Rollback
-		public void testAddBookToCartNoAuthenticationBacketIsPrivateCase() throws Exception {
+		public void testAddBookToCartNoAuthenticationCartIsPrivateCase() throws Exception {
 			String requestURI = "/addbook/";
 
-			Cart newCart = createBacketWithUser(true, USERNAME);
+			Cart newCart = createCartWithUser(true, USERNAME);
 			Long privatecartid = newCart.getCartid();
 
 			BookQuantityInfo bookQuantityInfo = new BookQuantityInfo(2, Long.valueOf(2), WRONG_PWD);
 			String requestBody = objectMapper.writeValueAsString(bookQuantityInfo);
-			String requestURIBacketIsPrivate = requestURI + privatecartid;
+			String requestURICartIsPrivate = requestURI + privatecartid;
 			mockMvc.perform(
-					post(requestURIBacketIsPrivate).contentType(MediaType.APPLICATION_JSON).content(requestBody))
+					post(requestURICartIsPrivate).contentType(MediaType.APPLICATION_JSON).content(requestBody))
 					.andExpect(status().isUnauthorized());
 		}
 
@@ -284,7 +284,7 @@ public class RestPublicControllerTest {
 		public void testAddBookToCartNoAuthenticationWrongPasswordCase() throws Exception {
 			String requestURI = "/addbook/";
 
-			Cart cart = createBacketNoUser(true);
+			Cart cart = createCartNoUser(true);
 			Long cartid = cart.getCartid();
 
 			String goodRequestURI = requestURI + cartid;
@@ -297,17 +297,17 @@ public class RestPublicControllerTest {
 
 		@Test
 		@Rollback
-		public void testAddBookToCartNoAuthenticationBacketIsNotCurrentCase() throws Exception {
+		public void testAddBookToCartNoAuthenticationCartIsNotCurrentCase() throws Exception {
 			String requestURI = "/addbook/";
 
-			Cart cart = createBacketNoUser(false);
+			Cart cart = createCartNoUser(false);
 			Long cartid = cart.getCartid();
-			String requestURINotCurrentBacket = requestURI + cartid;
+			String requestURINotCurrentCart = requestURI + cartid;
 
 			BookQuantityInfo bookQuantityInfo = new BookQuantityInfo(2, Long.valueOf(2), DEFAULT_PASSWORD);
 			String requestBody = objectMapper.writeValueAsString(bookQuantityInfo);
 			mockMvc.perform(
-					post(requestURINotCurrentBacket).contentType(MediaType.APPLICATION_JSON).content(requestBody))
+					post(requestURINotCurrentCart).contentType(MediaType.APPLICATION_JSON).content(requestBody))
 					.andExpect(status().isConflict());
 		}
 
@@ -316,7 +316,7 @@ public class RestPublicControllerTest {
 		public void testAddBookToCartNoAuthenticationBookNotFoundCase() throws Exception {
 			String requestURI = "/addbook/";
 
-			Cart cart = createBacketNoUser(true);
+			Cart cart = createCartNoUser(true);
 			Long cartid = cart.getCartid();
 			String requestURIGood = requestURI + cartid;
 
@@ -335,14 +335,14 @@ public class RestPublicControllerTest {
 		public void testAddBookToCartNoAuthenticationGoodCases() throws Exception {
 			String requestURI = "/addbook/";
 
-			Cart cart = createBacketNoUser(true);
+			Cart cart = createCartNoUser(true);
 			Long cartid = cart.getCartid();
 			String requestURIGood = requestURI + cartid;
 
 			Book book = createBook(BOOK_TITLE, OTHER_CATEGORY, DEFAULT_PRICE);
 			Long bookId = book.getId();
 
-			// Adding the new backetBook record case
+			// Adding the new cartBook record case
 			BookQuantityInfo bookQuantityInfo = new BookQuantityInfo(2, bookId, DEFAULT_PASSWORD);
 			String requestBody = objectMapper.writeValueAsString(bookQuantityInfo);
 			mockMvc.perform(post(requestURIGood).contentType(MediaType.APPLICATION_JSON).content(requestBody))
@@ -352,7 +352,7 @@ public class RestPublicControllerTest {
 			assertThat(cartBooks).hasSize(1);
 			assertThat(cartBooks.get(0).getQuantity()).isEqualTo(2);
 
-			// Adding books quantity to the existing backetBook case:
+			// Adding books quantity to the existing cartBook case:
 			mockMvc.perform(post(requestURIGood).contentType(MediaType.APPLICATION_JSON).content(requestBody))
 					.andExpect(status().isOk());
 			cartBooks = (List<CartBook>) cartBookRepository.findAll();
@@ -365,25 +365,25 @@ public class RestPublicControllerTest {
 	class testGetIdsOfBooksBycartid {
 		@Test
 		@Rollback
-		public void testGetIdsOfBooksBycartidBacketNotFoundCase() throws Exception {
+		public void testGetIdsOfBooksBycartidCartNotFoundCase() throws Exception {
 			String requestURI = "/booksids/";
 
-			String requestURIBacketNotFound = requestURI + Long.valueOf(2);
+			String requestURICartNotFound = requestURI + Long.valueOf(2);
 
-			mockMvc.perform(get(requestURIBacketNotFound)).andExpect(status().isNotFound());
+			mockMvc.perform(get(requestURICartNotFound)).andExpect(status().isNotFound());
 		}
 
 		@Test
 		@Rollback
-		public void testGetIdsOfBooksBycartidBacketHasUserCase() throws Exception {
+		public void testGetIdsOfBooksBycartidCartHasUserCase() throws Exception {
 			String requestURI = "/booksids/";
 
-			Cart cart = createBacketWithUser(true, USERNAME);
+			Cart cart = createCartWithUser(true, USERNAME);
 			Long cartid = cart.getCartid();
 
-			String requestURIBacketHasUser = requestURI + cartid;
+			String requestURICartHasUser = requestURI + cartid;
 
-			mockMvc.perform(get(requestURIBacketHasUser)).andExpect(status().isUnauthorized());
+			mockMvc.perform(get(requestURICartHasUser)).andExpect(status().isUnauthorized());
 		}
 
 		@Test
@@ -391,7 +391,7 @@ public class RestPublicControllerTest {
 		public void testGetIdsOfBooksBycartidGoodCases() throws Exception {
 			String requestURI = "/booksids/";
 
-			Cart cart = createBacketNoUser(true);
+			Cart cart = createCartNoUser(true);
 			Long cartid = cart.getCartid();
 
 			String requestURIGood = requestURI + cartid;
@@ -400,8 +400,8 @@ public class RestPublicControllerTest {
 
 			Book book1 = createBook(BOOK_TITLE, OTHER_CATEGORY, DEFAULT_PRICE);
 			Book book2 = createBook(BOOK_TITLE + " 2", OTHER_CATEGORY, DEFAULT_PRICE);
-			createBacketBookCustomQuantity(2, book1, cart);
-			createBacketBookCustomQuantity(1, book2, cart);
+			createCartBookCustomQuantity(2, book1, cart);
+			createCartBookCustomQuantity(1, book2, cart);
 			mockMvc.perform(get(requestURIGood)).andExpect(status().isOk()).andExpect(jsonPath("$.size()").value(2));
 		}
 	}
@@ -410,61 +410,61 @@ public class RestPublicControllerTest {
 	class testGetBooksInCartByIdAndPassword {
 		@Test
 		@Rollback
-		public void testGetBooksInBacketByIdAndPasswordBacketNotFoundCase() throws Exception {
+		public void testGetBooksInCartByIdAndPasswordCartNotFoundCase() throws Exception {
 			String requestURI = "/showcart";
 
-			BacketInfo backetInfoBacketNotFound = new BacketInfo(Long.valueOf(2), WRONG_PWD);
-			String requestBodyNotFound = objectMapper.writeValueAsString(backetInfoBacketNotFound);
+			CartInfo cartInfoCartNotFound = new CartInfo(Long.valueOf(2), WRONG_PWD);
+			String requestBodyNotFound = objectMapper.writeValueAsString(cartInfoCartNotFound);
 			mockMvc.perform(post(requestURI).contentType(MediaType.APPLICATION_JSON).content(requestBodyNotFound))
 					.andExpect(status().isNotFound());
 		}
 
 		@Test
 		@Rollback
-		public void testGetBooksInBacketByIdAndPasswordBacketHasOwnerCase() throws Exception {
+		public void testGetBooksInCartByIdAndPasswordCartHasOwnerCase() throws Exception {
 			String requestURI = "/showcart";
 
-			Cart cartWithOwner = createBacketWithUser(false, USERNAME);
+			Cart cartWithOwner = createCartWithUser(false, USERNAME);
 			Long cartid = cartWithOwner.getCartid();
 
-			BacketInfo backetInfo = new BacketInfo(cartid, WRONG_PWD);
-			String requestBody = objectMapper.writeValueAsString(backetInfo);
+			CartInfo cartInfo = new CartInfo(cartid, WRONG_PWD);
+			String requestBody = objectMapper.writeValueAsString(cartInfo);
 			mockMvc.perform(post(requestURI).contentType(MediaType.APPLICATION_JSON).content(requestBody))
 					.andExpect(status().isUnauthorized());
 		}
 
 		@Test
 		@Rollback
-		public void testGetBooksInBacketByIdAndPasswordWrongPasswordCase() throws Exception {
+		public void testGetBooksInCartByIdAndPasswordWrongPasswordCase() throws Exception {
 			String requestURI = "/showcart";
 
-			Cart cart = createBacketNoUser(false);
+			Cart cart = createCartNoUser(false);
 			Long cartid = cart.getCartid();
 
-			BacketInfo backetInfoWrongPwd = new BacketInfo(cartid, WRONG_PWD);
-			String requestBodyWrongPwd = objectMapper.writeValueAsString(backetInfoWrongPwd);
+			CartInfo cartInfoWrongPwd = new CartInfo(cartid, WRONG_PWD);
+			String requestBodyWrongPwd = objectMapper.writeValueAsString(cartInfoWrongPwd);
 			mockMvc.perform(post(requestURI).contentType(MediaType.APPLICATION_JSON).content(requestBodyWrongPwd))
 					.andExpect(status().isBadRequest());
 		}
 
 		@Test
 		@Rollback
-		public void testGetBooksInBacketByIdAndPasswordGoodCases() throws Exception {
+		public void testGetBooksInCartByIdAndPasswordGoodCases() throws Exception {
 			String requestURI = "/showcart";
 
-			Cart cart = createBacketNoUser(false);
+			Cart cart = createCartNoUser(false);
 			Long cartid = cart.getCartid();
 
-			BacketInfo backetInfo = new BacketInfo(cartid, DEFAULT_PASSWORD);
-			String requestBody = objectMapper.writeValueAsString(backetInfo);
+			CartInfo cartInfo = new CartInfo(cartid, DEFAULT_PASSWORD);
+			String requestBody = objectMapper.writeValueAsString(cartInfo);
 			// Empty cart case;
 			mockMvc.perform(post(requestURI).contentType(MediaType.APPLICATION_JSON).content(requestBody))
 					.andExpect(status().isOk()).andExpect(jsonPath("$.size()").value(0));
 
 			Book book1 = createBook(BOOK_TITLE, OTHER_CATEGORY, DEFAULT_PRICE);
 			Book book2 = createBook(BOOK_TITLE + " 2", ROMANCE_CATEGORY, DEFAULT_PRICE);
-			createBacketBookCustomQuantity(1, book1, cart);
-			createBacketBookCustomQuantity(1, book2, cart);
+			createCartBookCustomQuantity(1, book1, cart);
+			createCartBookCustomQuantity(1, book2, cart);
 
 			mockMvc.perform(post(requestURI).contentType(MediaType.APPLICATION_JSON).content(requestBody))
 					.andExpect(status().isOk()).andExpect(jsonPath("$.size()").value(2));
@@ -502,11 +502,11 @@ public class RestPublicControllerTest {
 	class testGetTotalByCartId {
 		@Test
 		@Rollback
-		public void testGetTotalBycartidBacketNotFoundCase() throws Exception {
-			String requestURI = "/totalofbacket";
+		public void testGetTotalBycartidCartNotFoundCase() throws Exception {
+			String requestURI = "/totalofcart";
 
-			BacketInfo backetInfoNotFound = new BacketInfo(Long.valueOf(2), DEFAULT_PASSWORD);
-			String requestBodyNotFound = objectMapper.writeValueAsString(backetInfoNotFound);
+			CartInfo cartInfoNotFound = new CartInfo(Long.valueOf(2), DEFAULT_PASSWORD);
+			String requestBodyNotFound = objectMapper.writeValueAsString(cartInfoNotFound);
 
 			mockMvc.perform(post(requestURI).contentType(MediaType.APPLICATION_JSON).content(requestBodyNotFound))
 					.andExpect(status().isNotFound());
@@ -514,29 +514,29 @@ public class RestPublicControllerTest {
 
 		@Test
 		@Rollback
-		public void testGetTotalBycartidBacketIsPrivateCase() throws Exception {
-			String requestURI = "/totalofbacket";
+		public void testGetTotalBycartidCartIsPrivateCase() throws Exception {
+			String requestURI = "/totalofcart";
 
-			Cart newCart = createBacketWithUser(true, USERNAME);
+			Cart newCart = createCartWithUser(true, USERNAME);
 			Long cartid = newCart.getCartid();
 
-			BacketInfo backetInfoPrivateBacket = new BacketInfo(cartid, DEFAULT_PASSWORD);
-			String requestBodyPrivateBacket = objectMapper.writeValueAsString(backetInfoPrivateBacket);
+			CartInfo cartInfoPrivateCart = new CartInfo(cartid, DEFAULT_PASSWORD);
+			String requestBodyPrivateCart = objectMapper.writeValueAsString(cartInfoPrivateCart);
 
-			mockMvc.perform(post(requestURI).contentType(MediaType.APPLICATION_JSON).content(requestBodyPrivateBacket))
+			mockMvc.perform(post(requestURI).contentType(MediaType.APPLICATION_JSON).content(requestBodyPrivateCart))
 					.andExpect(status().isUnauthorized());
 		}
 
 		@Test
 		@Rollback
 		public void testGetTotalBycartidWrongPasswordCase() throws Exception {
-			String requestURI = "/totalofbacket";
+			String requestURI = "/totalofcart";
 
-			Cart newCart = createBacketNoUser(true);
+			Cart newCart = createCartNoUser(true);
 			Long cartid = newCart.getCartid();
 
-			BacketInfo backetInfoWrongPwd = new BacketInfo(cartid, WRONG_PWD);
-			String requestBodyWrongPwd = objectMapper.writeValueAsString(backetInfoWrongPwd);
+			CartInfo cartInfoWrongPwd = new CartInfo(cartid, WRONG_PWD);
+			String requestBodyWrongPwd = objectMapper.writeValueAsString(cartInfoWrongPwd);
 
 			mockMvc.perform(post(requestURI).contentType(MediaType.APPLICATION_JSON).content(requestBodyWrongPwd))
 					.andExpect(status().isBadRequest());
@@ -545,15 +545,15 @@ public class RestPublicControllerTest {
 		@Test
 		@Rollback
 		public void testGetTotalBycartidGoodCases() throws Exception {
-			String requestURI = "/totalofbacket";
+			String requestURI = "/totalofcart";
 
-			Cart newCart = createBacketNoUser(true);
+			Cart newCart = createCartNoUser(true);
 			Long cartid = newCart.getCartid();
 
-			BacketInfo backetInfo = new BacketInfo(cartid, DEFAULT_PASSWORD);
-			String requestBody = objectMapper.writeValueAsString(backetInfo);
+			CartInfo cartInfo = new CartInfo(cartid, DEFAULT_PASSWORD);
+			String requestBody = objectMapper.writeValueAsString(cartInfo);
 
-			// Empty backet case
+			// Empty cart case
 			MvcResult result = mockMvc
 					.perform(post(requestURI).contentType(MediaType.APPLICATION_JSON).content(requestBody))
 					.andExpect(status().isOk()).andReturn();
@@ -562,8 +562,8 @@ public class RestPublicControllerTest {
 
 			Book book1 = createBook(BOOK_TITLE, OTHER_CATEGORY, DEFAULT_PRICE);
 			Book book2 = createBook(BOOK_TITLE + " 2", ROMANCE_CATEGORY, DEFAULT_PRICE);
-			createBacketBookCustomQuantity(1, book1, newCart);
-			createBacketBookCustomQuantity(2, book2, newCart);
+			createCartBookCustomQuantity(1, book1, newCart);
+			createCartBookCustomQuantity(2, book2, newCart);
 
 			mockMvc.perform(post(requestURI).contentType(MediaType.APPLICATION_JSON).content(requestBody))
 					.andExpect(status().isOk()).andExpect(jsonPath("$.total").value(DEFAULT_PRICE * 3));
@@ -604,11 +604,11 @@ public class RestPublicControllerTest {
 	class testReduceItemNoAuthentication {
 		@Test
 		@Rollback
-		public void testReduceItemNoAuthenticationBacketNotFoundCase() throws Exception {
+		public void testReduceItemNoAuthenticationCartNotFoundCase() throws Exception {
 			String requestURI = "/reduceitemnoauth/";
 
-			BacketInfo backetInfoNotFound = new BacketInfo(Long.valueOf(2), WRONG_PWD);
-			String requestBody = objectMapper.writeValueAsString(backetInfoNotFound);
+			CartInfo cartInfoNotFound = new CartInfo(Long.valueOf(2), WRONG_PWD);
+			String requestBody = objectMapper.writeValueAsString(cartInfoNotFound);
 			String requestURIBookNotFound = requestURI + Long.valueOf(2);
 
 			MvcResult result = mockMvc
@@ -616,19 +616,19 @@ public class RestPublicControllerTest {
 					.andExpect(status().isNotFound()).andReturn();
 
 			String message = result.getResponse().getErrorMessage();
-			assertThat(message).isEqualTo("The backet wasn't found by id");
+			assertThat(message).isEqualTo("The cart wasn't found by id");
 		}
 
 		@Test
 		@Rollback
-		public void testReduceItemNoAuthenticationBacketIsPrivateCase() throws Exception {
+		public void testReduceItemNoAuthenticationCartIsPrivateCase() throws Exception {
 			String requestURI = "/reduceitemnoauth/";
 
-			Cart cartWithOwner = createBacketWithUser(true, USERNAME);
+			Cart cartWithOwner = createCartWithUser(true, USERNAME);
 			Long cartid = cartWithOwner.getCartid();
 
-			BacketInfo backetInfoPrivateBacket = new BacketInfo(cartid, WRONG_PWD);
-			String requestBody = objectMapper.writeValueAsString(backetInfoPrivateBacket);
+			CartInfo cartInfoPrivateCart = new CartInfo(cartid, WRONG_PWD);
+			String requestBody = objectMapper.writeValueAsString(cartInfoPrivateCart);
 			String requestURIBookNotFound = requestURI + Long.valueOf(2);
 
 			mockMvc.perform(put(requestURIBookNotFound).contentType(MediaType.APPLICATION_JSON).content(requestBody))
@@ -640,11 +640,11 @@ public class RestPublicControllerTest {
 		public void testReduceItemNoAuthenticationWrongPasswordCase() throws Exception {
 			String requestURI = "/reduceitemnoauth/";
 
-			Cart cart = createBacketNoUser(true);
+			Cart cart = createCartNoUser(true);
 			Long cartid = cart.getCartid();
 
-			BacketInfo backetInfoWrongPwd = new BacketInfo(cartid, WRONG_PWD);
-			String requestBody = objectMapper.writeValueAsString(backetInfoWrongPwd);
+			CartInfo cartInfoWrongPwd = new CartInfo(cartid, WRONG_PWD);
+			String requestBody = objectMapper.writeValueAsString(cartInfoWrongPwd);
 			String requestURIBookNotFound = requestURI + Long.valueOf(2);
 
 			mockMvc.perform(put(requestURIBookNotFound).contentType(MediaType.APPLICATION_JSON).content(requestBody))
@@ -653,14 +653,14 @@ public class RestPublicControllerTest {
 
 		@Test
 		@Rollback
-		public void testReduceItemNoAuthenticationBacketIsNotCurrentCase() throws Exception {
+		public void testReduceItemNoAuthenticationCartIsNotCurrentCase() throws Exception {
 			String requestURI = "/reduceitemnoauth/";
 
-			Cart cart = createBacketNoUser(false);
+			Cart cart = createCartNoUser(false);
 			Long cartid = cart.getCartid();
 
-			BacketInfo backetInfoNotCurrent = new BacketInfo(cartid, DEFAULT_PASSWORD);
-			String requestBody = objectMapper.writeValueAsString(backetInfoNotCurrent);
+			CartInfo cartInfoNotCurrent = new CartInfo(cartid, DEFAULT_PASSWORD);
+			String requestBody = objectMapper.writeValueAsString(cartInfoNotCurrent);
 			String requestURIBookNotFound = requestURI + Long.valueOf(2);
 
 			mockMvc.perform(put(requestURIBookNotFound).contentType(MediaType.APPLICATION_JSON).content(requestBody))
@@ -672,11 +672,11 @@ public class RestPublicControllerTest {
 		public void testReduceItemNoAuthenticationBookNotFoundCase() throws Exception {
 			String requestURI = "/reduceitemnoauth/";
 
-			Cart cart = createBacketNoUser(true);
+			Cart cart = createCartNoUser(true);
 			Long cartid = cart.getCartid();
 
-			BacketInfo backetInfoGood = new BacketInfo(cartid, DEFAULT_PASSWORD);
-			String requestBodyGood = objectMapper.writeValueAsString(backetInfoGood);
+			CartInfo cartInfoGood = new CartInfo(cartid, DEFAULT_PASSWORD);
+			String requestBodyGood = objectMapper.writeValueAsString(cartInfoGood);
 			String requestURIBookNotFound = requestURI + Long.valueOf(2);
 
 			MvcResult result = mockMvc.perform(
@@ -689,20 +689,20 @@ public class RestPublicControllerTest {
 
 		@Test
 		@Rollback
-		public void testReduceItemNoAuthenticationBookIsNotInBacketCase() throws Exception {
+		public void testReduceItemNoAuthenticationBookIsNotInCartCase() throws Exception {
 			String requestURI = "/reduceitemnoauth/";
 
-			Cart cart = createBacketNoUser(true);
+			Cart cart = createCartNoUser(true);
 			Long cartid = cart.getCartid();
 
 			Book book = createBook(BOOK_TITLE, OTHER_CATEGORY, DEFAULT_PRICE);
 			Long bookId = book.getId();
 
-			BacketInfo backetInfo = new BacketInfo(cartid, DEFAULT_PASSWORD);
-			String requestBody = objectMapper.writeValueAsString(backetInfo);
-			String requestURIBookNotinBacket = requestURI + bookId;
+			CartInfo cartInfo = new CartInfo(cartid, DEFAULT_PASSWORD);
+			String requestBody = objectMapper.writeValueAsString(cartInfo);
+			String requestURIBookNotinCart = requestURI + bookId;
 
-			mockMvc.perform(put(requestURIBookNotinBacket).contentType(MediaType.APPLICATION_JSON).content(requestBody))
+			mockMvc.perform(put(requestURIBookNotinCart).contentType(MediaType.APPLICATION_JSON).content(requestBody))
 					.andExpect(status().isConflict());
 		}
 
@@ -711,16 +711,16 @@ public class RestPublicControllerTest {
 		public void testReduceItemNoAuthenticationQuantityIsReducedGoodCase() throws Exception {
 			String requestURI = "/reduceitemnoauth/";
 
-			Cart cart = createBacketNoUser(true);
+			Cart cart = createCartNoUser(true);
 			Long cartid = cart.getCartid();
 
 			Book book = createBook(BOOK_TITLE, OTHER_CATEGORY, DEFAULT_PRICE);
 			Long bookId = book.getId();
 
-			createBacketBookCustomQuantity(2, book, cart);
+			createCartBookCustomQuantity(2, book, cart);
 
-			BacketInfo backetInfo = new BacketInfo(cartid, DEFAULT_PASSWORD);
-			String requestBody = objectMapper.writeValueAsString(backetInfo);
+			CartInfo cartInfo = new CartInfo(cartid, DEFAULT_PASSWORD);
+			String requestBody = objectMapper.writeValueAsString(cartInfo);
 			String requestURIOk = requestURI + bookId;
 
 			mockMvc.perform(put(requestURIOk).contentType(MediaType.APPLICATION_JSON).content(requestBody))
@@ -733,19 +733,19 @@ public class RestPublicControllerTest {
 
 		@Test
 		@Rollback
-		public void testReduceItemNoAuthenticationBookIsRemovedFromBacketGoodCase() throws Exception {
+		public void testReduceItemNoAuthenticationBookIsRemovedFromCartGoodCase() throws Exception {
 			String requestURI = "/reduceitemnoauth/";
 
-			Cart cart = createBacketNoUser(true);
+			Cart cart = createCartNoUser(true);
 			Long cartid = cart.getCartid();
 
 			Book book = createBook(BOOK_TITLE, OTHER_CATEGORY, DEFAULT_PRICE);
 			Long bookId = book.getId();
 
-			createBacketBookCustomQuantity(1, book, cart);
+			createCartBookCustomQuantity(1, book, cart);
 
-			BacketInfo backetInfo = new BacketInfo(cartid, DEFAULT_PASSWORD);
-			String requestBody = objectMapper.writeValueAsString(backetInfo);
+			CartInfo cartInfo = new CartInfo(cartid, DEFAULT_PASSWORD);
+			String requestBody = objectMapper.writeValueAsString(cartInfo);
 			String requestURIOk = requestURI + bookId;
 
 			mockMvc.perform(put(requestURIOk).contentType(MediaType.APPLICATION_JSON).content(requestBody))
@@ -760,11 +760,11 @@ public class RestPublicControllerTest {
 	class testDeleteBookNoAuthentication {
 		@Test
 		@Rollback
-		public void testDeleteBookNoAuthenticationBacketNotFoundCase() throws Exception {
+		public void testDeleteBookNoAuthenticationCartNotFoundCase() throws Exception {
 			String requestURI = "/deletebook/";
 
-			BacketInfo backetInfoNotFound = new BacketInfo(Long.valueOf(2), WRONG_PWD);
-			String requestBody = objectMapper.writeValueAsString(backetInfoNotFound);
+			CartInfo cartInfoNotFound = new CartInfo(Long.valueOf(2), WRONG_PWD);
+			String requestBody = objectMapper.writeValueAsString(cartInfoNotFound);
 			String requestURIBookNotFound = requestURI + Long.valueOf(2);
 
 			MvcResult result = mockMvc
@@ -773,19 +773,19 @@ public class RestPublicControllerTest {
 					.andExpect(status().isNotFound()).andReturn();
 
 			String message = result.getResponse().getErrorMessage();
-			assertThat(message).isEqualTo("The backet wasn't found by id");
+			assertThat(message).isEqualTo("The cart wasn't found by id");
 		}
 
 		@Test
 		@Rollback
-		public void testDeleteBookNoAuthenticationBacketIsPrivateCase() throws Exception {
+		public void testDeleteBookNoAuthenticationCartIsPrivateCase() throws Exception {
 			String requestURI = "/deletebook/";
 
-			Cart cartWithOwner = createBacketWithUser(true, USERNAME);
+			Cart cartWithOwner = createCartWithUser(true, USERNAME);
 			Long cartid = cartWithOwner.getCartid();
 
-			BacketInfo backetInfoPrivatBacket = new BacketInfo(cartid, WRONG_PWD);
-			String requestBody = objectMapper.writeValueAsString(backetInfoPrivatBacket);
+			CartInfo cartInfoPrivatCart = new CartInfo(cartid, WRONG_PWD);
+			String requestBody = objectMapper.writeValueAsString(cartInfoPrivatCart);
 			String requestURIBookNotFound = requestURI + Long.valueOf(2);
 
 			mockMvc.perform(delete(requestURIBookNotFound).contentType(MediaType.APPLICATION_JSON).content(requestBody))
@@ -797,11 +797,11 @@ public class RestPublicControllerTest {
 		public void testDeleteBookNoAuthenticationWrongPasswordCase() throws Exception {
 			String requestURI = "/deletebook/";
 
-			Cart cart = createBacketNoUser(true);
+			Cart cart = createCartNoUser(true);
 			Long cartid = cart.getCartid();
 
-			BacketInfo backetInfoWrongPwd = new BacketInfo(cartid, WRONG_PWD);
-			String requestBody = objectMapper.writeValueAsString(backetInfoWrongPwd);
+			CartInfo cartInfoWrongPwd = new CartInfo(cartid, WRONG_PWD);
+			String requestBody = objectMapper.writeValueAsString(cartInfoWrongPwd);
 			String requestURIBookNotFound = requestURI + Long.valueOf(2);
 
 			mockMvc.perform(delete(requestURIBookNotFound).contentType(MediaType.APPLICATION_JSON).content(requestBody))
@@ -810,14 +810,14 @@ public class RestPublicControllerTest {
 
 		@Test
 		@Rollback
-		public void testDeleteBookNoAuthenticationBacketIsNotCurrentCase() throws Exception {
+		public void testDeleteBookNoAuthenticationCartIsNotCurrentCase() throws Exception {
 			String requestURI = "/deletebook/";
 
-			Cart cart = createBacketNoUser(false);
+			Cart cart = createCartNoUser(false);
 			Long cartid = cart.getCartid();
 
-			BacketInfo backetInfoNotCurrent = new BacketInfo(cartid, DEFAULT_PASSWORD);
-			String requestBody = objectMapper.writeValueAsString(backetInfoNotCurrent);
+			CartInfo cartInfoNotCurrent = new CartInfo(cartid, DEFAULT_PASSWORD);
+			String requestBody = objectMapper.writeValueAsString(cartInfoNotCurrent);
 			String requestURIBookNotFound = requestURI + Long.valueOf(2);
 
 			mockMvc.perform(delete(requestURIBookNotFound).contentType(MediaType.APPLICATION_JSON).content(requestBody))
@@ -829,11 +829,11 @@ public class RestPublicControllerTest {
 		public void testDeleteBookNoAuthenticationBookNotFoundCase() throws Exception {
 			String requestURI = "/deletebook/";
 
-			Cart cart = createBacketNoUser(true);
+			Cart cart = createCartNoUser(true);
 			Long cartid = cart.getCartid();
 
-			BacketInfo backetInfo = new BacketInfo(cartid, DEFAULT_PASSWORD);
-			String requestBodyBookNotFound = objectMapper.writeValueAsString(backetInfo);
+			CartInfo cartInfo = new CartInfo(cartid, DEFAULT_PASSWORD);
+			String requestBodyBookNotFound = objectMapper.writeValueAsString(cartInfo);
 			String requestURIBookNotFound = requestURI + Long.valueOf(2);
 
 			mockMvc.perform(delete(requestURIBookNotFound).contentType(MediaType.APPLICATION_JSON)
@@ -842,40 +842,40 @@ public class RestPublicControllerTest {
 
 		@Test
 		@Rollback
-		public void testDeleteBookNoAuthenticationBookIsNotInBacketCase() throws Exception {
+		public void testDeleteBookNoAuthenticationBookIsNotInCartCase() throws Exception {
 			String requestURI = "/deletebook/";
 
-			Cart cart = createBacketNoUser(true);
+			Cart cart = createCartNoUser(true);
 			Long cartid = cart.getCartid();
 
 			Book book = createBook(BOOK_TITLE, OTHER_CATEGORY, DEFAULT_PRICE);
 			Long bookId = book.getId();
 
-			BacketInfo backetInfo = new BacketInfo(cartid, DEFAULT_PASSWORD);
-			String requestBody = objectMapper.writeValueAsString(backetInfo);
-			String requestURIBookNotInBacket = requestURI + bookId;
+			CartInfo cartInfo = new CartInfo(cartid, DEFAULT_PASSWORD);
+			String requestBody = objectMapper.writeValueAsString(cartInfo);
+			String requestURIBookNotInCart = requestURI + bookId;
 
 			mockMvc.perform(
-					delete(requestURIBookNotInBacket).contentType(MediaType.APPLICATION_JSON).content(requestBody))
+					delete(requestURIBookNotInCart).contentType(MediaType.APPLICATION_JSON).content(requestBody))
 					.andExpect(status().isConflict());
 		}
 
 		@Test
 		@Rollback
-		public void testDeleteBookNoAuthenticationBookWithQuantityMoreThan1IsRemovedFromBacketGoodCase()
+		public void testDeleteBookNoAuthenticationBookWithQuantityMoreThan1IsRemovedFromCartGoodCase()
 				throws Exception {
 			String requestURI = "/deletebook/";
 
-			Cart cart = createBacketNoUser(true);
+			Cart cart = createCartNoUser(true);
 			Long cartid = cart.getCartid();
 
 			Book book = createBook(BOOK_TITLE, OTHER_CATEGORY, DEFAULT_PRICE);
 			Long bookId = book.getId();
 
-			createBacketBookCustomQuantity(3, book, cart);
+			createCartBookCustomQuantity(3, book, cart);
 
-			BacketInfo backetInfoWithBookId = new BacketInfo(cartid, DEFAULT_PASSWORD);
-			String requestBody = objectMapper.writeValueAsString(backetInfoWithBookId);
+			CartInfo cartInfoWithBookId = new CartInfo(cartid, DEFAULT_PASSWORD);
+			String requestBody = objectMapper.writeValueAsString(cartInfoWithBookId);
 			String requestURIOk = requestURI + bookId;
 
 			mockMvc.perform(delete(requestURIOk).contentType(MediaType.APPLICATION_JSON).content(requestBody))
@@ -887,19 +887,19 @@ public class RestPublicControllerTest {
 
 		@Test
 		@Rollback
-		public void testDeleteBookNoAuthenticationBookWithQuantity1IsRemovedFromBacketGoodCase() throws Exception {
+		public void testDeleteBookNoAuthenticationBookWithQuantity1IsRemovedFromCartGoodCase() throws Exception {
 			String requestURI = "/deletebook/";
 
-			Cart cart = createBacketNoUser(true);
+			Cart cart = createCartNoUser(true);
 			Long cartid = cart.getCartid();
 
 			Book book = createBook(BOOK_TITLE, OTHER_CATEGORY, DEFAULT_PRICE);
 			Long bookId = book.getId();
 
-			createBacketBookCustomQuantity(1, book, cart);
+			createCartBookCustomQuantity(1, book, cart);
 
-			BacketInfo backetInfo = new BacketInfo(cartid, DEFAULT_PASSWORD);
-			String requestBody = objectMapper.writeValueAsString(backetInfo);
+			CartInfo cartInfo = new CartInfo(cartid, DEFAULT_PASSWORD);
+			String requestBody = objectMapper.writeValueAsString(cartInfo);
 			String requestURIOk = requestURI + bookId;
 
 			mockMvc.perform(delete(requestURIOk).contentType(MediaType.APPLICATION_JSON).content(requestBody))
@@ -914,7 +914,7 @@ public class RestPublicControllerTest {
 	class testMakeSaleNoAuthentication {
 		@Test
 		@Rollback
-		public void testMakeSaleNoAuthenticationBacketNotFoundCase() throws Exception {
+		public void testMakeSaleNoAuthenticationCartNotFoundCase() throws Exception {
 			String requestURI = "/makesale";
 
 			AddressInfoNoAuthentication addressInfoNotFound = new AddressInfoNoAuthentication(FIRSTNAME, LASTNAME,
@@ -927,17 +927,17 @@ public class RestPublicControllerTest {
 
 		@Test
 		@Rollback
-		public void testMakeSaleNoAuthenticationEmptyBacketCase() throws Exception {
+		public void testMakeSaleNoAuthenticationEmptyCartCase() throws Exception {
 			String requestURI = "/makesale";
 
-			Cart emptyCart = createBacketNoUser(true);
+			Cart emptyCart = createCartNoUser(true);
 			Long bakcetId = emptyCart.getCartid();
 
-			AddressInfoNoAuthentication addressInfoEmptyBacket = new AddressInfoNoAuthentication(FIRSTNAME, LASTNAME,
+			AddressInfoNoAuthentication addressInfoEmptyCart = new AddressInfoNoAuthentication(FIRSTNAME, LASTNAME,
 					COUNTRY, CITY, STREET, POSTCODE, EMAIL, NOTE, bakcetId, DEFAULT_PASSWORD);
-			String requestBodyEmptyBacket = objectMapper.writeValueAsString(addressInfoEmptyBacket);
+			String requestBodyEmptyCart = objectMapper.writeValueAsString(addressInfoEmptyCart);
 
-			mockMvc.perform(post(requestURI).contentType(MediaType.APPLICATION_JSON).content(requestBodyEmptyBacket))
+			mockMvc.perform(post(requestURI).contentType(MediaType.APPLICATION_JSON).content(requestBodyEmptyCart))
 					.andExpect(status().isNotAcceptable());
 		}
 
@@ -946,11 +946,11 @@ public class RestPublicControllerTest {
 		public void testMakeSaleNoAuthenticationWrongPasswordCase() throws Exception {
 			String requestURI = "/makesale";
 
-			Cart cart = createBacketNoUser(false);
+			Cart cart = createCartNoUser(false);
 			Long bakcetId = cart.getCartid();
 
 			Book book1 = createBook(BOOK_TITLE, OTHER_CATEGORY, DEFAULT_PRICE);
-			createBacketBookCustomQuantity(1, book1, cart);
+			createCartBookCustomQuantity(1, book1, cart);
 
 			AddressInfoNoAuthentication addressInfoWrongPwd = new AddressInfoNoAuthentication(FIRSTNAME, LASTNAME,
 					COUNTRY, CITY, STREET, POSTCODE, EMAIL, NOTE, bakcetId, WRONG_PWD);
@@ -962,14 +962,14 @@ public class RestPublicControllerTest {
 
 		@Test
 		@Rollback
-		public void testMakeSaleNoAuthenticationBacketIsNotCurrentCase() throws Exception {
+		public void testMakeSaleNoAuthenticationCartIsNotCurrentCase() throws Exception {
 			String requestURI = "/makesale";
 
-			Cart cartNotCurrent = createBacketNoUser(false);
+			Cart cartNotCurrent = createCartNoUser(false);
 			Long bakcetId = cartNotCurrent.getCartid();
 
 			Book book1 = createBook(BOOK_TITLE, OTHER_CATEGORY, DEFAULT_PRICE);
-			createBacketBookCustomQuantity(1, book1, cartNotCurrent);
+			createCartBookCustomQuantity(1, book1, cartNotCurrent);
 
 			AddressInfoNoAuthentication addressInfo = new AddressInfoNoAuthentication(FIRSTNAME, LASTNAME, COUNTRY,
 					CITY, STREET, POSTCODE, EMAIL, NOTE, bakcetId, DEFAULT_PASSWORD);
@@ -984,11 +984,11 @@ public class RestPublicControllerTest {
 		public void testMakeSaleNoAuthenticationGoodCase() throws Exception {
 			String requestURI = "/makesale";
 
-			Cart cart = createBacketNoUser(true);
+			Cart cart = createCartNoUser(true);
 			Long bakcetId = cart.getCartid();
 
 			Book book1 = createBook(BOOK_TITLE, OTHER_CATEGORY, DEFAULT_PRICE);
-			createBacketBookCustomQuantity(1, book1, cart);
+			createCartBookCustomQuantity(1, book1, cart);
 
 			AddressInfoNoAuthentication addressInfo = new AddressInfoNoAuthentication(FIRSTNAME, LASTNAME, COUNTRY,
 					CITY, STREET, POSTCODE, EMAIL, NOTE, bakcetId, DEFAULT_PASSWORD);
@@ -1189,11 +1189,11 @@ public class RestPublicControllerTest {
 
 		@Test
 		@Rollback
-		public void testGetTokenUnverifiedUserAlreadyHasBacketAndEmailIsNotWorkingCases() throws Exception {
+		public void testGetTokenUnverifiedUserAlreadyHasCartAndEmailIsNotWorkingCases() throws Exception {
 			String requestURI = "/login";
 
 			User user = createUser(USERNAME);
-			createBacketWithUser(true, USERNAME);
+			createCartWithUser(true, USERNAME);
 
 			// By username case:
 			AccountCredentials credentials = new AccountCredentials(USERNAME, DEFAULT_PASSWORD);
@@ -1210,7 +1210,7 @@ public class RestPublicControllerTest {
 
 			user.setAccountVerified(false);
 			urepository.save(user);
-			createBacketWithUser(true, USERNAME);
+			createCartWithUser(true, USERNAME);
 
 			// By email case:
 			credentials = new AccountCredentials(EMAIL, DEFAULT_PASSWORD);
@@ -1393,14 +1393,14 @@ public class RestPublicControllerTest {
 
 		@Test
 		@Rollback
-		public void testVerifyUserAlreadyHasCurrentBacketCase() throws Exception {
+		public void testVerifyUserAlreadyHasCurrentCartCase() throws Exception {
 			String requestURI = "/verify";
 
 			User user = createUser(USERNAME);
 
 			String token = user.getVerificationCode();
 
-			createBacketWithUser(true, USERNAME);
+			createCartWithUser(true, USERNAME);
 
 			TokenInfo tokenInfo = new TokenInfo(token);
 			String requestBody = objectMapper.writeValueAsString(tokenInfo);
@@ -1464,7 +1464,7 @@ public class RestPublicControllerTest {
 				return;
 			}
 
-			// User doesn't have backet yet case:
+			// User doesn't have cart yet case:
 			mockMvc.perform(put(requestURI).contentType(MediaType.APPLICATION_JSON).content(requestBody))
 					.andExpect(status().isNotImplemented());
 
@@ -1476,7 +1476,7 @@ public class RestPublicControllerTest {
 			assertThat(carts).hasSize(1);
 			assertThat(carts.get(0).isCurrent()).isTrue();
 
-			// User already has backet case:
+			// User already has cart case:
 			user.setAccountVerified(false);
 			user.setVerificationCode("SomeCode");
 			urepository.save(user);
@@ -1522,10 +1522,10 @@ public class RestPublicControllerTest {
 	}
 
 	private Order createOrderWithDefaultStatusNoUser(int quantity, List<Book> books, String password) {
-		Cart cart = this.createBacketNoUser(false);
+		Cart cart = this.createCartNoUser(false);
 
 		for (Book book : books) {
-			this.createBacketBookCustomQuantity(quantity, book, cart);
+			this.createCartBookCustomQuantity(quantity, book, cart);
 		}
 
 		String stringField = "field";
@@ -1538,7 +1538,7 @@ public class RestPublicControllerTest {
 		return newOrder;
 	}
 
-	private Cart createBacketWithUser(boolean current, String username) {
+	private Cart createCartWithUser(boolean current, String username) {
 		User user = this.createUser(username);
 
 		List<Cart> currentCarts = cartRepository.findCurrentByUserid(user.getId());
@@ -1551,7 +1551,7 @@ public class RestPublicControllerTest {
 		return newCart;
 	}
 
-	private Cart createBacketNoUser(boolean current) {
+	private Cart createCartNoUser(boolean current) {
 		Cart newCart = new Cart(current);
 		cartRepository.save(newCart);
 
@@ -1571,7 +1571,7 @@ public class RestPublicControllerTest {
 		return user;
 	}
 
-	private CartBook createBacketBookCustomQuantity(int quantity, Book book, Cart cart) {
+	private CartBook createCartBookCustomQuantity(int quantity, Book book, Cart cart) {
 		CartBook newCartBook = new CartBook(quantity, cart, book);
 		cartBookRepository.save(newCartBook);
 
