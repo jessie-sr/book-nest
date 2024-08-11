@@ -4,7 +4,8 @@ public class RoleVerificationInfo {
 	private String role;
 	private boolean isAccountVerified;
 
-	public RoleVerificationInfo() {}
+	public RoleVerificationInfo() {
+	}
 
 	public RoleVerificationInfo(String role, boolean isAccountVerified) {
 		this.role = role;
