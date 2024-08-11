@@ -20,47 +20,48 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(nullable = false, updatable = false)
 	private Long id;
-	
+
 	@Column(nullable = false)
 	private String firstname;
-	
+
 	@Column(nullable = false)
 	private String lastname;
-	
+
 	@Column(nullable = false, unique = true)
 	private String username;
-	
+
 	@Column(nullable = false)
 	private String password;
-	
+
 	@Column(nullable = false)
 	private String role;
-	
+
 	@Column(nullable = false, unique = true)
 	private String email;
-	
-	@Column(name ="verification_code", length = 64)
+
+	@Column(name = "verification_code", length = 64)
 	private String verificationCode;
-	
+
 	private boolean accountVerified;
-	
+
 	@Column(nullable = true)
 	private String country;
-	
+
 	@Column(nullable = true)
 	private String city;
-	
+
 	@Column(nullable = true)
 	private String street;
-	
+
 	@Column(nullable = true)
 	private String postcode;
-	
+
 	@JsonIgnore
-	@OneToMany(cascade = CascadeType.ALL, mappedBy="user")
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
 	private List<Cart> carts;
-	
-	public User() {}
+
+	public User() {
+	}
 
 	public User(String firstname, String lastname, String username,
 			String password, String role, String email,
@@ -79,7 +80,7 @@ public class User {
 		this.street = "";
 		this.postcode = "";
 	}
-	
+
 	public User(String firstname, String lastname, String username,
 			String password, String role, String email,
 			boolean accountVerified) {
@@ -185,7 +186,6 @@ public class User {
 	public void setCity(String city) {
 		this.city = city;
 	}
-
 
 	public String getStreet() {
 		return street;
