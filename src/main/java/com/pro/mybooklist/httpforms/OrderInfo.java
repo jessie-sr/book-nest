@@ -10,7 +10,8 @@ public class OrderInfo {
 	private String postcode;
 	private String email;
 
-	public OrderInfo() {}
+	public OrderInfo() {
+	}
 
 	public OrderInfo(String status, String firstname, String lastname, String country, String city, String street,
 			String postcode, String email) {
