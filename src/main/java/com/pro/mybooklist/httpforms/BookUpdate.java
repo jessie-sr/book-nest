@@ -5,8 +5,9 @@ public class BookUpdate {
 	private int bookYear;
 	private double price;
 	private Long categoryId;
-	
-	public BookUpdate() {}
+
+	public BookUpdate() {
+	}
 
 	public BookUpdate(String title, String author, String url, String isbn, int bookYear, double price,
 			Long categoryId) {
