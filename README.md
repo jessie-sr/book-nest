@@ -2,13 +2,6 @@
 
 Aa a comprehensive bookstore application backend written in Java using the Spring Boot framework, this project provides a robust set of RESTful APIs that handle user interactions and data management for books, orders, and user accounts, including authentication and authorization. The system is designed to be secure, scalable, and maintainable, leveraging Spring Boot's powerful features to achieve these goals.
 
-## Table of Contents
-- [Architecture Overview](#architecture-overview)
-- [Technologies Used](#technologies-used)
-- [Dependencies](#dependencies)
-- [Usage Guide](#usage-guide)
-- [Testing](#testing)
-
 ## Architecture Overview
 
 - **Controllers**: Handle HTTP requests and responses, interacting with the service layer to execute business logic operations and return data to clients.
